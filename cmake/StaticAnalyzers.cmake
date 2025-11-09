@@ -1,0 +1,18 @@
+if(NOT CMAKE_BUILD_TYPE STREQUAL "Release")
+    find_program(CLANGTIDY clang-tidy)
+    if(CLANGTIDY)
+        message(STATUS "Using clang-tidy")
+        set(CMAKE_CXX_CLANG_TIDY "${CLANGTIDY};-extra-arg=-Wno-unknown-warning-option")
+
+        if(WIN32)
+            set(CMAKE_CXX_CLANG_TIDY "${CLANGTIDY};--extra-arg=/EHsc")
+        endif()
+    else()
+        message(WARNING "clang-tidy requested but executable not found")
+    endif()
+
+    if(NOT WIN32)
+        message(STATUS "Using address sanitizer")
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O0 -g -fsanitize=address")
+    endif()
+endif()

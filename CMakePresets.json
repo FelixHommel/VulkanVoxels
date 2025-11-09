@@ -1,0 +1,92 @@
+{
+    "version": 9,
+    "$schema": "https://cmake.org/cmake/help/latest/_downloads/3e2d73bff478d88a7de0de736ba5e361/schema.json",
+    "configurePresets": [
+        {
+            "name": "debug",
+            "displayName": "Debug",
+            "generator": "Ninja",
+            "binaryDir": "build/debug",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Debug"
+            }
+        },
+        {
+            "name": "release",
+            "displayName": "Release",
+            "generator": "Ninja",
+            "binaryDir": "build/release",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Release"
+            }
+        },
+        {
+            "name": "code-coverage",
+            "displayName": "Debug",
+            "generator": "Ninja",
+            "binaryDir": "build/code-coverage",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Debug",
+                "CODE_COVERAGE": "ON",
+                "CMAKE_C_COMPILER": "gcc",
+                "CMAKE_CXX_COMPILER": "g++"
+            }
+        },
+        {
+            "name": "clang-debug",
+            "displayName": "clang Debug",
+            "generator": "Ninja",
+            "binaryDir": "build/debug",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Debug",
+                "CMAKE_C_COMPILER": "clang",
+                "CMAKE_CXX_COMPILER": "clang++"
+            }
+        },
+        {
+            "name": "clang-release",
+            "displayName": "clang Release",
+            "generator": "Ninja",
+            "binaryDir": "build/release",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Release",
+                "CMAKE_C_COMPILER": "clang",
+                "CMAKE_CXX_COMPILER": "clang++"
+            }
+        }
+    ],
+    "buildPresets": [
+        {
+            "name": "debug",
+            "displayName": "Build Debug",
+            "configurePreset": "debug",
+            "configuration": "Debug"
+        },
+        {
+            "name": "release",
+            "displayName": "Build Release",
+            "configurePreset": "release",
+            "configuration": "Release"
+        },
+        {
+            "name": "code-coverage",
+            "displayName": "build code-coverage",
+            "configurePreset": "code-coverage",
+            "configuration": "Debug"
+        }
+    ],
+    "testPresets": [
+        {
+            "name": "test-all",
+            "displayName": "Test all",
+            "configurePreset": "debug",
+            "output": {
+                "outputOnFailure": true
+            },
+            "execution": {
+                "stopOnFailure": false,
+                "jobs": 4
+            }
+        }
+    ]
+}

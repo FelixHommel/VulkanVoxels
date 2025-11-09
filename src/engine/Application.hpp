@@ -1,0 +1,39 @@
+#ifndef SRC_ENGINE_APPLICATION_HPP
+#define SRC_ENGINE_APPLICATION_HPP
+
+#include "Window.hpp"
+
+#include <cstdint>
+
+namespace vv
+{
+
+/// \brief The Application coordinates everything to work with each other
+/// 
+/// \author Felix Hommel
+/// \date 11/9/2025
+class Application
+{
+public:
+    Application() = default;
+    ~Application() = default;
+
+    Application(const Application&) = delete;
+    Application(Application&&) = delete;
+    Application& operator=(const Application&) = delete;
+    Application& operator=(Application&&) = delete;
+
+    /// \brief start the Application
+    void run();
+
+    static constexpr std::uint16_t WINDOW_WIDTH{ 800 };
+    static constexpr std::uint16_t WINDOW_HEIGHT{ 600 };
+    static constexpr auto WINDOW_TITLE{ "VulkanVoxels" };
+
+private:
+    Window m_window{ WINDOW_WIDTH, WINDOW_HEIGHT, WINDOW_TITLE };
+};
+
+} // !vv
+
+#endif // !SRC_ENGINE_APPLICATION_HPP
