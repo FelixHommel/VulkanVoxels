@@ -1,8 +1,7 @@
 build
 .cache/
-shaders/
+resources/compiledShaders
 # explicitly allow the shaders directory in src
-!src/shaders/
 *.spv
 .idea
 
