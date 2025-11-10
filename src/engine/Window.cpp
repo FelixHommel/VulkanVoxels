@@ -4,6 +4,9 @@
 #include "spdlog/common.h"
 #include "spdlog/spdlog.h"
 
+#include <cstdint>
+#include <string>
+
 namespace vv
 {
 
