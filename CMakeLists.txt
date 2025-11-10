@@ -12,6 +12,7 @@ endif()
 
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
+add_compile_definitions(PROJECT_ROOT="${CMAKE_SOURCE_DIR}/")
 
 include(cmake/DefaultProjectSettings.cmake)
 

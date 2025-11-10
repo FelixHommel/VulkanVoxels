@@ -1,6 +1,10 @@
 #!/usr/bin/env python3
 
-# Little python script to compile all shaders in this project manually
+"""
+Python script which will compile GLSL shaders into SPIR-V binaries
+
+author: Felix Hommel
+"""
 
 import os
 import subprocess
