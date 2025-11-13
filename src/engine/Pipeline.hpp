@@ -3,8 +3,9 @@
 
 #include "Device.hpp"
 
-#include <filesystem>
 #include <vulkan/vulkan_core.h>
+
+#include <filesystem>
 
 namespace vv
 {
@@ -17,7 +18,6 @@ struct PipelineConfigInfo
 {
     VkViewport viewport{};
     VkRect2D scissor{};
-    VkPipelineViewportStateCreateInfo viewportInfo{};
     VkPipelineInputAssemblyStateCreateInfo inputAssemblyInfo{};
     VkPipelineRasterizationStateCreateInfo rasterizationInfo{};
     VkPipelineMultisampleStateCreateInfo multisampleInfo{};
@@ -47,6 +47,7 @@ public:
     Pipeline& operator=(const Pipeline&) = delete;
     Pipeline& operator=(Pipeline&&) = delete;
 
+    void bind(VkCommandBuffer commandBuffer);
     static PipelineConfigInfo defaultPipelineConfigInfo(std::uint32_t width, std::uint32_t height);
 
 private:

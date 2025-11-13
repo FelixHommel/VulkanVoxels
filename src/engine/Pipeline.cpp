@@ -51,13 +51,21 @@ Pipeline::Pipeline(Device& device,
         .pVertexAttributeDescriptions = nullptr
     };
 
+    VkPipelineViewportStateCreateInfo viewportInfo{
+        .sType = VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO,
+        .viewportCount = 1,
+        .pViewports = &configInfo.viewport,
+        .scissorCount = 1,
+        .pScissors = &configInfo.scissor
+    };
+
     VkGraphicsPipelineCreateInfo pipelineInfo{
         .sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO,
         .stageCount = shaderStages.size(),
         .pStages = shaderStages.data(),
         .pVertexInputState = &vertexInputInfo,
         .pInputAssemblyState = &configInfo.inputAssemblyInfo,
-        .pViewportState = &configInfo.viewportInfo,
+        .pViewportState = &viewportInfo,
         .pRasterizationState = &configInfo.rasterizationInfo,
         .pMultisampleState = &configInfo.multisampleInfo,
         .pDepthStencilState = &configInfo.depthStencilInfo,
@@ -81,6 +89,11 @@ Pipeline::~Pipeline()
     vkDestroyPipeline(device.device(), m_graphicsPipeline, nullptr);
 }
 
+void Pipeline::bind(VkCommandBuffer commandBuffer)
+{
+    vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, m_graphicsPipeline);
+}
+
 PipelineConfigInfo Pipeline::defaultPipelineConfigInfo(std::uint32_t width, std::uint32_t height)
 {
     PipelineConfigInfo configInfo{
@@ -95,13 +108,6 @@ PipelineConfigInfo Pipeline::defaultPipelineConfigInfo(std::uint32_t width, std:
         .scissor = {
             .offset = { .x = 0, .y = 0 },
             .extent = { .width = width, .height = height }
-        },
-        .viewportInfo = {
-            .sType = VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO,
-            .viewportCount = 1,
-            .pViewports = &configInfo.viewport,
-            .scissorCount = 1,
-            .pScissors = &configInfo.scissor
         },
         .inputAssemblyInfo = {
             .sType = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO,
