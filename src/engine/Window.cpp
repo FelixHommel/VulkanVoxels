@@ -5,6 +5,7 @@
 #include "spdlog/spdlog.h"
 
 #include <cstdint>
+#include <stdexcept>
 #include <string>
 
 namespace vv
@@ -28,6 +29,12 @@ Window::~Window()
 {
     glfwDestroyWindow(m_window);
     glfwTerminate();
+}
+
+void Window::createWindowSurface(VkInstance instance, VkSurfaceKHR* surface)
+{
+    if(glfwCreateWindowSurface(instance, m_window, nullptr, surface) != 0)
+        throw std::runtime_error("Failed to create window surface");
 }
 
 }

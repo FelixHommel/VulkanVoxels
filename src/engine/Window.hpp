@@ -1,6 +1,7 @@
 #ifndef SRC_ENGINE_WINDOW_HPP
 #define SRC_ENGINE_WINDOW_HPP
 
+#define GLFW_INCLUDE_VULKAN
 #include "GLFW/glfw3.h"
 
 #include <cstdint>
@@ -28,6 +29,8 @@ public:
     ///
     /// \return  *true* if the window should close, *false* if not
     [[nodiscard]] bool shouldClose() const { return glfwWindowShouldClose(m_window) != 0; }
+
+    void createWindowSurface(VkInstance instance, VkSurfaceKHR* surface);
 
 private:
     std::uint16_t m_width;
