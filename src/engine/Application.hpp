@@ -28,8 +28,8 @@ public:
     /// \brief start the Application
     void run();
 
-    static constexpr std::uint16_t WINDOW_WIDTH{ 800 };
-    static constexpr std::uint16_t WINDOW_HEIGHT{ 600 };
+    static constexpr std::uint32_t WINDOW_WIDTH{ 800 };
+    static constexpr std::uint32_t WINDOW_HEIGHT{ 600 };
     static constexpr auto WINDOW_TITLE{ "VulkanVoxels" };
     static constexpr auto VERTEX_SHADER_PATH{ PROJECT_ROOT "resources/compiledShaders/simpleVert.spv" };
     static constexpr auto FRAGMENT_SHADER_PATH{ PROJECT_ROOT "resources/compiledShaders/simpleFrag.spv" };
