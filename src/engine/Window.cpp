@@ -11,7 +11,7 @@
 namespace vv
 {
 
-Window::Window(std::uint16_t width, std::uint16_t height, const std::string& title)
+Window::Window(std::uint32_t width, std::uint32_t height, const std::string& title)
     : m_width{ width }
     , m_height{ height }
     , m_title{ title }
@@ -22,7 +22,7 @@ Window::Window(std::uint16_t width, std::uint16_t height, const std::string& tit
     glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
     glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
 
-    m_window = glfwCreateWindow(m_width, m_height, m_title.c_str(), nullptr, nullptr);
+    m_window = glfwCreateWindow(static_cast<int>(m_width), static_cast<int>(m_height), m_title.c_str(), nullptr, nullptr);
 }
 
 Window::~Window()
