@@ -2,6 +2,7 @@
 #define SRC_ENGINE_APPLICATION_HPP
 
 #include "Window.hpp"
+#include "Device.hpp"
 #include "Pipeline.hpp"
 
 #include <cstdint>
@@ -35,7 +36,8 @@ public:
 
 private:
     Window m_window{ WINDOW_WIDTH, WINDOW_HEIGHT, WINDOW_TITLE };
-    Pipeline m_pipeline{ VERTEX_SHADER_PATH, FRAGMENT_SHADER_PATH };
+    Device m_device{ m_window };
+    Pipeline m_pipeline{ m_device, VERTEX_SHADER_PATH, FRAGMENT_SHADER_PATH, Pipeline::defaultPipelineConfigInfo(WINDOW_WIDTH, WINDOW_HEIGHT) };
 };
 
 } // !vv
