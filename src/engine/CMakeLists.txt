@@ -6,6 +6,7 @@ add_library(${NAME}
     ./Application.cpp
     ./Window.cpp
     ./Pipeline.cpp
+    ./Device.cpp
 )
 
 target_sources(${NAME}
@@ -16,6 +17,7 @@ target_sources(${NAME}
             ./Application.hpp
             ./Window.hpp
             ./Pipeline.hpp
+            ./Device.hpp
 )
 
 target_include_directories(${NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
