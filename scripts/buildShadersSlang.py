@@ -11,8 +11,8 @@ import subprocess
 import argparse
 
 parser = argparse.ArgumentParser(description="Compile Slang shaders to SPIR-V")
-_ = parser.add_argument("--input", required=True, help="Input directory containing .vert/.frag files")
-_ = parser.add_argument("--output", required=True, help="Output directory for .spv files")
+parser.add_argument("--input", required=True, help="Input directory containing .slag files")
+parser.add_argument("--output", required=True, help="Output directory for .spv files")
 args = parser.parse_args()
 
 os.makedirs(args.output, exist_ok=True)
