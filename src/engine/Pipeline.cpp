@@ -1,5 +1,6 @@
 #include "Pipeline.hpp"
 
+#include "Model.hpp"
 #include "utility/FileIO.hpp"
 
 #include <array>
@@ -39,12 +40,14 @@ Pipeline::Pipeline(Device& device,
     shaderStages[1].module = m_fragmentShaderModule;
     shaderStages[1].pName = "main";
 
+    auto bindingDescriptions{ Model::Vertex::getBindingDescriptions() };
+    auto attributeDescriptions{ Model::Vertex::getAttributeDescriptions() };
     VkPipelineVertexInputStateCreateInfo vertexInputInfo{};
     vertexInputInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
-    vertexInputInfo.vertexBindingDescriptionCount = 0;
-    vertexInputInfo.pVertexBindingDescriptions = nullptr;
-    vertexInputInfo.vertexAttributeDescriptionCount = 0;
-    vertexInputInfo.pVertexAttributeDescriptions = nullptr;
+    vertexInputInfo.vertexBindingDescriptionCount = static_cast<std::uint32_t>(bindingDescriptions.size());
+    vertexInputInfo.pVertexBindingDescriptions = bindingDescriptions.data();
+    vertexInputInfo.vertexAttributeDescriptionCount = static_cast<std::uint32_t>(attributeDescriptions.size());
+    vertexInputInfo.pVertexAttributeDescriptions = attributeDescriptions.data();
 
     VkPipelineViewportStateCreateInfo viewportInfo{};
     viewportInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO;

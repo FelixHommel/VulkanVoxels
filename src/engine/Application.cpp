@@ -1,10 +1,12 @@
 #include "Application.hpp"
 
 #include "GLFW/glfw3.h"
+#include "spdlog/spdlog.h"
 
 #include <array>
 #include <memory>
 #include <stdexcept>
+#include <vector>
 #include <vulkan/vulkan_core.h>
 
 namespace vv
@@ -12,6 +14,7 @@ namespace vv
 
 Application::Application()
 {
+    loadModels();
     createPipelineLayout();
     createPipeline();
     createCommandBuffers();
@@ -31,6 +34,13 @@ void Application::run()
     }
 
     vkDeviceWaitIdle(m_device.device());
+}
+
+void Application::loadModels()
+{
+    std::vector<Model::Vertex> vertices{};
+    createSierpinski(vertices, 5, {-0.5f, 0.5f}, {0.5f, 0.5f}, {0.0f, -0.5f});
+    m_model = std::make_unique<Model>(m_device, vertices);
 }
 
 void Application::createPipelineLayout()
@@ -94,7 +104,8 @@ void Application::createCommandBuffers()
         vkCmdBeginRenderPass(m_commandBufers[i], &renderPassBeginInfo, VK_SUBPASS_CONTENTS_INLINE);
 
         m_pipeline->bind(m_commandBufers[i]);
-        vkCmdDraw(m_commandBufers[i], 3, 1, 0, 0);
+        m_model->bind(m_commandBufers[i]);
+        m_model->draw(m_commandBufers[i]);
 
         vkCmdEndRenderPass(m_commandBufers[i]);
 
@@ -115,6 +126,26 @@ void Application::drawFrame()
 
     if(result != VK_SUCCESS)
         throw std::runtime_error("failed to present swapchain image");
+}
+
+void Application::createSierpinski(std::vector<Model::Vertex>& vertices, int depth, glm::vec2 left, glm::vec2 right, glm::vec2 top)
+{
+    if(depth <= 0)
+    {
+        vertices.push_back({ top });
+        vertices.push_back({ right });
+        vertices.push_back({ left });
+    }
+    else
+    {
+        auto leftTop{ 0.5f * (left + top) };
+        auto rightTop{ 0.5f * (right + top) };
+        auto leftRight{ 0.5f * (left + right) };
+
+        createSierpinski(vertices, depth - 1, left, leftRight, leftTop);
+        createSierpinski(vertices, depth - 1, leftRight, right, rightTop);
+        createSierpinski(vertices, depth - 1, leftTop, rightTop, top);
+    }
 }
 
 } // !vv

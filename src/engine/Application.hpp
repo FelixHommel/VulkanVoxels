@@ -1,14 +1,17 @@
 #ifndef SRC_ENGINE_APPLICATION_HPP
 #define SRC_ENGINE_APPLICATION_HPP
 
-#include "Swapchain.hpp"
+#include "Model.hpp"
 #include "Device.hpp"
 #include "Pipeline.hpp"
+#include "Swapchain.hpp"
 #include "Window.hpp"
+#include "glm/ext/vector_float2.hpp"
+
+#include <vulkan/vulkan_core.h>
 
 #include <cstdint>
 #include <memory>
-#include <vulkan/vulkan_core.h>
 
 namespace vv
 {
@@ -45,11 +48,16 @@ private:
     std::unique_ptr<Pipeline> m_pipeline;
     VkPipelineLayout m_pipelineLayout{ VK_NULL_HANDLE };
     std::vector<VkCommandBuffer> m_commandBufers;
+    std::unique_ptr<Model> m_model;
 
+    void loadModels();
     void createPipelineLayout();
     void createPipeline();
     void createCommandBuffers();
+
     void drawFrame();
+
+    void createSierpinski(std::vector<Model::Vertex>& vertices, int depth, glm::vec2 left, glm::vec2 right, glm::vec2 top);
 };
 
 } // !vv

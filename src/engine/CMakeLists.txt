@@ -8,6 +8,7 @@ add_library(${NAME}
     ./Pipeline.cpp
     ./Device.cpp
     ./Swapchain.cpp
+    ./Model.cpp
 )
 
 target_sources(${NAME}
@@ -20,6 +21,7 @@ target_sources(${NAME}
             ./Pipeline.hpp
             ./Device.hpp
             ./Swapchain.hpp
+            ./Model.hpp
 )
 
 target_include_directories(${NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
