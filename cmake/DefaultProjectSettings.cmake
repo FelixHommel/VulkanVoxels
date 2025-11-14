@@ -15,10 +15,10 @@ endif()
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
-option(VVDEBUG "Use Debug statements and validation layers" ON)
+option(VV_DEBUG "Use Debug statements and validation layers" ON)
 
-if(VVDEBUG)
-    add_compile_definitions(VVDEBUG)
-elseif(VVDEBUG OR CMAKE_BUILD_TYPE STREQUAL "Debug")
+if(VV_DEBUG)
+    add_compile_definitions(VV_DEBUG)
+elseif(VV_DEBUG OR CMAKE_BUILD_TYPE STREQUAL "Debug")
     add_compile_definitions(VV_ENABLE_ASSERTS)
 endif()
