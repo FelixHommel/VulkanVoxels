@@ -3,7 +3,7 @@ option(VV_USE_SLANG "Use slang shaders over glsl" ON)
 find_package(Python3 REQUIRED COMPONENTS Interpreter)
 
 if(VV_USE_SLANG)
-    # copnfigure for slang shaders
+    # configure for slang shaders
     set(SHADER_SCRIPT ${CMAKE_SOURCE_DIR}/scripts/buildShadersSlang.py)
     set(SHADER_INPUT ${CMAKE_SOURCE_DIR}/resources/shaders)
     set(SHADER_OUTPUT ${CMAKE_SOURCE_DIR}/resources/compiledShaders)

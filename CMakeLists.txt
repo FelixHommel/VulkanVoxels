@@ -1,14 +1,9 @@
 cmake_minimum_required(VERSION 3.30)
 project(
-    RRenderer
+    VulkanVoxels
     DESCRIPTION "A Renderer using Vulkan written in C++"
     LANGUAGES CXX
 )
-
-option(RRDEBUG "Use Debug and validation layers" ON)
-if(RRDEBUG)
-    add_definitions(-DRRDEBUG)
-endif()
 
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)

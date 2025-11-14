@@ -1,5 +1,5 @@
 function(set_project_warnings project_name)
-    option(WARNINGS_AS_ERRORS "Treat compiler warnings as errors" ON)
+    option(VV_WARNINGS_AS_ERRORS "Treat compiler warnings as errors" ON)
 
     set(MSVC_WARNINGS
         /W4
@@ -25,7 +25,7 @@ function(set_project_warnings project_name)
         /permissive-
     )
 
-    set(CLANG_WARNIGNS
+    set(CLANG_WARNINGS
         -Wall
         -Wextra
         -Wnon-virtual-dtor
@@ -41,7 +41,7 @@ function(set_project_warnings project_name)
         -Wformat=2
     )
 
-    if(WARNINGS_AS_ERRORS)
+    if(VV_WARNINGS_AS_ERRORS)
         set(MSVC_WARNINGS ${MSVC_WARNINGS} /WX)
         set(CLANG_WARNINGS ${CLANG_WARNINGS} -Werror)
     endif()
