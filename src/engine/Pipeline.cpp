@@ -31,12 +31,14 @@ Pipeline::Pipeline(Device& device,
     std::array<VkPipelineShaderStageCreateInfo, 2> shaderStages{{
         {
             .sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO,
+            .pNext = nullptr,
             .stage = VK_SHADER_STAGE_VERTEX_BIT,
             .module = m_vertexShaderModule,
             .pName = "main",
             },
         {
             .sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO,
+            .pNext = nullptr,
             .stage = VK_SHADER_STAGE_FRAGMENT_BIT,
             .module = m_fragmentShaderModule,
             .pName = "main",
@@ -45,6 +47,7 @@ Pipeline::Pipeline(Device& device,
 
     VkPipelineVertexInputStateCreateInfo vertexInputInfo{
         .sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO,
+        .pNext = nullptr,
         .vertexBindingDescriptionCount = 0,
         .pVertexBindingDescriptions = nullptr,
         .vertexAttributeDescriptionCount = 0,
@@ -53,6 +56,7 @@ Pipeline::Pipeline(Device& device,
 
     VkPipelineViewportStateCreateInfo viewportInfo{
         .sType = VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO,
+        .pNext = nullptr,
         .viewportCount = 1,
         .pViewports = &configInfo.viewport,
         .scissorCount = 1,
@@ -61,6 +65,7 @@ Pipeline::Pipeline(Device& device,
 
     VkGraphicsPipelineCreateInfo pipelineInfo{
         .sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO,
+        .pNext = nullptr,
         .stageCount = shaderStages.size(),
         .pStages = shaderStages.data(),
         .pVertexInputState = &vertexInputInfo,
@@ -111,11 +116,13 @@ PipelineConfigInfo Pipeline::defaultPipelineConfigInfo(std::uint32_t width, std:
         },
         .inputAssemblyInfo = {
             .sType = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO,
+            .pNext = nullptr,
             .topology = VK_PRIMITIVE_TOPOLOGY_LINE_LIST,
             .primitiveRestartEnable = VK_FALSE
         },
         .rasterizationInfo = {
             .sType = VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO,
+            .pNext = nullptr,
             .depthClampEnable = VK_FALSE,
             .rasterizerDiscardEnable = VK_FALSE,
             .polygonMode = VK_POLYGON_MODE_FILL,
@@ -129,6 +136,7 @@ PipelineConfigInfo Pipeline::defaultPipelineConfigInfo(std::uint32_t width, std:
         },
         .multisampleInfo = {
             .sType = VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO,
+            .pNext = nullptr,
             .rasterizationSamples = VK_SAMPLE_COUNT_1_BIT,
             .sampleShadingEnable = VK_FALSE,
             .minSampleShading = 1.f,
@@ -148,6 +156,7 @@ PipelineConfigInfo Pipeline::defaultPipelineConfigInfo(std::uint32_t width, std:
         },
         .colorBlendInfo = {
             .sType = VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO,
+            .pNext = nullptr,
             .logicOpEnable = VK_FALSE,
             .logicOp = VK_LOGIC_OP_COPY,
             .attachmentCount = 1,
@@ -156,6 +165,7 @@ PipelineConfigInfo Pipeline::defaultPipelineConfigInfo(std::uint32_t width, std:
         },
         .depthStencilInfo = {
             .sType = VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO,
+            .pNext = nullptr,
             .depthTestEnable = VK_TRUE,
             .depthWriteEnable = VK_TRUE,
             .depthCompareOp = VK_COMPARE_OP_LESS,

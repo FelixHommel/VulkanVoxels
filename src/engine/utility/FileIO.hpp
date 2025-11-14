@@ -22,8 +22,8 @@ static std::vector<char> read(const std::filesystem::path& filepath)
     if(!fileHandle.is_open())
         throw std::runtime_error("Failed to open file: " + filepath.string());
 
-    std::streamsize fileSize{ static_cast<std::streamsize>(fileHandle.tellg()) };
-    std::vector<char> buffer(fileSize);
+    const auto fileSize{ fileHandle.tellg() };
+    std::vector<char> buffer(static_cast<std::size_t>(fileSize));
 
     fileHandle.seekg(0);
     fileHandle.read(buffer.data(), fileSize);
