@@ -1,11 +1,14 @@
 #ifndef SRC_ENGINE_APPLICATION_HPP
 #define SRC_ENGINE_APPLICATION_HPP
 
-#include "Window.hpp"
+#include "Swapchain.hpp"
 #include "Device.hpp"
 #include "Pipeline.hpp"
+#include "Window.hpp"
 
 #include <cstdint>
+#include <memory>
+#include <vulkan/vulkan_core.h>
 
 namespace vv
 {
@@ -17,8 +20,8 @@ namespace vv
 class Application
 {
 public:
-    Application() = default;
-    ~Application() = default;
+    Application();
+    ~Application();
 
     Application(const Application&) = delete;
     Application(Application&&) = delete;
@@ -37,7 +40,15 @@ public:
 private:
     Window m_window{ WINDOW_WIDTH, WINDOW_HEIGHT, WINDOW_TITLE };
     Device m_device{ m_window };
-    Pipeline m_pipeline{ m_device, VERTEX_SHADER_PATH, FRAGMENT_SHADER_PATH, Pipeline::defaultPipelineConfigInfo(WINDOW_WIDTH, WINDOW_HEIGHT) };
+    Swapchain m_swapchain{ m_device, m_window.getExtent() };
+    std::unique_ptr<Pipeline> m_pipeline;
+    VkPipelineLayout m_pipelineLayout{ VK_NULL_HANDLE };
+    std::vector<VkCommandBuffer> m_commandBufers;
+
+    void createPipelineLayout();
+    void createPipeline();
+    void createCommandBuffers();
+    void drawFrame();
 };
 
 } // !vv
