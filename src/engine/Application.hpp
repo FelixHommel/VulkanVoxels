@@ -36,6 +36,7 @@ public:
     static constexpr auto WINDOW_TITLE{ "VulkanVoxels" };
     static constexpr auto VERTEX_SHADER_PATH{ PROJECT_ROOT "resources/compiledShaders/simpleVert.spv" };
     static constexpr auto FRAGMENT_SHADER_PATH{ PROJECT_ROOT "resources/compiledShaders/simpleFrag.spv" };
+    static constexpr VkClearColorValue CLEAR_COLOR{ {0.1f, 0.1f, 0.1f, 1.f} };
 
 private:
     Window m_window{ WINDOW_WIDTH, WINDOW_HEIGHT, WINDOW_TITLE };

@@ -3,10 +3,10 @@
 
 #include "Window.hpp"
 
-#include <cstdint>
-#include <optional>
 #include <vulkan/vulkan_core.h>
 
+#include <cstdint>
+#include <optional>
 #include <vector>
 
 namespace vv
@@ -42,7 +42,7 @@ struct QueueFamilyIndices
 class Device
 {
 public:
-#ifdef DEBUG
+#ifdef VV_DEBUG
     static constexpr bool ENABLE_VALIDATION_LAYERS{ true };
 #else
     static constexpr bool ENABLE_VALIDATION_LAYERS{ false };

@@ -35,13 +35,12 @@ void Application::run()
 
 void Application::createPipelineLayout()
 {
-    VkPipelineLayoutCreateInfo createInfo{
-        .sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO,
-        .setLayoutCount = 0,
-        .pSetLayouts = nullptr,
-        .pushConstantRangeCount = 0,
-        .pPushConstantRanges = nullptr
-    };
+    VkPipelineLayoutCreateInfo createInfo{};
+    createInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
+    createInfo.setLayoutCount = 0;
+    createInfo.pSetLayouts = nullptr;
+    createInfo.pushConstantRangeCount = 0;
+    createInfo.pPushConstantRanges = nullptr;
 
     if(vkCreatePipelineLayout(m_device.device(), &createInfo, nullptr, &m_pipelineLayout) != VK_SUCCESS)
         throw std::runtime_error("failed to create pipeline layout");
@@ -60,44 +59,37 @@ void Application::createCommandBuffers()
 {
     m_commandBufers.resize(m_swapchain.imageCount());
 
-    VkCommandBufferAllocateInfo allocInfo{
-        .sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO,
-        .commandPool = m_device.commandPool(),
-        .level = VK_COMMAND_BUFFER_LEVEL_PRIMARY,
-        .commandBufferCount = static_cast<std::uint32_t>(m_commandBufers.size())
-    };
+    VkCommandBufferAllocateInfo allocInfo{};
+    allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
+    allocInfo.commandPool = m_device.commandPool();
+    allocInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
+    allocInfo.commandBufferCount = static_cast<std::uint32_t>(m_commandBufers.size());
     
     if(vkAllocateCommandBuffers(m_device.device(), &allocInfo, m_commandBufers.data()) != VK_SUCCESS)
         throw std::runtime_error("failed to allocate command buffers");
 
     for(std::size_t i{ 0 }; i < m_commandBufers.size(); ++i)
     {
-        VkCommandBufferBeginInfo beginInfo{
-            .sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO,
-        };
+        VkCommandBufferBeginInfo beginInfo{};
+        beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
 
         if(vkBeginCommandBuffer(m_commandBufers[i], &beginInfo) != VK_SUCCESS)
             throw std::runtime_error("failed to begin recording to command buffer");
 
-        std::array<VkClearValue, 2> clearValues{{
-            {
-                .color = { 0.1f, 0.1f, 0.1f, 1.f }
-            },
-            {
-                .depthStencil = { 1.f, 0 }
-            }
-        }};
-        VkRenderPassBeginInfo renderPassBeginInfo{
-            .sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO,
-            .renderPass = m_swapchain.getRenderPass(),
-            .framebuffer = m_swapchain.getFramebuffer(i),
-            .renderArea = {
-                .offset = { .x = 0, .y = 0 },
-                .extent = m_swapchain.getExtent()
-            },
-            .clearValueCount = static_cast<std::uint32_t>(clearValues.size()),
-            .pClearValues = clearValues.data()
+        std::array<VkClearValue, 2> clearValues{};
+        clearValues[0].color = { CLEAR_COLOR };
+        clearValues[1].depthStencil = { .depth=1.f, .stencil=0 };
+
+        VkRenderPassBeginInfo renderPassBeginInfo{};
+        renderPassBeginInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
+        renderPassBeginInfo.renderPass = m_swapchain.getRenderPass();
+        renderPassBeginInfo.framebuffer = m_swapchain.getFramebuffer(i);
+        renderPassBeginInfo.renderArea = {
+            .offset = { .x = 0, .y = 0 },
+            .extent = m_swapchain.getExtent()
         };
+        renderPassBeginInfo.clearValueCount = static_cast<std::uint32_t>(clearValues.size());
+        renderPassBeginInfo.pClearValues = clearValues.data();
 
         vkCmdBeginRenderPass(m_commandBufers[i], &renderPassBeginInfo, VK_SUBPASS_CONTENTS_INLINE);
 
