@@ -260,7 +260,7 @@ void Device::createInstance()
         .applicationVersion = VK_MAKE_VERSION(0, 0, 1),
         .pEngineName = "No Engine",
         .engineVersion = VK_MAKE_VERSION(0, 0, 1),
-        .apiVersion = VK_API_VERSION_1_0
+        .apiVersion = VK_API_VERSION_1_4
     };
 
     auto extensions{ getRequiredExtensions() };
