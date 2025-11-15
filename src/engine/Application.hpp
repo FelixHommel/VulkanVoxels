@@ -56,8 +56,6 @@ private:
     void createCommandBuffers();
 
     void drawFrame();
-
-    void createSierpinski(std::vector<Model::Vertex>& vertices, int depth, glm::vec2 left, glm::vec2 right, glm::vec2 top);
 };
 
 } // !vv
