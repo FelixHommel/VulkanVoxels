@@ -19,6 +19,5 @@ option(VV_DEBUG "Use Debug statements and validation layers" ON)
 
 if(VV_DEBUG)
     add_compile_definitions(VV_DEBUG)
-elseif(VV_DEBUG OR CMAKE_BUILD_TYPE STREQUAL "Debug")
     add_compile_definitions(VV_ENABLE_ASSERTS)
 endif()

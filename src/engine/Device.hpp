@@ -42,10 +42,11 @@ struct QueueFamilyIndices
 class Device
 {
 public:
-#ifdef VV_DEBUG
-    static constexpr bool ENABLE_VALIDATION_LAYERS{ true };
+    static constexpr bool ENABLE_VALIDATION_LAYERS = 
+#if defined(VV_DEBUG)
+    true;
 #else
-    static constexpr bool ENABLE_VALIDATION_LAYERS{ false };
+    false;
 #endif
 
     Device(Window& window);

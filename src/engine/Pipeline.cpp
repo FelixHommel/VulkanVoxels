@@ -18,7 +18,7 @@ Pipeline::Pipeline(Device& device,
             const PipelineConfigInfo& configInfo)
     : device{ device }
 {
-#ifdef VV_ENABLE_ASSERTS
+#if defined(VV_ENABLE_ASSERTS)
     assert(configInfo.pipelineLayout != VK_NULL_HANDLE && "Cannot create graphics pipeline: no pipeline layout provided");
     assert(configInfo.renderPass != VK_NULL_HANDLE && "Cannot create graphics pipeline: no render pass provided");
 #endif

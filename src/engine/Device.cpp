@@ -265,7 +265,7 @@ void Device::createInstance()
     createInfo.enabledExtensionCount = static_cast<std::uint32_t>(extensions.size());
     createInfo.ppEnabledExtensionNames = extensions.data();
 
-#ifdef __APPLE__
+#if defined(__APPLE__)
     createInfo.flags = VK_INSTANCE_CREATE_ENUMERATE_PORTABILITY_BIT_KHR;
 #endif
 
@@ -425,7 +425,7 @@ std::vector<const char*> Device::getRequiredExtensions()
     if constexpr(ENABLE_VALIDATION_LAYERS)
     {
         extensions.push_back(VK_EXT_DEBUG_UTILS_EXTENSION_NAME);
-#ifdef __APPLE__
+#if defined(__APPLE__)
         extensions.push_back(VK_KHR_PORTABILITY_ENUMERATION_EXTENSION_NAME);
 #endif
     }
