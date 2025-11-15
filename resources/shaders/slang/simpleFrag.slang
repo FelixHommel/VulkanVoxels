@@ -1,5 +1,18 @@
-[shader("pixel")]
-float4 main() : SV_Target
+struct FSInput
 {
-    return float4(1.0, 1.0, 0.0, 1.0);
+    [[vk::location(0)]] float3 fragColor;
+};
+
+struct FSOutput
+{
+    float4 color : SV_Target0;
+};
+
+[shader("pixel")]
+FSOutput main(FSInput input)
+{
+    FSOutput output;
+    output.color = float4(input.fragColor, 1.0);
+
+    return output;
 }
