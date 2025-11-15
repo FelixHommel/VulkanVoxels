@@ -7,15 +7,24 @@ struct VSInput
 struct VSOutput
 {
     float4 position : SV_Position;
-    [[vk::location(0)]] float3 fragColor;
 };
+
+struct PushData
+{
+    float2x2 transform;
+    float2 offset;
+    float3 color;
+};
+
+[[push_constant]]
+PushData push;
 
 [shader("vertex")]
 VSOutput main(VSInput input)
 {
     VSOutput output;
-    output.position = float4(input.position, 0.0, 1.0);
-    output.fragColor = input.color;
+    float2 transformed = mul(push.transform, input.position) + push.offset;
+    output.position = float4(transformed, 0.0, 1.0);
 
     return output;
 }

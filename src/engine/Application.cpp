@@ -1,12 +1,14 @@
 #include "Application.hpp"
 
+#include "Object.hpp"
+
+#include "glm/glm.hpp"
+#include "glm/gtc/constants.hpp"
 #include "GLFW/glfw3.h"
-#include "spdlog/spdlog.h"
 
 #include <array>
 #include <cassert>
 #include <memory>
-#include <ranges>
 #include <stdexcept>
 #include <vector>
 #include <vulkan/vulkan_core.h>
@@ -16,7 +18,7 @@ namespace vv
 
 Application::Application()
 {
-    loadModels();
+    loadObjects();
     createPipelineLayout();
     recreateSwapchain();
     createCommandBuffers();
@@ -38,24 +40,39 @@ void Application::run()
     vkDeviceWaitIdle(m_device.device());
 }
 
-void Application::loadModels()
+void Application::loadObjects()
 {
     std::vector<Model::Vertex> vertices{
         {{0.0f, -0.5f}, {1.0f, 0.0f, 0.0f}},
         {{0.5f, 0.5f}, {0.0f, 1.0f, 0.0f}},
         {{-0.5f, 0.5f}, {0.0f, 0.0f, 1.0f}}
     };
-    m_model = std::make_unique<Model>(m_device, vertices);
+    auto model{ std::make_shared<Model>(m_device, vertices) };
+
+    Object triangle{ Object::createObject() };
+    triangle.model = model;
+    triangle.color = { .1f, .8f, .1f };
+    triangle.transform2d.translation.x = .2f;
+    triangle.transform2d.scale = { 2.f, .5f };
+    triangle.transform2d.rotation = .25f * glm::two_pi<float>();
+
+    m_objects.push_back(std::move(triangle));
 }
 
 void Application::createPipelineLayout()
 {
+    VkPushConstantRange pushConstantRange{
+        .stageFlags = VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT,
+        .offset = 0,
+        .size = sizeof(SimplePushConstantData)
+    };
+
     VkPipelineLayoutCreateInfo createInfo{};
     createInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
     createInfo.setLayoutCount = 0;
     createInfo.pSetLayouts = nullptr;
-    createInfo.pushConstantRangeCount = 0;
-    createInfo.pPushConstantRanges = nullptr;
+    createInfo.pushConstantRangeCount = 1;
+    createInfo.pPushConstantRanges = &pushConstantRange;
 
     if(vkCreatePipelineLayout(m_device.device(), &createInfo, nullptr, &m_pipelineLayout) != VK_SUCCESS)
         throw std::runtime_error("failed to create pipeline layout");
@@ -63,7 +80,7 @@ void Application::createPipelineLayout()
 
 void Application::createPipeline()
 {
-#ifdef VV_ENABLE_ASSERTS
+#if defined(VV_ENABLE_ASSERTS)
     assert(m_swapchain != nullptr && "Cannot create pipeline without swapchain");
     assert(m_pipelineLayout != VK_NULL_HANDLE && "Cannot create pipeline without pipeline layout");
 #endif
@@ -141,14 +158,36 @@ void Application::recordCommandBuffer(std::size_t imageIndex)
     vkCmdSetViewport(m_commandBufers[imageIndex], 0, 1, &viewport);
     vkCmdSetScissor(m_commandBufers[imageIndex], 0, 1, &scissor);
 
-    m_pipeline->bind(m_commandBufers[imageIndex]);
-    m_model->bind(m_commandBufers[imageIndex]);
-    m_model->draw(m_commandBufers[imageIndex]);
+    renderObjects(m_commandBufers[imageIndex]);
 
     vkCmdEndRenderPass(m_commandBufers[imageIndex]);
 
     if(vkEndCommandBuffer(m_commandBufers[imageIndex]) != VK_SUCCESS)
         throw std::runtime_error("failed to record command buffer");
+}
+
+void Application::renderObjects(VkCommandBuffer commandBuffer)
+{
+    m_pipeline->bind(commandBuffer);
+
+    for(const auto& obj : m_objects)
+    {
+        SimplePushConstantData pushData{
+            .transform = obj.transform2d.mat2(),
+            .offset = obj.transform2d.translation,
+            .color = obj.color
+        };
+
+        vkCmdPushConstants(commandBuffer,
+            m_pipelineLayout,
+            VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT,
+            0,
+            sizeof(SimplePushConstantData),
+            &pushData);
+
+        obj.model->bind(commandBuffer);
+        obj.model->draw(commandBuffer);
+    }
 }
 
 void Application::drawFrame()

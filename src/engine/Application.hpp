@@ -1,11 +1,15 @@
 #ifndef SRC_ENGINE_APPLICATION_HPP
 #define SRC_ENGINE_APPLICATION_HPP
 
-#include "Model.hpp"
+#include "Object.hpp"
 #include "Device.hpp"
 #include "Pipeline.hpp"
 #include "Swapchain.hpp"
 #include "Window.hpp"
+
+#define GLM_FORCE_RADIANS
+#define GLM_FORCE_DEPTH_ZERO_TO_ONE
+#include "glm/glm.hpp"
 
 #include <vulkan/vulkan_core.h>
 
@@ -14,6 +18,13 @@
 
 namespace vv
 {
+
+struct SimplePushConstantData
+{
+    glm::mat2 transform{ 1.f };
+    glm::vec2 offset;
+    alignas(16) glm::vec3 color;
+};
 
 /// \brief The Application coordinates everything to work with each other
 /// 
@@ -47,15 +58,16 @@ private:
     std::unique_ptr<Pipeline> m_pipeline;
     VkPipelineLayout m_pipelineLayout{ VK_NULL_HANDLE };
     std::vector<VkCommandBuffer> m_commandBufers;
-    std::unique_ptr<Model> m_model;
+    std::vector<Object> m_objects;
 
-    void loadModels();
+    void loadObjects();
     void createPipelineLayout();
     void createPipeline();
     void createCommandBuffers();
     void freeCommandBuffers();
 
     void recordCommandBuffer(std::size_t imageIndex);
+    void renderObjects(VkCommandBuffer commandBuffer);
     void drawFrame();
 
     void recreateSwapchain();

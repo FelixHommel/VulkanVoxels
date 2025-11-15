@@ -22,6 +22,7 @@ target_sources(${NAME}
             ./Device.hpp
             ./Swapchain.hpp
             ./Model.hpp
+            ./Object.hpp
 )
 
 target_include_directories(${NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
