@@ -19,7 +19,7 @@ jobs:
           sudo apt update
           sudo apt install -y cmake g++ ninja-build vulkan-tools libvulkan-dev \
             glslang-tools glslang-dev xorg-dev libx11-dev mesa-common-dev \
-            libwayland-dev wayland-protocols libxkbcommon-dev slang
+            libwayland-dev wayland-protocols libxkbcommon-dev
 
       - name: Configure CMake
         run: cmake --preset release
