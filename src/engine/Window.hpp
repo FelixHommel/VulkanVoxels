@@ -1,9 +1,10 @@
 #ifndef SRC_ENGINE_WINDOW_HPP
 #define SRC_ENGINE_WINDOW_HPP
 
-#include <vulkan/vulkan_core.h>
 #define GLFW_INCLUDE_VULKAN
 #include "GLFW/glfw3.h"
+
+#include <vulkan/vulkan_core.h>
 
 #include <cstdint>
 #include <string>
@@ -26,19 +27,21 @@ public:
     Window& operator=(const Window&) = delete;
     Window& operator=(Window&&) = delete;
 
-    /// \brief Returns whether the window should be closed or not
-    ///
-    /// \return  *true* if the window should close, *false* if not
     [[nodiscard]] bool shouldClose() const { return glfwWindowShouldClose(m_window) != 0; }
     [[nodiscard]] VkExtent2D getExtent() const noexcept { return { .width = m_width, .height = m_height }; }
+    [[nodiscard]] bool wasWindowResized() const noexcept { return m_wasResized; }
+    void resetWindowResizeFlag() { m_wasResized = false; }
 
     void createWindowSurface(VkInstance instance, VkSurfaceKHR* surface);
 
 private:
     std::uint32_t m_width;
     std::uint32_t m_height;
+    bool m_wasResized{ false };
     std::string m_title;
     GLFWwindow* m_window;
+
+    static void framebufferResizeCallback(GLFWwindow* window, int width, int height);
 };
 
 } //!vv

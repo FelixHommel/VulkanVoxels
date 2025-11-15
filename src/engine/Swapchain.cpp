@@ -28,6 +28,20 @@ Swapchain::Swapchain(Device& device, VkExtent2D windowExtent)
     createSyncObjects();
 }
 
+Swapchain::Swapchain(Device& device, VkExtent2D windowExtent, std::shared_ptr<Swapchain> previous)
+    : device(device)
+    , windowExtent(windowExtent)
+    , m_oldSwapchain(previous)
+{
+    createSwapchain();
+    createImageViews();
+    createRenderPass();
+    createDepthResources();
+    createFramebuffers();
+    createSyncObjects();
+    m_oldSwapchain = nullptr;
+}
+
 Swapchain::~Swapchain()
 {
     for(const auto& imageView : m_swapchainImageViews)
@@ -153,7 +167,7 @@ void Swapchain::createSwapchain()
     createInfo.compositeAlpha = VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR;
     createInfo.presentMode = presentMode;
     createInfo.clipped = VK_TRUE;
-    createInfo.oldSwapchain = VK_NULL_HANDLE;
+    createInfo.oldSwapchain = m_oldSwapchain == nullptr ? VK_NULL_HANDLE : m_oldSwapchain->m_swapchain;
 
     QueueFamilyIndices indices{ device.findPhysicalQueueFamilies() };
     if(indices.graphicsFamily.value() != indices.presentFamily.value())

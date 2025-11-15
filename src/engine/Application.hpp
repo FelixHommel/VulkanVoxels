@@ -6,7 +6,6 @@
 #include "Pipeline.hpp"
 #include "Swapchain.hpp"
 #include "Window.hpp"
-#include "glm/ext/vector_float2.hpp"
 
 #include <vulkan/vulkan_core.h>
 
@@ -44,7 +43,7 @@ public:
 private:
     Window m_window{ WINDOW_WIDTH, WINDOW_HEIGHT, WINDOW_TITLE };
     Device m_device{ m_window };
-    Swapchain m_swapchain{ m_device, m_window.getExtent() };
+    std::unique_ptr<Swapchain> m_swapchain;
     std::unique_ptr<Pipeline> m_pipeline;
     VkPipelineLayout m_pipelineLayout{ VK_NULL_HANDLE };
     std::vector<VkCommandBuffer> m_commandBufers;
@@ -54,8 +53,12 @@ private:
     void createPipelineLayout();
     void createPipeline();
     void createCommandBuffers();
+    void freeCommandBuffers();
 
+    void recordCommandBuffer(std::size_t imageIndex);
     void drawFrame();
+
+    void recreateSwapchain();
 };
 
 } // !vv

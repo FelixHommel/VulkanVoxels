@@ -3,6 +3,7 @@
 
 #include "Device.hpp"
 
+#include <vector>
 #include <vulkan/vulkan_core.h>
 
 #include <filesystem>
@@ -16,14 +17,15 @@ namespace vv
 /// \date 11//13/2025
 struct PipelineConfigInfo
 {
-    VkViewport viewport{};
-    VkRect2D scissor{};
+    VkPipelineViewportStateCreateInfo viewportInfo{};
     VkPipelineInputAssemblyStateCreateInfo inputAssemblyInfo{};
     VkPipelineRasterizationStateCreateInfo rasterizationInfo{};
     VkPipelineMultisampleStateCreateInfo multisampleInfo{};
     VkPipelineColorBlendAttachmentState colorBlendAttachment{};
     VkPipelineColorBlendStateCreateInfo colorBlendInfo{};
     VkPipelineDepthStencilStateCreateInfo depthStencilInfo{};
+    std::vector<VkDynamicState> dynamicStateEnables;
+    VkPipelineDynamicStateCreateInfo dynamicStateInfo{};
     VkPipelineLayout pipelineLayout{ VK_NULL_HANDLE };
     VkRenderPass renderPass{ VK_NULL_HANDLE };
     std::uint32_t subpass{ 0 };
@@ -48,7 +50,7 @@ public:
     Pipeline& operator=(Pipeline&&) = delete;
 
     void bind(VkCommandBuffer commandBuffer);
-    static PipelineConfigInfo defaultPipelineConfigInfo(std::uint32_t width, std::uint32_t height);
+    static void defaultPipelineConfigInfo(PipelineConfigInfo& configInfo);
 
 private:
     void createShaderModule(const std::vector<char>& code, VkShaderModule* shaderModule);

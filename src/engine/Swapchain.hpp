@@ -7,6 +7,7 @@
 
 #include <cstddef>
 #include <cstdint>
+#include <memory>
 #include <vector>
 
 namespace vv
@@ -16,6 +17,7 @@ class Swapchain
 {
 public:
     Swapchain(Device& device, VkExtent2D windowExtent);
+    Swapchain(Device& device, VkExtent2D windowExtent, std::shared_ptr<Swapchain> previous);
     ~Swapchain();
 
     Swapchain(const Swapchain&) = delete;
@@ -44,6 +46,7 @@ private:
 
     /** Core */
     VkSwapchainKHR m_swapchain{ VK_NULL_HANDLE };
+    std::shared_ptr<Swapchain> m_oldSwapchain{ nullptr };
     std::vector<VkFramebuffer> m_swapchainFramebuffers{ VK_NULL_HANDLE };
     VkRenderPass m_renderPass{ VK_NULL_HANDLE };
 
