@@ -35,9 +35,15 @@ public:
     [[nodiscard]] VkResult submitCommandBuffer(const VkCommandBuffer* commandBuffer, const std::uint32_t* imageIndex);
 
     /** Raw handle access */
-    [[nodiscard]] VkSwapchainKHR getHandle() const { return m_swapchain; }
-    [[nodiscard]] VkRenderPass getRenderPass() const { return m_renderPass; }
+    [[nodiscard]] VkSwapchainKHR getHandle() const noexcept { return m_swapchain; }
+    [[nodiscard]] VkRenderPass getRenderPass() const noexcept { return m_renderPass; }
     [[nodiscard]] VkFramebuffer getFramebuffer(std::size_t index) const;
+
+    bool compareSwapFormats(const Swapchain& swapchain) const noexcept
+    {
+        return swapchain.m_swapchainImageViews == m_swapchainImageViews &&
+            swapchain.m_swapchainDepthFormat == m_swapchainDepthFormat;
+    }
 
 private:
     /** External objects */
@@ -52,6 +58,7 @@ private:
 
     /** Images */
     VkFormat m_swapchainImageFormat{};
+    VkFormat m_swapchainDepthFormat{};
     VkExtent2D m_swapchainImageExtent{};
     std::vector<VkImage> m_swapchainImages;
     std::vector<VkImageView> m_swapchainImageViews;

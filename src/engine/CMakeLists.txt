@@ -9,6 +9,8 @@ add_library(${NAME}
     ./Device.cpp
     ./Swapchain.cpp
     ./Model.cpp
+    ./Renderer.cpp
+    ./BasicRenderSystem.cpp
 )
 
 target_sources(${NAME}
@@ -23,6 +25,8 @@ target_sources(${NAME}
             ./Swapchain.hpp
             ./Model.hpp
             ./Object.hpp
+            ./Renderer.hpp
+            ./BasicRenderSystem.hpp
 )
 
 target_include_directories(${NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})

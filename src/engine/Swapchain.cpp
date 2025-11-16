@@ -284,6 +284,7 @@ void Swapchain::createRenderPass()
 void Swapchain::createDepthResources()
 {
     VkFormat depthFormat{ findDepthFormat() };
+    m_swapchainDepthFormat = depthFormat;
     VkExtent2D swapchainExtent{ m_swapchainImageExtent };
 
     m_depthImages.resize(imageCount());
