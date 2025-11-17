@@ -27,6 +27,7 @@ target_sources(${NAME}
             ./Object.hpp
             ./Renderer.hpp
             ./BasicRenderSystem.hpp
+            ./MagnetPhysicsSystem.hpp
 )
 
 target_include_directories(${NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})

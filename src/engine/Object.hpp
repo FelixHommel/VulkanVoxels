@@ -3,12 +3,20 @@
 
 #include "Model.hpp"
 
+#define GLM_FORCE_RADIANS
+#define GLM_FORCE_DEPTH_ZERO_TO_ONE
 #include "glm/glm.hpp"
 
 #include <memory>
 
 namespace vv
 {
+
+struct RigidBody2dComponent
+{
+    glm::vec2 velocity{};
+    float mass{ 1.f };
+};
 
 struct Transform2dComponent
 {
@@ -49,6 +57,7 @@ public:
     std::shared_ptr<Model> model{};
     glm::vec3 color{};
     Transform2dComponent transform2d{};
+    RigidBody2dComponent rigidBody2d{};
 
 private:
     Object(id_t objId) : m_id{ objId } {}
