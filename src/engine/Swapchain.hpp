@@ -41,7 +41,7 @@ public:
 
     bool compareSwapFormats(const Swapchain& swapchain) const noexcept
     {
-        return swapchain.m_swapchainImageViews == m_swapchainImageViews &&
+        return swapchain.m_swapchainImageFormat == m_swapchainImageFormat &&
             swapchain.m_swapchainDepthFormat == m_swapchainDepthFormat;
     }
 
