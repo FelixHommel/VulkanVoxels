@@ -6,10 +6,10 @@
 #include "Renderer.hpp"
 #include "Window.hpp"
 
-#include <memory>
 #include <vulkan/vulkan_core.h>
 
 #include <cstdint>
+#include <memory>
 
 namespace vv
 {
@@ -44,9 +44,7 @@ private:
     std::vector<Object> m_objects;
 
     void loadObjects();
-
-    std::unique_ptr<Model> createSquareModel(Device& device, glm::vec2 offset);
-    std::unique_ptr<Model> createCircleModel(Device& device, unsigned int numSides);
+    std::unique_ptr<Model> loadCubeModel(Device& device, const glm::vec3& offset);
 };
 
 } // !vv

@@ -1,18 +1,18 @@
 struct VSInput
 {
-    [[vk::location(0)]] float2 position;
+    [[vk::location(0)]] float3 position;
     [[vk::location(1)]] float3 color;
 };
 
 struct VSOutput
 {
     float4 position : SV_Position;
+    float3 color;
 };
 
 struct PushData
 {
-    float2x2 transform;
-    float2 offset;
+    float4x4 transform;
     float3 color;
 };
 
@@ -23,8 +23,8 @@ PushData push;
 VSOutput main(VSInput input)
 {
     VSOutput output;
-    float2 transformed = mul(push.transform, input.position) + push.offset;
-    output.position = float4(transformed, 0.0, 1.0);
+    output.position = mul(push.transform, float4(input.position, 1.0));
+    output.color = input.color;
 
     return output;
 }

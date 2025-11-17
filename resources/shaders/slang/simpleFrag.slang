@@ -1,4 +1,6 @@
-struct FSInput {};
+struct FSInput {
+    float3 color;
+};
 
 struct FSOutput
 {
@@ -7,8 +9,7 @@ struct FSOutput
 
 struct PushData
 {
-    float2x2 transform;
-    float2 offset;
+    float4x4 transform;
     float3 color;
 };
 
@@ -19,7 +20,7 @@ PushData push;
 FSOutput main(FSInput input)
 {
     FSOutput output;
-    output.color = float4(push.color, 1.0);
+    output.color = float4(input.color, 1.0);
 
     return output;
 }

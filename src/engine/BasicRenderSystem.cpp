@@ -34,11 +34,11 @@ void BasicRenderSystem::renderObjects(VkCommandBuffer commandBuffer, std::vector
 
     for(auto& obj : objects)
     {
-        obj.transform2d.rotation = glm::mod(obj.transform2d.rotation + 0.01f, glm::two_pi<float>());
+        obj.transform.rotation.y = glm::mod(obj.transform.rotation.y + 0.01f, glm::two_pi<float>());
+        obj.transform.rotation.x = glm::mod(obj.transform.rotation.x + 0.005f, glm::two_pi<float>());
 
         SimplePushConstantData pushData{
-            .transform = obj.transform2d.mat2(),
-            .offset = obj.transform2d.translation,
+            .transform = obj.transform.mat4(),
             .color = obj.color
         };
 
