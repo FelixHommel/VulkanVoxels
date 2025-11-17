@@ -66,7 +66,7 @@ Swapchain::~Swapchain()
 
     vkDestroyRenderPass(device.device(), m_renderPass, nullptr);
 
-    for(std::size_t i{ 0 }; i < imageCount(); ++i)
+    for(std::size_t i{ 0 }; i < m_renderFinishedSemaphores.size(); ++i)
     {
         vkDestroySemaphore(device.device(), m_renderFinishedSemaphores[i], nullptr);
     }

@@ -90,7 +90,7 @@ void Renderer::endFrame()
         throw std::runtime_error("failed to present swapchain image");
 
     m_isFrameStarted = false;
-    m_currentImageIndex = (m_currentImageIndex + 1) % Swapchain::MAX_FRAMES_IN_FLIGHT;
+    m_currentFrameIndex = (m_currentFrameIndex + 1) % Swapchain::MAX_FRAMES_IN_FLIGHT;
 }
 
 void Renderer::beginRenderPass(VkCommandBuffer commandBuffer)
