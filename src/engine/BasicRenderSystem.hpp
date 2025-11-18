@@ -1,6 +1,7 @@
 #ifndef SRC_ENGINE_BASIC_RENDER_SYSTEM_HPP
 #define SRC_ENGINE_BASIC_RENDER_SYSTEM_HPP
 
+#include "Camera.hpp"
 #include "Object.hpp"
 #include "Device.hpp"
 #include "Pipeline.hpp"
@@ -33,7 +34,7 @@ public:
     BasicRenderSystem& operator=(const BasicRenderSystem&) = delete;
     BasicRenderSystem& operator=(BasicRenderSystem&&) = delete;
 
-    void renderObjects(VkCommandBuffer commandBuffer, std::vector<Object>& objects);
+    void renderObjects(VkCommandBuffer commandBuffer, std::vector<Object>& objects, const Camera& camera);
 
 private:
     static constexpr auto VERTEX_SHADER_PATH{ PROJECT_ROOT "resources/compiledShaders/simpleVert.spv" };

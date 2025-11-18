@@ -11,6 +11,7 @@ add_library(${NAME}
     ./Model.cpp
     ./Renderer.cpp
     ./BasicRenderSystem.cpp
+    ./Camera.cpp
 )
 
 target_sources(${NAME}
@@ -28,6 +29,7 @@ target_sources(${NAME}
             ./Renderer.hpp
             ./BasicRenderSystem.hpp
             ./MagnetPhysicsSystem.hpp
+            ./Camera.hpp
 )
 
 target_include_directories(${NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})

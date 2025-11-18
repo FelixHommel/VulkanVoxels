@@ -29,6 +29,7 @@ public:
 
     [[nodiscard]] std::size_t imageCount() const { return m_swapchainImages.size(); }
     [[nodiscard]] VkExtent2D getExtent() const { return m_swapchainImageExtent; }
+    [[nodiscard]] float extentAspectRatio() const noexcept { return static_cast<float>(m_swapchainImageExtent.width) / static_cast<float>(m_swapchainImageExtent.height); }
 
     /** Presentation utility */
     [[nodiscard]] VkResult acquireNextImage(std::uint32_t* imageIndex);

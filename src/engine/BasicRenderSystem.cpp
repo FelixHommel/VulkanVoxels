@@ -1,5 +1,6 @@
 #include "BasicRenderSystem.hpp"
 
+#include "Camera.hpp"
 #include "Object.hpp"
 
 #include "glm/glm.hpp"
@@ -28,7 +29,7 @@ BasicRenderSystem::~BasicRenderSystem()
     vkDestroyPipelineLayout(device.device(), m_pipelineLayout, nullptr);
 }
 
-void BasicRenderSystem::renderObjects(VkCommandBuffer commandBuffer, std::vector<Object>& objects)
+void BasicRenderSystem::renderObjects(VkCommandBuffer commandBuffer, std::vector<Object>& objects, const Camera& camera)
 {
     m_pipeline->bind(commandBuffer);
 
@@ -38,7 +39,7 @@ void BasicRenderSystem::renderObjects(VkCommandBuffer commandBuffer, std::vector
         obj.transform.rotation.x = glm::mod(obj.transform.rotation.x + 0.005f, glm::two_pi<float>());
 
         SimplePushConstantData pushData{
-            .transform = obj.transform.mat4(),
+            .transform = camera.getProjection() * obj.transform.mat4(),
             .color = obj.color
         };
 

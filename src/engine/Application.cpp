@@ -1,10 +1,9 @@
 #include "Application.hpp"
 
 #include "BasicRenderSystem.hpp"
+#include "Camera.hpp"
 #include "Object.hpp"
 
-#include "glm/glm.hpp"
-#include "glm/gtc/constants.hpp"
 #include "GLFW/glfw3.h"
 #include <vulkan/vulkan_core.h>
 
@@ -23,16 +22,21 @@ Application::Application()
 void Application::run()
 {
     BasicRenderSystem basicRenderSystem{ m_device, m_renderer.getRenderPass() };
+    Camera camera{};
 
     while(!m_window.shouldClose())
     {
         glfwPollEvents();
 
+        float aspectRatio{ m_renderer.getAspectRatio() };
+        // camera.setOrthographicProjection(-aspectRatio, aspectRatio, -1, 1, -1, 1);
+        camera.setPerspectiveProjection(glm::radians(45.f), aspectRatio, 0.1f, 100.f);
+
         if(auto commandBuffer{ m_renderer.beginFrame() })
         {
             m_renderer.beginRenderPass(commandBuffer);
 
-            basicRenderSystem.renderObjects(commandBuffer, m_objects);
+            basicRenderSystem.renderObjects(commandBuffer, m_objects, camera);
 
             m_renderer.endRenderPass(commandBuffer);
             m_renderer.endFrame();
@@ -47,7 +51,7 @@ void Application::loadObjects()
     std::shared_ptr<Model> model{ loadCubeModel(m_device, {0.f, 0.f, 0.f}) };
     auto cube{ Object::createObject() };
     cube.model = model;
-    cube.transform.translation = { 0.f, 0.f, 0.5f };
+    cube.transform.translation = { 0.f, 0.f, 2.5f };
     cube.transform.scale = { 0.5f, 0.5f, 0.5f };
     m_objects.push_back(std::move(cube));
 }
