@@ -28,7 +28,6 @@ target_sources(${NAME}
             ./Object.hpp
             ./Renderer.hpp
             ./BasicRenderSystem.hpp
-            ./MagnetPhysicsSystem.hpp
             ./Camera.hpp
 )
 
