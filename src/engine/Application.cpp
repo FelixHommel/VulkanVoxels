@@ -27,11 +27,11 @@ void Application::run()
     {
         glfwPollEvents();
 
-        float aspectRatio{ m_renderer.getAspectRatio() };
+        const float aspectRatio{ m_renderer.getAspectRatio() };
         // camera.setOrthographicProjection(-aspectRatio, aspectRatio, -1, 1, 0.1f, 10.f);
         camera.setPerspectiveProjection(glm::radians(45.f), aspectRatio, 0.1f, 10.f);
 
-        if(auto commandBuffer{ m_renderer.beginFrame() })
+        if (const auto commandBuffer{ m_renderer.beginFrame() })
         {
             m_renderer.beginRenderPass(commandBuffer);
 
@@ -48,7 +48,7 @@ void Application::run()
 /// \brief Load all objects that are being used
 void Application::loadObjects()
 {
-    std::shared_ptr<Model> model{ loadCubeModel(m_device, {0.f, 0.f, 0.f}) };
+    const std::shared_ptr<Model> model{ loadCubeModel(m_device, {0.f, 0.f, 0.f}) };
     auto cube{ Object::createObject() };
     cube.model = model;
     cube.transform.translation = { 0.f, 0.f, 2.5f };

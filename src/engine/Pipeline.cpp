@@ -24,8 +24,8 @@ Pipeline::Pipeline(Device& device,
     assert(configInfo.renderPass != VK_NULL_HANDLE && "Cannot create graphics pipeline: no render pass provided");
 #endif
 
-    auto vertCode{ readFile(vertexShaderPath) };
-    auto fragCode{ readFile(fragmentShaderPath) };
+    const auto vertCode{readFile(vertexShaderPath)};
+    const auto fragCode{ readFile(fragmentShaderPath) };
 
     createShaderModule(vertCode, &m_vertexShaderModule);
     createShaderModule(fragCode, &m_fragmentShaderModule);
@@ -41,8 +41,8 @@ Pipeline::Pipeline(Device& device,
     shaderStages[1].module = m_fragmentShaderModule;
     shaderStages[1].pName = "main";
 
-    auto bindingDescriptions{ Model::Vertex::getBindingDescriptions() };
-    auto attributeDescriptions{ Model::Vertex::getAttributeDescriptions() };
+    const auto bindingDescriptions{Model::Vertex::getBindingDescriptions()};
+    const auto attributeDescriptions{ Model::Vertex::getAttributeDescriptions() };
     VkPipelineVertexInputStateCreateInfo vertexInputInfo{};
     vertexInputInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
     vertexInputInfo.vertexBindingDescriptionCount = static_cast<std::uint32_t>(bindingDescriptions.size());

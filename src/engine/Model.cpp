@@ -41,7 +41,7 @@ Model::Model(Device& device, const std::vector<Vertex>& vertices)
     : device(device)
     , m_vertexCount{ static_cast<std::uint32_t>(vertices.size()) }
 {
-    VkDeviceSize bufferSize{ sizeof(vertices[0]) * m_vertexCount };
+    const VkDeviceSize bufferSize{ sizeof(vertices[0]) * m_vertexCount };
 
     device.createBuffer(bufferSize,
             VK_BUFFER_USAGE_VERTEX_BUFFER_BIT,
@@ -63,8 +63,8 @@ Model::~Model()
 
 void Model::bind(VkCommandBuffer commandBuffer)
 {
-    std::array<VkBuffer, 1> buffers{ m_vertexBuffer };
-    std::array<VkDeviceSize, 1> offsets{ 0 };
+    const std::array<VkBuffer, 1> buffers{m_vertexBuffer};
+    const std::array<VkDeviceSize, 1> offsets{ 0 };
     vkCmdBindVertexBuffers(commandBuffer, 0, 1, buffers.data(), offsets.data());
 }
 

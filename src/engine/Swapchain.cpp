@@ -92,9 +92,13 @@ VkResult Swapchain::submitCommandBuffer(const VkCommandBuffer* commandBuffer, co
 
     m_imagesInFlight[*imageIndex] = m_inFlightFences[m_currentFrame];
 
-    std::array<VkSemaphore, 1> waitSemaphores{ m_imageAvailableSemaphores[m_currentFrame] };
-    std::array<VkPipelineStageFlags, 1> waitStages{ VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT };
-    std::array<VkSemaphore, 1> signalSemaphore{ m_renderFinishedSemaphores[*imageIndex] };
+    const std::array<VkSemaphore, 1> waitSemaphores{
+        m_imageAvailableSemaphores[m_currentFrame]
+    };
+    const std::array<VkPipelineStageFlags, 1> waitStages{
+        VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT
+    };
+    const std::array<VkSemaphore, 1> signalSemaphore{ m_renderFinishedSemaphores[*imageIndex] };
 
     VkSubmitInfo submitInfo{};
     submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
@@ -107,10 +111,15 @@ VkResult Swapchain::submitCommandBuffer(const VkCommandBuffer* commandBuffer, co
     submitInfo.pSignalSemaphores = signalSemaphore.data();
 
     vkResetFences(device.device(), 1, &m_inFlightFences[m_currentFrame]);
-    if(vkQueueSubmit(device.graphicsQueue(), 1, &submitInfo, m_inFlightFences[m_currentFrame]) != VK_SUCCESS)
+    if (vkQueueSubmit(
+            device.graphicsQueue(),
+            1,
+            &submitInfo,
+            m_inFlightFences[m_currentFrame]
+        ) != VK_SUCCESS)
         throw std::runtime_error("failed to submit command buffer");
 
-    std::array<VkSwapchainKHR, 1> swapchains{ m_swapchain };
+    const std::array<VkSwapchainKHR, 1> swapchains{ m_swapchain };
 
     VkPresentInfoKHR presentInfo{};
     presentInfo.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
@@ -120,7 +129,7 @@ VkResult Swapchain::submitCommandBuffer(const VkCommandBuffer* commandBuffer, co
     presentInfo.pSwapchains = swapchains.data();
     presentInfo.pImageIndices = imageIndex;
 
-    auto result{ vkQueuePresentKHR(device.presentQueue(), &presentInfo) };
+    const auto result{ vkQueuePresentKHR(device.presentQueue(), &presentInfo) };
 
     m_currentFrame = (m_currentFrame + 1) % MAX_FRAMES_IN_FLIGHT;
 
@@ -148,11 +157,16 @@ bool Swapchain::compareSwapFormats(const Swapchain& swapchain) const noexcept
 */
 void Swapchain::createSwapchain()
 {
-    SwapchainSupportDetails swapchainSupport{ device.getSwapchainSupport() };
+    const SwapchainSupportDetails swapchainSupport{device.getSwapchainSupport()
+    };
 
-    VkSurfaceFormatKHR surfaceFormat{ chooseSwapSurfaceFormat(swapchainSupport.formats) };
-    VkPresentModeKHR presentMode{ chooseSwapPresentMode(swapchainSupport.presentModes) };
-    VkExtent2D extent{ chooseSwapExtent(swapchainSupport.capabilities) };
+    const VkSurfaceFormatKHR surfaceFormat{
+        chooseSwapSurfaceFormat(swapchainSupport.formats)
+    };
+    const VkPresentModeKHR presentMode{
+        chooseSwapPresentMode(swapchainSupport.presentModes)
+    };
+    const VkExtent2D extent{ chooseSwapExtent(swapchainSupport.capabilities) };
 
     std::uint32_t imageCount{ swapchainSupport.capabilities.minImageCount + 1 };
     if(swapchainSupport.capabilities.maxImageCount > 0 && imageCount > swapchainSupport.capabilities.maxImageCount)
@@ -175,12 +189,14 @@ void Swapchain::createSwapchain()
     createInfo.compositeAlpha = VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR;
     createInfo.presentMode = presentMode;
     createInfo.clipped = VK_TRUE;
-    createInfo.oldSwapchain = m_oldSwapchain == nullptr ? VK_NULL_HANDLE : m_oldSwapchain->m_swapchain;
+    createInfo.oldSwapchain = m_oldSwapchain == nullptr
+                                  ? VK_NULL_HANDLE
+                                  : m_oldSwapchain->m_swapchain;
 
-    QueueFamilyIndices indices{ device.findPhysicalQueueFamilies() };
+    const QueueFamilyIndices indices{ device.findPhysicalQueueFamilies() };
     if(indices.graphicsFamily.value() != indices.presentFamily.value())
     {
-        std::array<std::uint32_t, 2> queueFamilyIndices{ indices.presentFamily.value(), indices.graphicsFamily.value() };
+        const std::array<std::uint32_t, 2> queueFamilyIndices{ indices.presentFamily.value(), indices.graphicsFamily.value() };
 
         createInfo.imageSharingMode = VK_SHARING_MODE_CONCURRENT;
         createInfo.queueFamilyIndexCount = static_cast<std::uint32_t>(queueFamilyIndices.size());
@@ -270,9 +286,10 @@ void Swapchain::createRenderPass()
     dependency.srcStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT | VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT;
     dependency.dstStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT | VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT;
     dependency.srcAccessMask = 0;
-    dependency.dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT | VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT;
+    dependency.dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT |
+                               VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT;
 
-    std::array<VkAttachmentDescription, 2> attachments{ colorAttachment, depthAttachment };
+    const std::array<VkAttachmentDescription, 2> attachments{ colorAttachment, depthAttachment };
     VkRenderPassCreateInfo createInfo{};
     createInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO;
     createInfo.attachmentCount = static_cast<std::uint32_t>(attachments.size());
@@ -291,9 +308,9 @@ void Swapchain::createRenderPass()
 */
 void Swapchain::createDepthResources()
 {
-    VkFormat depthFormat{ findDepthFormat() };
+    const VkFormat depthFormat{ findDepthFormat() };
     m_swapchainDepthFormat = depthFormat;
-    VkExtent2D swapchainExtent{ m_swapchainImageExtent };
+    const VkExtent2D swapchainExtent{ m_swapchainImageExtent };
 
     m_depthImages.resize(imageCount());
     m_depthImagesMemory.resize(imageCount());
@@ -347,8 +364,10 @@ void Swapchain::createFramebuffers()
 
     for(std::size_t i{0}; i < imageCount(); ++i)
     {
-        std::array<VkImageView, 2> attachments{ m_swapchainImageViews[i], m_depthImageViews[i] };
-        VkExtent2D swapchainExtent{ m_swapchainImageExtent };
+        std::array<VkImageView, 2> attachments{
+            m_swapchainImageViews[i], m_depthImageViews[i]
+        };
+        const VkExtent2D swapchainExtent{ m_swapchainImageExtent };
 
         VkFramebufferCreateInfo createInfo{};
         createInfo.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;

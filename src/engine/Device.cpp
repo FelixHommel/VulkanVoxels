@@ -48,7 +48,7 @@ namespace
             const VkAllocationCallbacks* pAllocator,
             VkDebugUtilsMessengerEXT* pDebugMessenger)
     {
-        auto func{ reinterpret_cast<PFN_vkCreateDebugUtilsMessengerEXT>(vkGetInstanceProcAddr(instance, "vkCreateDebugUtilsMessengerEXT")) };
+        const auto func{ reinterpret_cast<PFN_vkCreateDebugUtilsMessengerEXT>(vkGetInstanceProcAddr(instance, "vkCreateDebugUtilsMessengerEXT")) };
 
         if(func != nullptr)
             return func(instance, pCreateInfo, pAllocator, pDebugMessenger);
@@ -61,7 +61,7 @@ namespace
             VkDebugUtilsMessengerEXT debugMessenger,
             const VkAllocationCallbacks* pAllocator)
     {
-        auto func{ reinterpret_cast<PFN_vkDestroyDebugUtilsMessengerEXT>(vkGetInstanceProcAddr(instance, "vkDestroyDebugUtilsMessengerEXT")) };
+        const auto func{ reinterpret_cast<PFN_vkDestroyDebugUtilsMessengerEXT>(vkGetInstanceProcAddr(instance, "vkDestroyDebugUtilsMessengerEXT")) };
 
         if(func != nullptr)
             func(instance, debugMessenger, pAllocator);
@@ -187,9 +187,9 @@ void Device::endSingleTimeCommand(VkCommandBuffer commandBuffer)
 
 void Device::copyBuffer(VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize size)
 {
-    VkCommandBuffer commandBuffer{ beginSingleTimeCommand() };
+    const VkCommandBuffer commandBuffer{beginSingleTimeCommand()};
 
-    VkBufferCopy copyRegion{
+    const VkBufferCopy copyRegion{
         .srcOffset = 0,
         .dstOffset = 0,
         .size = size
@@ -202,7 +202,7 @@ void Device::copyBuffer(VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize siz
 
 void Device::copyBufferToImage(VkBuffer buffer, VkImage image, std::uint32_t width, std::uint32_t height, std::uint32_t layerCount)
 {
-    VkCommandBuffer commandBuffer{ beginSingleTimeCommand() };
+    const VkCommandBuffer commandBuffer{ beginSingleTimeCommand() };
 
     VkBufferImageCopy region{};
     region.bufferOffset = 0;
@@ -255,7 +255,7 @@ void Device::createInstance()
     appInfo.engineVersion = VK_MAKE_VERSION(0, 0, 1);
     appInfo.apiVersion = VK_API_VERSION_1_4;
 
-    auto extensions{ getRequiredExtensions() };
+    const auto extensions{ getRequiredExtensions() };
 
     VkInstanceCreateInfo createInfo{};
     createInfo.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
@@ -380,7 +380,7 @@ void Device::createLogicalDevice()
 
 void Device::createCommandPool()
 {
-    QueueFamilyIndices queueFamilyIndices{ findPhysicalQueueFamilies() };
+    const QueueFamilyIndices queueFamilyIndices{ findPhysicalQueueFamilies() };
 
     if(!queueFamilyIndices.graphicsFamily.has_value())
         throw std::runtime_error("failed to find graphics queue family");
@@ -416,9 +416,11 @@ bool Device::isDeviceSuitable(VkPhysicalDevice phDevice)
 std::vector<const char*> Device::getRequiredExtensions()
 {
     std::uint32_t glfwExtensionCount{ 0 };
-    const char** glfwExtensions{ glfwGetRequiredInstanceExtensions(&glfwExtensionCount) };
+    const char** glfwExtensions{
+        glfwGetRequiredInstanceExtensions(&glfwExtensionCount)
+    };
 
-    std::span<const char*> extensionSpan(glfwExtensions, glfwExtensionCount);
+    const std::span<const char*> extensionSpan(glfwExtensions, glfwExtensionCount);
     std::vector<const char*> extensions(extensionSpan.cbegin(), extensionSpan.cend());
 
     if constexpr(ENABLE_VALIDATION_LAYERS)
@@ -519,7 +521,7 @@ void Device::hasGlfwRequiredInstanceExtensions()
     }
 
     spdlog::log(spdlog::level::info, "rquired extensions:");
-    auto requiredExtensions{ getRequiredExtensions() };
+    const auto requiredExtensions{ getRequiredExtensions() };
     for(const auto& required : requiredExtensions)
     {
         spdlog::log(spdlog::level::info, "\t{}", required);

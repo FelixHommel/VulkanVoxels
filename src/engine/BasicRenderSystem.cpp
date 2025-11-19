@@ -60,7 +60,7 @@ void BasicRenderSystem::renderObjects(VkCommandBuffer commandBuffer, std::vector
 /// \brief Create a PipelineLayout that can be used to create a Pipeline
 void BasicRenderSystem::createPipelineLayout()
 {
-    VkPushConstantRange pushConstantRange{
+    const VkPushConstantRange pushConstantRange{
         .stageFlags = VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT,
         .offset = 0,
         .size = sizeof(SimplePushConstantData)

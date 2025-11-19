@@ -50,7 +50,7 @@ VkCommandBuffer Renderer::beginFrame()
     assert(!m_isFrameStarted && "Cannot call beginFrame() while a frame is already in progress");
 #endif
 
-    auto result{ m_swapchain->acquireNextImage(&m_currentImageIndex) };
+    const auto result{ m_swapchain->acquireNextImage(&m_currentImageIndex) };
     if(result == VK_ERROR_OUT_OF_DATE_KHR)
     {
         recreateSwapchain();
@@ -62,7 +62,7 @@ VkCommandBuffer Renderer::beginFrame()
 
     m_isFrameStarted = true;
 
-    auto commandBuffer{ getCurrentCommandBuffer() };
+    const auto commandBuffer{ getCurrentCommandBuffer() };
     VkCommandBufferBeginInfo beginInfo{};
     beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
 
@@ -78,11 +78,11 @@ void Renderer::endFrame()
     assert(m_isFrameStarted && "cannot call endFrame() while there is no frame in progress");
 #endif
 
-    auto commandBuffer{ getCurrentCommandBuffer() };
-    if(vkEndCommandBuffer(commandBuffer) != VK_SUCCESS)
+    const auto commandBuffer{ getCurrentCommandBuffer() };
+    if (vkEndCommandBuffer(commandBuffer) != VK_SUCCESS)
         throw std::runtime_error("failed to record command buffer");
 
-    auto result{ m_swapchain->submitCommandBuffer(&commandBuffer, &m_currentImageIndex) };
+    const auto result{ m_swapchain->submitCommandBuffer(&commandBuffer, &m_currentImageIndex) };
     if(result == VK_ERROR_OUT_OF_DATE_KHR || result == VK_SUBOPTIMAL_KHR || window.wasWindowResized())
     {
         window.resetWindowResizeFlag();
@@ -117,9 +117,11 @@ void Renderer::beginRenderPass(VkCommandBuffer commandBuffer)
     renderPassBeginInfo.clearValueCount = static_cast<std::uint32_t>(clearValues.size());
     renderPassBeginInfo.pClearValues = clearValues.data();
 
-    vkCmdBeginRenderPass(commandBuffer, &renderPassBeginInfo, VK_SUBPASS_CONTENTS_INLINE);
+    vkCmdBeginRenderPass(
+        commandBuffer, &renderPassBeginInfo, VK_SUBPASS_CONTENTS_INLINE
+    );
 
-    VkViewport viewport{
+    const VkViewport viewport{
         .x = 0.f,
         .y = 0.f,
         .width = static_cast<float>(m_swapchain->getExtent().width),
@@ -128,7 +130,7 @@ void Renderer::beginRenderPass(VkCommandBuffer commandBuffer)
         .maxDepth = 1.f
     };
 
-    VkRect2D scissor{
+    const VkRect2D scissor{
         .offset = {
             .x = 0,
             .y = 0
