@@ -18,12 +18,19 @@ struct RigidBody2dComponent
     float mass{ 1.f };
 };
 
+/// \brief Component to represent position and transformation in 3D Space
+///
+/// \author Felix Hommel
+/// \date 11/19/2025
 struct TransformComponent
 {
     glm::vec3 translation{};
     glm::vec3 scale{ 1.f, 1.f, 1.f };
     glm::vec3 rotation{};
 
+    /// \brief Calculate the final matrix that represents the total transformation
+    ///
+    /// Matrix transformation is calculated with translation * rot.y * rot.x * rot.z * scale
     [[nodiscard]] glm::mat4 mat4() const noexcept
     {
         const float c3{ glm::cos(rotation.z) };
@@ -62,11 +69,19 @@ struct TransformComponent
     }
 };
 
+/// \brief An Object is used to represent arbitrary vertex data as objects and associate positions and other properties with them
+///
+/// \author Felix Hommel
+/// \date 11/19/2025
 class Object
 {
 public:
     using id_t = std::uint16_t;
 
+    /// \brief Automatic id increasing creation of new Objects
+    ///
+    /// increases the internal id counter and then calls the Constructor the create
+    /// a new \ref Object
     static Object createObject()
     {
         static id_t currentId{ 0 };

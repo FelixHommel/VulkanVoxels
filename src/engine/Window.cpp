@@ -40,6 +40,11 @@ void Window::createWindowSurface(VkInstance instance, VkSurfaceKHR* surface)
         throw std::runtime_error("Failed to create window surface");
 }
 
+/// \brief Callback function for when the window is resized
+///
+/// \param window pointer to a GLFW window
+/// \param width the new width of the window
+/// \param height the new height of the window
 void Window::framebufferResizeCallback(GLFWwindow* window, int width, int height)
 {
     auto* pWindow{ reinterpret_cast<Window*>(glfwGetWindowUserPointer(window)) };

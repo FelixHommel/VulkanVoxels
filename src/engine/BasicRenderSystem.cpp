@@ -3,11 +3,12 @@
 #include "Camera.hpp"
 #include "Object.hpp"
 
+#define GLM_FORCE_RADIANS
+#define GLM_FORCE_DEPTH_ZERO_TO_ONE
 #include "glm/glm.hpp"
 #include "glm/gtc/constants.hpp"
-#include "GLFW/glfw3.h"
+#include "glm/gtc/matrix_transform.hpp"
 
-#include <array>
 #include <cassert>
 #include <memory>
 #include <stdexcept>
@@ -41,7 +42,7 @@ void BasicRenderSystem::renderObjects(VkCommandBuffer commandBuffer, std::vector
         SimplePushConstantData pushData{
             .transform = camera.getProjection() * obj.transform.mat4(),
             .color = obj.color
-        };
+    };
 
         vkCmdPushConstants(
             commandBuffer,
@@ -56,6 +57,7 @@ void BasicRenderSystem::renderObjects(VkCommandBuffer commandBuffer, std::vector
     }
 }
 
+/// \brief Create a PipelineLayout that can be used to create a Pipeline
 void BasicRenderSystem::createPipelineLayout()
 {
     VkPushConstantRange pushConstantRange{
@@ -75,6 +77,7 @@ void BasicRenderSystem::createPipelineLayout()
         throw std::runtime_error("failed to create pipeline layout");
 }
 
+/// \brief Create a Pipeline for Rendering
 void BasicRenderSystem::createPipeline(VkRenderPass renderPass)
 {
 #if defined(VV_ENABLE_ASSERTS)

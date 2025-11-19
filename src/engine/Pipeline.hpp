@@ -31,13 +31,19 @@ struct PipelineConfigInfo
     std::uint32_t subpass{ 0 };
 };
 
-/// \brief The Pipeline is a building piece that consits of programable and non-programable stages that vertices run through before they are displayed
+/// \brief The Pipeline is a building piece that consists of programmable and non-programmable stages that vertices run through before they are displayed
 ///
 /// \author Felix Hommel
 /// \date 11/10/2025
 class Pipeline
 {
 public:
+    /// \brief Create a new \ref Pipeline
+    ///
+    /// \param device \ref Device where the pipeline is created on
+    /// \param vertexShaderPath filepath to the vertex shader in spir-v format
+    /// \param fragmentShaderPath filepath to the fragment shader in spir-v format
+    /// \param configInfo \ref PipelineConfigInfo that contains information of how the pipeline should be configured
     Pipeline(Device& device,
             const std::filesystem::path& vertexShaderPath,
             const std::filesystem::path& fragmentShaderPath,
@@ -49,8 +55,15 @@ public:
     Pipeline& operator=(const Pipeline&) = delete;
     Pipeline& operator=(Pipeline&&) = delete;
 
-    void bind(VkCommandBuffer commandBuffer);
+    /// \brief Provides a default set of configuration that can be used for configuration
+    ///
+    /// \param configInfo \ref PipelineConfigInfo where the configuration is being saved
     static void defaultPipelineConfigInfo(PipelineConfigInfo& configInfo);
+
+    /// \brief Bind the Pipeline to a command buffer
+    ///
+    /// \param commandBuffer the VkCommandBuffer to which the pipeline is being bound
+    void bind(VkCommandBuffer commandBuffer);
 
 private:
     void createShaderModule(const std::vector<char>& code, VkShaderModule* shaderModule);

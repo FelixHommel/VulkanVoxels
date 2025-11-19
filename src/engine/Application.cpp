@@ -29,8 +29,8 @@ void Application::run()
         glfwPollEvents();
 
         float aspectRatio{ m_renderer.getAspectRatio() };
-        // camera.setOrthographicProjection(-aspectRatio, aspectRatio, -1, 1, -1, 1);
-        camera.setPerspectiveProjection(glm::radians(45.f), aspectRatio, 0.1f, 100.f);
+        // camera.setOrthographicProjection(-aspectRatio, aspectRatio, -1, 1, 0.1f, 10.f);
+        camera.setPerspectiveProjection(glm::radians(45.f), aspectRatio, 0.1f, 10.f);
 
         if(auto commandBuffer{ m_renderer.beginFrame() })
         {
@@ -46,6 +46,7 @@ void Application::run()
     vkDeviceWaitIdle(m_device.device());
 }
 
+/// \brief Load all objects that are being used
 void Application::loadObjects()
 {
     std::shared_ptr<Model> model{ loadCubeModel(m_device, {0.f, 0.f, 0.f}) };
@@ -56,6 +57,10 @@ void Application::loadObjects()
     m_objects.push_back(std::move(cube));
 }
 
+/// \brief Create a Cube Model
+///
+/// \param device \ref Device used to allocate memory for the model
+/// \param offset a offset applied to the model on a per-vertex basis
 std::unique_ptr<Model> Application::loadCubeModel(Device& device, const glm::vec3& offset)
 {
     std::vector<Model::Vertex> vertices{

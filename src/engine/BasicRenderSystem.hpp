@@ -17,15 +17,32 @@
 namespace vv
 {
 
+/// \brief Structure containing the information about push constants
+///
+/// Representation of which data is sent to the GPU via push constant
+///
+/// \author Felix Hommel
+/// \date 11/19/2025
 struct SimplePushConstantData
 {
     glm::mat4 transform{ 1.f };
     alignas(16) glm::vec3 color{};
 };
 
+/// \brief Render System to render standard \ref Object
+///
+/// Used to render simple \ref Object by first pushing the push constants and then
+/// drawing the mesh
+///
+/// \author Felix Hommel
+/// \date 11/19/2025
 class BasicRenderSystem
 {
 public:
+    /// \brief Create a new \ref BasicRenderSystem
+    ///
+    /// \param device Reference to a \ref Device to create the \ref Pipeline on
+    /// \param renderPass Which RenderPass to use in the pipeline
     BasicRenderSystem(Device& device, VkRenderPass renderPass);
     ~BasicRenderSystem();
 
@@ -34,6 +51,11 @@ public:
     BasicRenderSystem& operator=(const BasicRenderSystem&) = delete;
     BasicRenderSystem& operator=(BasicRenderSystem&&) = delete;
 
+    /// \brief Render a list of \ref Object
+    ///
+    /// \param commandBuffer which VkCommandBuffer is drawn to
+    /// \param objects a vector of \ref Object which are the objcts that are being rendered
+    /// \param camera the \ref Camera which is in use
     void renderObjects(VkCommandBuffer commandBuffer, std::vector<Object>& objects, const Camera& camera);
 
 private:

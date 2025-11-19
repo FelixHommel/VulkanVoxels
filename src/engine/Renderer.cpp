@@ -148,6 +148,7 @@ void Renderer::endRenderPass(VkCommandBuffer commandBuffer)
     vkCmdEndRenderPass(commandBuffer);
 }
 
+/// \brief Create as many command buffers as the amount of images that can be parallely in flight (supported by the swapchain)
 void Renderer::createCommandBuffers()
 {
     m_commandBufers.resize(Swapchain::MAX_FRAMES_IN_FLIGHT);
@@ -162,12 +163,17 @@ void Renderer::createCommandBuffers()
         throw std::runtime_error("failed to allocate command buffers");
 }
 
+/// \brief Free the allocated command buffers
 void Renderer::freeCommandBuffers()
 {
     vkFreeCommandBuffers(device.device(), device.commandPool(), static_cast<std::uint32_t>(m_commandBufers.size()), m_commandBufers.data());
     m_commandBufers.clear();
 }
 
+/// \brief Recreate the swapchain
+///
+/// The need for resizing the swapchain arises if the parameters have changed, especially
+/// the size of the frame buffer
 void Renderer::recreateSwapchain()
 {
     auto extent{ window.getExtent() };

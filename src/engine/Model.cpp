@@ -22,6 +22,7 @@ std::vector<VkVertexInputBindingDescription> Model::Vertex::getBindingDescriptio
 
 std::vector<VkVertexInputAttributeDescription> Model::Vertex::getAttributeDescriptions()
 {
+    // NOTE: Per member variable of the Vertex a entry in the attribute description is needed
     std::vector<VkVertexInputAttributeDescription> attributeDescriptions(2);
     attributeDescriptions[0].binding = 0;
     attributeDescriptions[0].location = 0;

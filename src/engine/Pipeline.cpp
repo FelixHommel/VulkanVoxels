@@ -161,6 +161,10 @@ void Pipeline::defaultPipelineConfigInfo(PipelineConfigInfo& configInfo)
     configInfo.dynamicStateInfo.pDynamicStates = configInfo.dynamicStateEnables.data();
 }
 
+/// \brief Create a new Shader
+///
+/// \param code the compiled shader byte code
+/// \param shaderModule where the shader module is saved
 void Pipeline::createShaderModule(const std::vector<char>& code, VkShaderModule* shaderModule)
 {
     VkShaderModuleCreateInfo createInfo{};

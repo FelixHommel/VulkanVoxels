@@ -13,9 +13,20 @@
 namespace vv
 {
 
+/// \brief The Renderer provides functionality to draw frames to the screen
+///
+/// It manages synchronization between frame buffers on a user level and manages
+/// the beginning of frames and render passes as well as the ending of frames and render passes
+///
+/// \author Felix Hommel
+/// \date 11/19/2025
 class Renderer
 {
 public:
+    /// \brief Create a new \ref Renderer
+    ///
+    /// \param window the \ref Window that is rendered to
+    /// \param device the \ref Device that is used
     Renderer(Window& window, Device& device);
     ~Renderer();
 
@@ -30,9 +41,24 @@ public:
     [[nodiscard]] VkCommandBuffer getCurrentCommandBuffer() const;
     [[nodiscard]] std::size_t getFrameIndex() const;
 
+    /// \brief Prepares the command buffer for the next frame
+    ///
+    /// Ensures that the next frame is properly synchronized and ready to be rendered
+    /// and then provides the command buffer that is used to render the next frame
+    ///
+    /// \return VkCommandBuffer that is used to render the next frame
     VkCommandBuffer beginFrame();
+    /// \brief End the command buffer recording and submit the finished command buffer
     void endFrame();
+    /// \brief Start a new render pass
+    ///
+    /// Start a new Render pass and then configure the viewport and scissor
+    ///
+    /// \param commandBuffer currently used VkCommandBuffer
     void beginRenderPass(VkCommandBuffer commandBuffer);
+    /// \brief End the current render pass
+    ///
+    /// \param commandBuffer currently used VkCommandBuffer
     void endRenderPass(VkCommandBuffer commandBuffer);
 
 private:

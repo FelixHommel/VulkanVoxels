@@ -13,10 +13,26 @@
 namespace vv
 {
 
+/// \brief Manages synchronization of command buffers on a low level
+///
+/// \author Felix Hommel
+/// \date 11/19/2025
 class Swapchain
 {
 public:
+    /// \brief Create a new \ref Swapchain
+    ///
+    /// \param device \ref Device that is used to create the Swapchain
+    /// \param windowExtent size of the window used to set the size for frame buffers
     Swapchain(Device& device, VkExtent2D windowExtent);
+    /// \brief Create a new \ref Swapchain
+    ///
+    /// This variant is used primarily for recreation of the swapchain therefore
+    /// it can be passed the old swapchain which can boost creation speed
+    ///
+    /// \param device \ref Device that is used to create the Swapchain
+    /// \param windowExtent size of the window to set the size for frame buffers
+    /// \param previous the olf \ref Swapchain wrapped in a shared_ptr
     Swapchain(Device& device, VkExtent2D windowExtent, std::shared_ptr<Swapchain> previous);
     ~Swapchain();
 

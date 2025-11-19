@@ -242,7 +242,6 @@ void Device::createImageWithInfo(const VkImageCreateInfo& imageInfo, VkMemoryPro
         throw std::runtime_error("failed to bind image memory");
 }
 
-
 void Device::createInstance()
 {
     if(ENABLE_VALIDATION_LAYERS && !checkValidationLayerSupport())

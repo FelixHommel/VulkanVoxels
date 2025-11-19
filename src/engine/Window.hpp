@@ -32,6 +32,10 @@ public:
     [[nodiscard]] bool wasWindowResized() const noexcept { return m_wasResized; }
     void resetWindowResizeFlag() { m_wasResized = false; }
 
+    /// \brief Create the surface that is needed for vulkan rendering
+    ///
+    /// \param instance the VkInstance that is used
+    /// \param surface where to store the surface
     void createWindowSurface(VkInstance instance, VkSurfaceKHR* surface);
 
 private:
