@@ -41,7 +41,7 @@ private:
     std::vector<Object> m_objects;
 
     void loadObjects();
-    std::unique_ptr<Model> loadCubeModel(Device& device, const glm::vec3& offset);
+    static std::unique_ptr<Model> loadCubeModel(Device& device, const glm::vec3& offset);
 };
 
 } // !vv

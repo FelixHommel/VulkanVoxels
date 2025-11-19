@@ -59,7 +59,7 @@ void Application::loadObjects()
 /// \brief Create a Cube Model
 ///
 /// \param device \ref Device used to allocate memory for the model
-/// \param offset a offset applied to the model on a per-vertex basis
+/// \param offset an offset applied to the model on a per-vertex basis
 std::unique_ptr<Model> Application::loadCubeModel(Device& device, const glm::vec3& offset)
 {
     std::vector<Model::Vertex> vertices{
@@ -112,8 +112,8 @@ std::unique_ptr<Model> Application::loadCubeModel(Device& device, const glm::vec
         {{.5f, .5f, -0.5f}, {.1f, .8f, .1f}}
     };
 
-    for(auto& v : vertices)
-        v.position += offset;
+    for(auto& [position, color] : vertices)
+        position += offset;
 
     return std::make_unique<Model>(device, vertices);
 }
