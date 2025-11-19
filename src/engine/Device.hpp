@@ -49,7 +49,7 @@ public:
     false;
 #endif
 
-    Device(Window& window);
+    explicit Device(Window& window);
     ~Device();
 
     Device(const Device&) = delete;
@@ -57,27 +57,27 @@ public:
     Device& operator=(const Device&) = delete;
     Device& operator=(Device&&) = delete;
 
-    VkCommandPool commandPool() { return m_commandPool; }
-    VkDevice device() { return m_device; }
-    VkSurfaceKHR surface() { return m_surface; }
-    VkQueue graphicsQueue() { return m_graphicsQueue; }
-    VkQueue presentQueue() { return m_presentQueue; }
+    [[nodiscard]] VkCommandPool commandPool() const noexcept { return m_commandPool; }
+    [[nodiscard]] VkDevice device() const noexcept { return m_device; }
+    [[nodiscard]] VkSurfaceKHR surface() const noexcept { return m_surface; }
+    [[nodiscard]] VkQueue graphicsQueue() const noexcept { return m_graphicsQueue; }
+    [[nodiscard]] VkQueue presentQueue() const noexcept { return m_presentQueue; }
 
     /// \brief Query the physical device for its swapchain support
     ///
     /// \return \ref SwapchainSupportDetails the details of the supported swapchain features
-    SwapchainSupportDetails getSwapchainSupport() { return querySwapchainSupport(m_physicalDevice); }
+    [[nodiscard]] SwapchainSupportDetails getSwapchainSupport() const { return querySwapchainSupport(m_physicalDevice); }
     /// \brief Find a suitable memory type from the physical device
     ///
     /// \param typeFilter filter out specific unwanted types
     /// \param properties properties the memory needs to fulfill
     ///
     /// \return std::uint32_t 
-    std::uint32_t findMemoryType(std::uint32_t typeFilter, VkMemoryPropertyFlags properties);
-    /// \brief Find apropriate queues on the physical device
+    [[nodiscard]] std::uint32_t findMemoryType(std::uint32_t typeFilter, VkMemoryPropertyFlags properties) const;
+    /// \brief Find appropriate queues on the physical device
     ///
     /// \return \ref QueueFamilyIndices the chosen queues
-    QueueFamilyIndices findPhysicalQueueFamilies() { return findQueueFamilies(m_physicalDevice); }
+    [[nodiscard]] QueueFamilyIndices findPhysicalQueueFamilies() const { return findQueueFamilies(m_physicalDevice); }
     /// \brief Determine the best fitting format from a selection
     ///
     /// \param candidates proposed candidates that are available to be the format
@@ -85,7 +85,7 @@ public:
     /// \param features which features the format needs to support
     ///
     /// \return \ref VkFormat the chosen format
-    VkFormat findSupportedFormat(const std::vector<VkFormat>& candidates, VkImageTiling tiling, VkFormatFeatureFlags features);
+    [[nodiscard]] VkFormat findSupportedFormat(const std::vector<VkFormat>& candidates, VkImageTiling tiling, VkFormatFeatureFlags features) const;
 
     /// \brief Create a new Buffer
     ///
@@ -96,21 +96,21 @@ public:
     /// \param properties memory properties for the buffer memory
     /// \param buffer where to store the handle to the new buffer
     /// \param bufferMemory handle to the memory region
-    void createBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, VkBuffer& buffer, VkDeviceMemory& bufferMemory);
+    void createBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, VkBuffer& buffer, VkDeviceMemory& bufferMemory) const;
     /// \brief Start recording a command
     ///
     /// \return \ref VkCommandBuffer handle to the command buffer that is being recorded to
-    VkCommandBuffer beginSingleTimeCommand();
+    [[nodiscard]] VkCommandBuffer beginSingleTimeCommand() const;
     /// \brief End recording a command
     ///
-    /// \param \ref VkCommandBuffer which command buffer should stop recording
-    void endSingleTimeCommand(VkCommandBuffer commandBuffer);
+    /// \param commandBuffer \ref VkCommandBuffer which command buffer should stop recording
+    void endSingleTimeCommand(VkCommandBuffer commandBuffer) const;
     /// \brief Copy data from one buffer to another
     ///
-    /// \param src buffer to copy from
-    /// \param dst buffer to copy to
+    /// \param srcBuffer buffer to copy from
+    /// \param dstBuffer buffer to copy to
     /// \param size how big the copied data is
-    void copyBuffer(VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize size);
+    void copyBuffer(VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize size) const;
     /// \brief Copy buffer data to an image
     ///
     /// \param buffer the buffer to copy from
@@ -118,7 +118,7 @@ public:
     /// \param width the width of the image
     /// \param height the height of the image
     /// \param layerCount how many layers the image has
-    void copyBufferToImage(VkBuffer buffer, VkImage image, std::uint32_t width, std::uint32_t height, std::uint32_t layerCount);
+    void copyBufferToImage(VkBuffer buffer, VkImage image, std::uint32_t width, std::uint32_t height, std::uint32_t layerCount) const;
 
     /// \brief Create a new Image
     ///
@@ -126,9 +126,9 @@ public:
     ///
     /// \param imageInfo \ref VkImageCreateInfo struct with the required information filled out
     /// \param properties properties the memory of the image needs to fulfill
-    /// \param image where to store the iamge handle to
+    /// \param image where to store the image handle to
     /// \param imageMemory where to store the image memory handle to
-    void createImageWithInfo(const VkImageCreateInfo& imageInfo, VkMemoryPropertyFlags properties, VkImage& image, VkDeviceMemory& imageMemory);
+    void createImageWithInfo(const VkImageCreateInfo& imageInfo, VkMemoryPropertyFlags properties, VkImage& image, VkDeviceMemory& imageMemory) const;
 
     VkPhysicalDeviceProperties properties{}; // NOLINT
 
@@ -154,14 +154,14 @@ private:
     void createLogicalDevice();
     void createCommandPool();
 
-    bool isDeviceSuitable(VkPhysicalDevice phDevice);
+    bool isDeviceSuitable(VkPhysicalDevice phDevice) const;
     static std::vector<const char*> getRequiredExtensions();
-    bool checkValidationLayerSupport();
-    QueueFamilyIndices findQueueFamilies(VkPhysicalDevice phDevice);
+    [[nodiscard]] bool checkValidationLayerSupport() const noexcept;
+    QueueFamilyIndices findQueueFamilies(VkPhysicalDevice phDevice) const;
     static void populateDebugMessengerCreateInfo(VkDebugUtilsMessengerCreateInfoEXT& createInfo);
     static void hasGlfwRequiredInstanceExtensions();
-    bool checkDeviceExtensionSupport(VkPhysicalDevice phDevice);
-    SwapchainSupportDetails querySwapchainSupport(VkPhysicalDevice phDevice);
+    bool checkDeviceExtensionSupport(VkPhysicalDevice phDevice) const;
+    [[nodiscard]] SwapchainSupportDetails querySwapchainSupport(VkPhysicalDevice phDevice) const;
 };
 
 } //!vv

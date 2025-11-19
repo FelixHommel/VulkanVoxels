@@ -94,9 +94,7 @@ Device::~Device()
     vkDestroyInstance(m_instance, nullptr);
 }
 
-std::uint32_t Device::findMemoryType(
-    const std::uint32_t typeFilter,
-    const VkMemoryPropertyFlags properties)
+std::uint32_t Device::findMemoryType(const std::uint32_t typeFilter, const VkMemoryPropertyFlags properties) const
 {
     VkPhysicalDeviceMemoryProperties memProperties{};
     vkGetPhysicalDeviceMemoryProperties(m_physicalDevice, &memProperties);
@@ -110,9 +108,7 @@ std::uint32_t Device::findMemoryType(
     throw std::runtime_error("failed to find a suitable memoty type");
 }
 
-VkFormat Device::findSupportedFormat(const std::vector<VkFormat>& candidates,
-    const VkImageTiling tiling,
-    const VkFormatFeatureFlags features)
+VkFormat Device::findSupportedFormat(const std::vector<VkFormat>& candidates, const VkImageTiling tiling, const VkFormatFeatureFlags features) const
 {
     for(const auto format : candidates)
     {
@@ -132,7 +128,7 @@ VkFormat Device::findSupportedFormat(const std::vector<VkFormat>& candidates,
 void Device::createBuffer(
     const VkDeviceSize size,
     const VkBufferUsageFlags usage,
-    const VkMemoryPropertyFlags properties, VkBuffer& buffer, VkDeviceMemory& bufferMemory)
+    const VkMemoryPropertyFlags properties, VkBuffer& buffer, VkDeviceMemory& bufferMemory) const
 {
     VkBufferCreateInfo createInfo{};
     createInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
@@ -157,7 +153,7 @@ void Device::createBuffer(
     vkBindBufferMemory(m_device, buffer, bufferMemory, 0);
 }
 
-VkCommandBuffer Device::beginSingleTimeCommand()
+VkCommandBuffer Device::beginSingleTimeCommand() const
 {
     VkCommandBufferAllocateInfo allocInfo{};
     allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
@@ -177,7 +173,7 @@ VkCommandBuffer Device::beginSingleTimeCommand()
     return commandBuffer;
 }
 
-void Device::endSingleTimeCommand(const VkCommandBuffer commandBuffer)
+void Device::endSingleTimeCommand(const VkCommandBuffer commandBuffer) const
 {
     vkEndCommandBuffer(commandBuffer);
 
@@ -195,7 +191,7 @@ void Device::endSingleTimeCommand(const VkCommandBuffer commandBuffer)
 void Device::copyBuffer(
     const VkBuffer srcBuffer,
     const VkBuffer dstBuffer,
-    const VkDeviceSize size)
+    const VkDeviceSize size) const
 {
     const VkCommandBuffer commandBuffer{beginSingleTimeCommand()};
 
@@ -215,7 +211,7 @@ void Device::copyBufferToImage(
     const VkImage image,
     const std::uint32_t width,
     const std::uint32_t height,
-    const std::uint32_t layerCount)
+    const std::uint32_t layerCount) const
 {
     const VkCommandBuffer commandBuffer{ beginSingleTimeCommand() };
 
@@ -238,7 +234,7 @@ void Device::copyBufferToImage(
 }
 
 void Device::createImageWithInfo(const VkImageCreateInfo& imageInfo,
-    const VkMemoryPropertyFlags properties, VkImage& image, VkDeviceMemory& imageMemory)
+    const VkMemoryPropertyFlags properties, VkImage& image, VkDeviceMemory& imageMemory) const
 {
     if(vkCreateImage(m_device, &imageInfo, nullptr, &image) != VK_SUCCESS)
         throw std::runtime_error("failed to create image");
@@ -356,7 +352,7 @@ void Device::createLogicalDevice()
     std::vector<VkDeviceQueueCreateInfo> queueCreateInfos;
     const std::set<std::uint32_t> uniqueQueueFamilies{ indices.graphicsFamily.value(), indices.presentFamily.value() };
 
-    const float queuePriority{ 1.f };
+    constexpr float queuePriority{ 1.f };
     for(std::uint32_t queueFamily : uniqueQueueFamilies)
     {
         VkDeviceQueueCreateInfo queueCreateInfo{};
@@ -410,7 +406,7 @@ void Device::createCommandPool()
         throw std::runtime_error("failed to create command pool");
 }
 
-bool Device::isDeviceSuitable(VkPhysicalDevice phDevice)
+bool Device::isDeviceSuitable(VkPhysicalDevice phDevice) const
 {
     QueueFamilyIndices indices{ findQueueFamilies(phDevice) };
 
@@ -450,7 +446,7 @@ std::vector<const char*> Device::getRequiredExtensions()
     return extensions;
 }
 
-bool Device::checkValidationLayerSupport()
+bool Device::checkValidationLayerSupport() const
 {
     std::uint32_t layerCount{};
     vkEnumerateInstanceLayerProperties(&layerCount, nullptr);
@@ -478,7 +474,8 @@ bool Device::checkValidationLayerSupport()
     return true;
 }
 
-QueueFamilyIndices Device::findQueueFamilies(const VkPhysicalDevice phDevice)
+QueueFamilyIndices Device::findQueueFamilies(const VkPhysicalDevice phDevice
+) const
 {
     QueueFamilyIndices indices{};
 
@@ -547,7 +544,7 @@ void Device::hasGlfwRequiredInstanceExtensions()
     }
 }
 
-bool Device::checkDeviceExtensionSupport(const VkPhysicalDevice phDevice)
+bool Device::checkDeviceExtensionSupport(const VkPhysicalDevice phDevice) const
 {
     std::uint32_t extensionCount{};
     vkEnumerateDeviceExtensionProperties(phDevice, nullptr, &extensionCount, nullptr);
@@ -561,8 +558,7 @@ bool Device::checkDeviceExtensionSupport(const VkPhysicalDevice phDevice)
     return requiredExtensions.empty();
 }
 
-SwapchainSupportDetails Device::querySwapchainSupport(
-    const VkPhysicalDevice phDevice)
+SwapchainSupportDetails Device::querySwapchainSupport(const VkPhysicalDevice phDevice) const
 {
     SwapchainSupportDetails details{};
     vkGetPhysicalDeviceSurfaceCapabilitiesKHR(phDevice, m_surface, &details.capabilities);
