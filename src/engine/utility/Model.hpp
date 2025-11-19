@@ -38,11 +38,21 @@ public:
         static std::vector<VkVertexInputAttributeDescription> getAttributeDescriptions();
     };
 
+    /// \brief Helper struct that stores the vertices and potential indices of a mesh
+    ///
+    /// \author Felix Hommel
+    /// \date 11/19/2025
+    struct Builder
+    {
+        std::vector<Vertex> vertices;
+        std::vector<std::uint32_t> indices;
+    };
+
     /// \brief Create a new \ref Model
     ///
     /// \param device \ref Device that is used to allocate the vertex buffer memory
     /// \param vertices vector containing the vertices that make up the Model Mesh
-    Model(Device& device, const std::vector<Vertex>& vertices);
+    Model(Device& device, const Builder& builder);
     ~Model();
 
     Model(const Model&) = delete;
@@ -61,9 +71,18 @@ public:
 
 private:
     Device& device;
+
     VkBuffer m_vertexBuffer{ VK_NULL_HANDLE };
     VkDeviceMemory m_vertexBufferMemory{ VK_NULL_HANDLE };
     std::uint32_t m_vertexCount;
+
+    bool m_hasIndexBuffer{ false };
+    VkBuffer m_indexBuffer{ VK_NULL_HANDLE };
+    VkDeviceMemory m_indexBufferMemory{ VK_NULL_HANDLE };
+    std::uint32_t m_indexCount;
+
+    void createVertexBuffer(const std::vector<Vertex>& vertices);
+    void createIndexBuffer(const std::vector<std::uint32_t>& indices);
 };
 
 } // !vv
