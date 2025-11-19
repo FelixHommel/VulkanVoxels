@@ -47,7 +47,7 @@ public:
     [[nodiscard]] float extentAspectRatio() const noexcept { return static_cast<float>(m_swapchainImageExtent.width) / static_cast<float>(m_swapchainImageExtent.height); }
 
     /** Presentation utility */
-    [[nodiscard]] VkResult acquireNextImage(std::uint32_t* imageIndex);
+    [[nodiscard]] VkResult acquireNextImage(std::uint32_t* imageIndex) const;
     [[nodiscard]] VkResult submitCommandBuffer(const VkCommandBuffer* commandBuffer, const std::uint32_t* imageIndex);
 
     /** Raw handle access */

@@ -79,7 +79,7 @@ Swapchain::~Swapchain()
     }
 }
 
-VkResult Swapchain::acquireNextImage(std::uint32_t* imageIndex)
+VkResult Swapchain::acquireNextImage(std::uint32_t* imageIndex) const
 {
     vkWaitForFences(device.device(), 1, &m_inFlightFences[m_currentFrame], VK_TRUE, std::numeric_limits<std::uint64_t>::max());
 
@@ -96,7 +96,7 @@ VkResult Swapchain::submitCommandBuffer(const VkCommandBuffer* commandBuffer, co
     const std::array<VkSemaphore, 1> waitSemaphores{
         m_imageAvailableSemaphores[m_currentFrame]
     };
-    const std::array<VkPipelineStageFlags, 1> waitStages{
+    constexpr std::array<VkPipelineStageFlags, 1> waitStages{
         VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT
     };
     const std::array<VkSemaphore, 1> signalSemaphore{ m_renderFinishedSemaphores[*imageIndex] };
@@ -158,15 +158,9 @@ bool Swapchain::compareSwapFormats(const Swapchain& swapchain) const noexcept
 */
 void Swapchain::createSwapchain()
 {
-    const SwapchainSupportDetails swapchainSupport{device.getSwapchainSupport()
-    };
-
-    const VkSurfaceFormatKHR surfaceFormat{
-        chooseSwapSurfaceFormat(swapchainSupport.formats)
-    };
-    const VkPresentModeKHR presentMode{
-        chooseSwapPresentMode(swapchainSupport.presentModes)
-    };
+    const SwapchainSupportDetails swapchainSupport{device.getSwapchainSupport() };
+    const VkSurfaceFormatKHR surfaceFormat{ chooseSwapSurfaceFormat(swapchainSupport.formats) };
+    const VkPresentModeKHR presentMode{ chooseSwapPresentMode(swapchainSupport.presentModes) };
     const VkExtent2D extent{ chooseSwapExtent(swapchainSupport.capabilities) };
 
     std::uint32_t imageCount{ swapchainSupport.capabilities.minImageCount + 1 };
