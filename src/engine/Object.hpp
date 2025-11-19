@@ -78,31 +78,22 @@ class Object
 public:
     using id_t = std::uint16_t;
 
-    /// \brief Automatic id increasing creation of new Objects
-    ///
-    /// increases the internal id counter and then calls the Constructor the create
-    /// a new \ref Object
-    static Object createObject()
-    {
-        static id_t currentId{ 0 };
-        return Object{ currentId++ };
-    }
+    Object() : m_id{ s_nextId++ } {}
 
     Object(const Object&) = delete;
     Object& operator=(const Object&) = delete;
     Object(Object&&) = default;
     Object& operator=(Object&&) = default;
 
-    id_t getId() { return m_id; }
+    [[nodiscard]] id_t getId() const noexcept { return m_id; }
 
     std::shared_ptr<Model> model{};
     glm::vec3 color{};
     TransformComponent transform{};
 
 private:
-    Object(const id_t objId) : m_id{ objId } {}
-
     id_t m_id;
+    inline static id_t s_nextId{ 0 }; // NOTE: This means that currently there can be a max of 65535 Objects
 };
 
 } // !vv

@@ -49,7 +49,7 @@ void Application::run()
 void Application::loadObjects()
 {
     const std::shared_ptr<Model> model{ loadCubeModel(m_device, {0.f, 0.f, 0.f}) };
-    auto cube{ Object::createObject() };
+    Object cube{};
     cube.model = model;
     cube.transform.translation = { 0.f, 0.f, 2.5f };
     cube.transform.scale = { 0.5f, 0.5f, 0.5f };
