@@ -4,22 +4,20 @@
 #define GLFW_INCLUDE_VULKAN
 #include "GLFW/glfw3.h"
 
-#include <vulkan/vulkan_core.h>
-
 #include <cstdint>
 #include <string>
 
 namespace vv
 {
 
-/// \brief The Window class is a wrapper around the GLFW windoing utility
+/// \brief The Window class is a wrapper around the GLFW windowing utility
 ///
 /// \author Felix Hommel
 /// \date 11/9/2025
 class Window
 {
 public:
-    Window(std::uint32_t width, std::uint32_t height, const std::string& title);
+    Window(std::uint32_t width, std::uint32_t height, std::string title);
     ~Window();
 
     Window(const Window&) = delete;
@@ -36,7 +34,7 @@ public:
     ///
     /// \param instance the VkInstance that is used
     /// \param surface where to store the surface
-    void createWindowSurface(VkInstance instance, VkSurfaceKHR* surface);
+    void createWindowSurface(VkInstance instance, VkSurfaceKHR* surface) const;
 
 private:
     std::uint32_t m_width;

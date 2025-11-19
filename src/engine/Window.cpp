@@ -13,10 +13,10 @@ namespace vv
 
 Window::Window(
     const std::uint32_t width,
-    const std::uint32_t height, const std::string& title)
+    const std::uint32_t height, std::string title)
     : m_width{ width }
     , m_height{ height }
-    , m_title{ title }
+    , m_title{ std::move(title) }
 {
     if(glfwInit() != GLFW_TRUE)
         spdlog::log(spdlog::level::err, "Failed to create the window");
@@ -37,7 +37,7 @@ Window::~Window()
 }
 
 void Window::createWindowSurface(
-    const VkInstance instance, VkSurfaceKHR* surface)
+    const VkInstance instance, VkSurfaceKHR* surface) const
 {
     if(glfwCreateWindowSurface(instance, m_window, nullptr, surface) != 0)
         throw std::runtime_error("Failed to create window surface");
@@ -48,11 +48,9 @@ void Window::createWindowSurface(
 /// \param window pointer to a GLFW window
 /// \param width the new width of the window
 /// \param height the new height of the window
-void Window::framebufferResizeCallback(GLFWwindow* window,
-    const int width,
-    const int height)
+void Window::framebufferResizeCallback(GLFWwindow* window, const int width, const int height)
 {
-    auto* pWindow{ reinterpret_cast<Window*>(glfwGetWindowUserPointer(window)) };
+    auto* pWindow{ static_cast<Window*>(glfwGetWindowUserPointer(window)) };
 
     pWindow->m_wasResized = true;
     pWindow->m_width = static_cast<std::uint32_t>(width);
