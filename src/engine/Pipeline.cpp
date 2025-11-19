@@ -80,7 +80,7 @@ Pipeline::~Pipeline()
     vkDestroyPipeline(device.device(), m_graphicsPipeline, nullptr);
 }
 
-void Pipeline::bind(VkCommandBuffer commandBuffer)
+void Pipeline::bind(const VkCommandBuffer commandBuffer)
 {
     vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, m_graphicsPipeline);
 }

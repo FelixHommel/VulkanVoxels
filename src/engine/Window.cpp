@@ -11,7 +11,9 @@
 namespace vv
 {
 
-Window::Window(std::uint32_t width, std::uint32_t height, const std::string& title)
+Window::Window(
+    const std::uint32_t width,
+    const std::uint32_t height, const std::string& title)
     : m_width{ width }
     , m_height{ height }
     , m_title{ title }
@@ -34,7 +36,8 @@ Window::~Window()
     glfwTerminate();
 }
 
-void Window::createWindowSurface(VkInstance instance, VkSurfaceKHR* surface)
+void Window::createWindowSurface(
+    const VkInstance instance, VkSurfaceKHR* surface)
 {
     if(glfwCreateWindowSurface(instance, m_window, nullptr, surface) != 0)
         throw std::runtime_error("Failed to create window surface");
@@ -45,7 +48,9 @@ void Window::createWindowSurface(VkInstance instance, VkSurfaceKHR* surface)
 /// \param window pointer to a GLFW window
 /// \param width the new width of the window
 /// \param height the new height of the window
-void Window::framebufferResizeCallback(GLFWwindow* window, int width, int height)
+void Window::framebufferResizeCallback(GLFWwindow* window,
+    const int width,
+    const int height)
 {
     auto* pWindow{ reinterpret_cast<Window*>(glfwGetWindowUserPointer(window)) };
 

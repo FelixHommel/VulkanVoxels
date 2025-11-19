@@ -61,14 +61,14 @@ Model::~Model()
     vkFreeMemory(device.device(), m_vertexBufferMemory, nullptr);
 }
 
-void Model::bind(VkCommandBuffer commandBuffer)
+void Model::bind(const VkCommandBuffer commandBuffer)
 {
     const std::array<VkBuffer, 1> buffers{m_vertexBuffer};
     const std::array<VkDeviceSize, 1> offsets{ 0 };
     vkCmdBindVertexBuffers(commandBuffer, 0, 1, buffers.data(), offsets.data());
 }
 
-void Model::draw(VkCommandBuffer commandBuffer) const
+void Model::draw(const VkCommandBuffer commandBuffer) const
 {
     vkCmdDraw(commandBuffer, m_vertexCount, 1, 0, 0);
 }

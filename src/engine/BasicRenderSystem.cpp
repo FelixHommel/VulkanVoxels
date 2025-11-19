@@ -18,7 +18,7 @@
 namespace vv
 {
 
-BasicRenderSystem::BasicRenderSystem(Device& device, VkRenderPass renderPass)
+BasicRenderSystem::BasicRenderSystem(Device& device, const VkRenderPass renderPass)
     : device(device)
 {
     createPipelineLayout();
@@ -30,7 +30,7 @@ BasicRenderSystem::~BasicRenderSystem()
     vkDestroyPipelineLayout(device.device(), m_pipelineLayout, nullptr);
 }
 
-void BasicRenderSystem::renderObjects(VkCommandBuffer commandBuffer, std::vector<Object>& objects, const Camera& camera) const
+void BasicRenderSystem::renderObjects(const VkCommandBuffer commandBuffer, std::vector<Object>& objects, const Camera& camera) const
 {
     m_pipeline->bind(commandBuffer);
 
@@ -78,7 +78,7 @@ void BasicRenderSystem::createPipelineLayout()
 }
 
 /// \brief Create a Pipeline for Rendering
-void BasicRenderSystem::createPipeline(VkRenderPass renderPass)
+void BasicRenderSystem::createPipeline(const VkRenderPass renderPass)
 {
 #if defined(VV_ENABLE_ASSERTS)
     assert(m_pipelineLayout != VK_NULL_HANDLE && "Cannot create pipeline without pipeline layout");

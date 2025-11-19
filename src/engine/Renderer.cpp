@@ -95,7 +95,7 @@ void Renderer::endFrame()
     m_currentFrameIndex = (m_currentFrameIndex + 1) % Swapchain::MAX_FRAMES_IN_FLIGHT;
 }
 
-void Renderer::beginRenderPass(VkCommandBuffer commandBuffer)
+void Renderer::beginRenderPass(const VkCommandBuffer commandBuffer)
 {
 #if defined(VV_ENABLE_ASSERTS)
     assert(m_isFrameStarted && "Cannot call beginRenderPass() while there is no frame in progress");
@@ -142,7 +142,7 @@ void Renderer::beginRenderPass(VkCommandBuffer commandBuffer)
     vkCmdSetScissor(commandBuffer, 0, 1, &scissor);
 }
 
-void Renderer::endRenderPass(VkCommandBuffer commandBuffer)
+void Renderer::endRenderPass(const VkCommandBuffer commandBuffer)
 {
 #if defined(VV_ENABLE_ASSERTS)
     assert(m_isFrameStarted && "Cannot call endRenderPass() while there is no frame in progress");

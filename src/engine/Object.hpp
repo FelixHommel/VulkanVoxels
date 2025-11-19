@@ -100,7 +100,7 @@ public:
     TransformComponent transform{};
 
 private:
-    Object(id_t objId) : m_id{ objId } {}
+    Object(const id_t objId) : m_id{ objId } {}
 
     id_t m_id;
 };

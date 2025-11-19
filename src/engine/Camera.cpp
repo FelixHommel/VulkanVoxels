@@ -7,7 +7,13 @@
 namespace vv
 {
 
-void Camera::setOrthographicProjection(float left, float right, float top, float bottom, float near, float far)
+void Camera::setOrthographicProjection(
+    const float left,
+    const float right,
+    const float top,
+    const float bottom,
+    const float near,
+    const float far)
 {
     m_projectionMatrix = glm::mat4{1.0f};
     m_projectionMatrix[0][0] = 2.f / (right - left);
@@ -18,7 +24,11 @@ void Camera::setOrthographicProjection(float left, float right, float top, float
     m_projectionMatrix[3][2] = -near / (far - near);
 }
 
-void Camera::setPerspectiveProjection(float fovy, float aspectRatio, float near, float far)
+void Camera::setPerspectiveProjection(
+    const float fovy,
+    const float aspectRatio,
+    const float near,
+    const float far)
 {
 #if defined(VV_ENABLE_ASSERTS)
     assert(glm::abs(aspectRatio - std::numeric_limits<float>::epsilon()) > 0.0f);

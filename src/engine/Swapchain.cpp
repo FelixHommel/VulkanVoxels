@@ -16,7 +16,7 @@
 namespace vv
 {
 
-Swapchain::Swapchain(Device& device, VkExtent2D windowExtent)
+Swapchain::Swapchain(Device& device, const VkExtent2D windowExtent)
     : device(device)
     , windowExtent(windowExtent)
 {
@@ -28,7 +28,8 @@ Swapchain::Swapchain(Device& device, VkExtent2D windowExtent)
     createSyncObjects();
 }
 
-Swapchain::Swapchain(Device& device, VkExtent2D windowExtent, std::shared_ptr<Swapchain> previous)
+Swapchain::Swapchain(Device& device,
+    const VkExtent2D windowExtent, std::shared_ptr<Swapchain> previous)
     : device(device)
     , windowExtent(windowExtent)
     , m_oldSwapchain(previous)
@@ -136,7 +137,7 @@ VkResult Swapchain::submitCommandBuffer(const VkCommandBuffer* commandBuffer, co
     return result;
 }
 
-VkFramebuffer Swapchain::getFramebuffer(std::size_t index) const
+VkFramebuffer Swapchain::getFramebuffer(const std::size_t index) const
 {
     if (index >= m_swapchainFramebuffers.size())
         throw std::out_of_range(
