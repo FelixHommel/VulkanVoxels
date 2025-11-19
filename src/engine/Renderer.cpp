@@ -32,7 +32,7 @@ VkCommandBuffer Renderer::getCurrentCommandBuffer() const
     assert(m_isFrameStarted && "Cannot get command buffer when no frame is in progress");
 #endif
 
-    return m_commandBufers[m_currentFrameIndex];
+    return m_commandBuffers[m_currentFrameIndex];
 }
 
 std::size_t Renderer::getFrameIndex() const
@@ -95,7 +95,7 @@ void Renderer::endFrame()
     m_currentFrameIndex = (m_currentFrameIndex + 1) % Swapchain::MAX_FRAMES_IN_FLIGHT;
 }
 
-void Renderer::beginRenderPass(const VkCommandBuffer commandBuffer)
+void Renderer::beginRenderPass(const VkCommandBuffer commandBuffer) const
 {
 #if defined(VV_ENABLE_ASSERTS)
     assert(m_isFrameStarted && "Cannot call beginRenderPass() while there is no frame in progress");
@@ -142,7 +142,7 @@ void Renderer::beginRenderPass(const VkCommandBuffer commandBuffer)
     vkCmdSetScissor(commandBuffer, 0, 1, &scissor);
 }
 
-void Renderer::endRenderPass(const VkCommandBuffer commandBuffer)
+void Renderer::endRenderPass(const VkCommandBuffer commandBuffer) const
 {
 #if defined(VV_ENABLE_ASSERTS)
     assert(m_isFrameStarted && "Cannot call endRenderPass() while there is no frame in progress");
@@ -155,23 +155,23 @@ void Renderer::endRenderPass(const VkCommandBuffer commandBuffer)
 /// \brief Create as many command buffers as the amount of images that can be parallely in flight (supported by the swapchain)
 void Renderer::createCommandBuffers()
 {
-    m_commandBufers.resize(Swapchain::MAX_FRAMES_IN_FLIGHT);
+    m_commandBuffers.resize(Swapchain::MAX_FRAMES_IN_FLIGHT);
 
     VkCommandBufferAllocateInfo allocInfo{};
     allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
     allocInfo.commandPool = device.commandPool();
     allocInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
-    allocInfo.commandBufferCount = static_cast<std::uint32_t>(m_commandBufers.size());
+    allocInfo.commandBufferCount = static_cast<std::uint32_t>(m_commandBuffers.size());
     
-    if(vkAllocateCommandBuffers(device.device(), &allocInfo, m_commandBufers.data()) != VK_SUCCESS)
+    if(vkAllocateCommandBuffers(device.device(), &allocInfo, m_commandBuffers.data()) != VK_SUCCESS)
         throw std::runtime_error("failed to allocate command buffers");
 }
 
 /// \brief Free the allocated command buffers
 void Renderer::freeCommandBuffers()
 {
-    vkFreeCommandBuffers(device.device(), device.commandPool(), static_cast<std::uint32_t>(m_commandBufers.size()), m_commandBufers.data());
-    m_commandBufers.clear();
+    vkFreeCommandBuffers(device.device(), device.commandPool(), static_cast<std::uint32_t>(m_commandBuffers.size()), m_commandBuffers.data());
+    m_commandBuffers.clear();
 }
 
 /// \brief Recreate the swapchain
@@ -195,7 +195,7 @@ void Renderer::recreateSwapchain()
         std::shared_ptr<Swapchain> oldSwapchain{ std::move(m_swapchain) };
         m_swapchain = std::make_unique<Swapchain>(device, extent, oldSwapchain);
 
-        if(!oldSwapchain->compareSwapFormats(*m_swapchain.get()))
+        if(!oldSwapchain->compareSwapFormats(*m_swapchain))
             throw std::runtime_error("swapchain image or depth format has changed");
     }
 }

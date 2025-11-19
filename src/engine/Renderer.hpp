@@ -55,11 +55,11 @@ public:
     /// Start a new Render pass and then configure the viewport and scissor
     ///
     /// \param commandBuffer currently used VkCommandBuffer
-    void beginRenderPass(VkCommandBuffer commandBuffer);
+    void beginRenderPass(VkCommandBuffer commandBuffer) const;
     /// \brief End the current render pass
     ///
     /// \param commandBuffer currently used VkCommandBuffer
-    void endRenderPass(VkCommandBuffer commandBuffer);
+    void endRenderPass(VkCommandBuffer commandBuffer) const;
 
 private:
     static constexpr VkClearColorValue CLEAR_COLOR{ {0.1f, 0.1f, 0.1f, 1.f} };
@@ -67,9 +67,9 @@ private:
     Window& window;
     Device& device;
     std::unique_ptr<Swapchain> m_swapchain;
-    std::vector<VkCommandBuffer> m_commandBufers;
+    std::vector<VkCommandBuffer> m_commandBuffers;
 
-    std::uint32_t m_currentImageIndex;
+    std::uint32_t m_currentImageIndex{};
     std::size_t m_currentFrameIndex{ 0 };
     bool m_isFrameStarted{ false };
 
