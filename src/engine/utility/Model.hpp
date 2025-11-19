@@ -1,7 +1,7 @@
-#ifndef SRC_ENGINE_MODEL_HPP
-#define SRC_ENGINE_MODEL_HPP
+#ifndef VULKAN_VOXELS_SRC_ENGINE_UTILITY_MODEL_HPP
+#define VULKAN_VOXELS_SRC_ENGINE_UTILITY_MODEL_HPP
 
-#include "Device.hpp"
+#include "core/Device.hpp"
 
 #define GLM_FORCE_RADIANS
 #define GLM_FORCE_DEPTH_ZERO_TO_ONE
@@ -68,4 +68,4 @@ private:
 
 } // !vv
 
-#endif // !SRC_ENGINE_MODEL_HPP
+#endif // !VULKAN_VOXELS_SRC_ENGINE_UTILITY_MODEL_HPP

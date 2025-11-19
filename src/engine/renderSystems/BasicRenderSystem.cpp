@@ -1,19 +1,19 @@
 #include "BasicRenderSystem.hpp"
 
-#include "Camera.hpp"
-#include "Object.hpp"
+#include "utility/Camera.hpp"
+#include "utility/Object.hpp"
 
 #define GLM_FORCE_RADIANS
 #define GLM_FORCE_DEPTH_ZERO_TO_ONE
 #include "glm/glm.hpp"
 #include "glm/gtc/constants.hpp"
 #include "glm/gtc/matrix_transform.hpp"
+#include <vulkan/vulkan_core.h>
 
 #include <cassert>
 #include <memory>
 #include <stdexcept>
 #include <vector>
-#include <vulkan/vulkan_core.h>
 
 namespace vv
 {

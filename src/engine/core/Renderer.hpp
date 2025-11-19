@@ -1,5 +1,5 @@
-#ifndef SRC_ENGINE_RENDERER_HPP
-#define SRC_ENGINE_RENDERER_HPP
+#ifndef VULKAN_VOXELS_SRC_ENGINE_CORE_RENDERER_HPP
+#define VULKAN_VOXELS_SRC_ENGINE_CORE_RENDERER_HPP
 
 #include "Device.hpp"
 #include "Swapchain.hpp"
@@ -80,4 +80,4 @@ private:
 
 } // !vv
 
-#endif // !SRC_ENGINE_RENDERER_HPP
+#endif // !VULKAN_VOXELS_SRC_ENGINE_CORE_RENDERER_HPP

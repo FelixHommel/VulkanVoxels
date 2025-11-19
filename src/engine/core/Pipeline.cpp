@@ -1,6 +1,6 @@
 #include "Pipeline.hpp"
 
-#include "Model.hpp"
+#include "utility/Model.hpp"
 
 #include <vulkan/vulkan_core.h>
 

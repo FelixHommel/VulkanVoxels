@@ -1,9 +1,9 @@
 #include "Model.hpp"
 
-#include <cstddef>
 #include <vulkan/vulkan_core.h>
 
 #include <array>
+#include <cstddef>
 #include <cstring>
 #include <vector>
 

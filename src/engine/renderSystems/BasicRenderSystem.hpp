@@ -1,15 +1,14 @@
-#ifndef SRC_ENGINE_BASIC_RENDER_SYSTEM_HPP
-#define SRC_ENGINE_BASIC_RENDER_SYSTEM_HPP
+#ifndef VULKAN_VOXELS_SRC_ENGINE_RENDER_SYSTEMS_BASIC_RENDER_SYSTEM_HPP
+#define VULKAN_VOXELS_SRC_ENGINE_RENDER_SYSTEMS_BASIC_RENDER_SYSTEM_HPP
 
-#include "Camera.hpp"
-#include "Object.hpp"
-#include "Device.hpp"
-#include "Pipeline.hpp"
+#include "core/Device.hpp"
+#include "core/Pipeline.hpp"
+#include "utility/Camera.hpp"
+#include "utility/Object.hpp"
 
 #define GLM_FORCE_RADIANS
 #define GLM_FORCE_DEPTH_ZERO_TO_ONE
 #include "glm/glm.hpp"
-
 #include <vulkan/vulkan_core.h>
 
 #include <memory>
@@ -73,4 +72,4 @@ private:
 
 } // !vv
 
-#endif // !SRC_ENGINE_BASIC_RENDER_SYSTEM_HPP
+#endif // !VULKAN_VOXELS_SRC_ENGINE_RENDER_SYSTEMS_BASIC_RENDER_SYSTEM_HPP

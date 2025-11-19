@@ -1,8 +1,8 @@
 #include "Application.hpp"
 
-#include "BasicRenderSystem.hpp"
-#include "Camera.hpp"
-#include "Object.hpp"
+#include "renderSystems/BasicRenderSystem.hpp"
+#include "utility/Camera.hpp"
+#include "utility/Object.hpp"
 
 #include "GLFW/glfw3.h"
 #include <vulkan/vulkan_core.h>

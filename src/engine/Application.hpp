@@ -1,10 +1,10 @@
-#ifndef SRC_ENGINE_APPLICATION_HPP
-#define SRC_ENGINE_APPLICATION_HPP
+#ifndef VULKAN_VOXELS_SRC_ENGINE_APPLICATION_HPP
+#define VULKAN_VOXELS_SRC_ENGINE_APPLICATION_HPP
 
-#include "Object.hpp"
-#include "Device.hpp"
-#include "Renderer.hpp"
-#include "Window.hpp"
+#include "core/Device.hpp"
+#include "core/Renderer.hpp"
+#include "core/Window.hpp"
+#include "utility/Object.hpp"
 
 #include <memory>
 
@@ -46,4 +46,4 @@ private:
 
 } // !vv
 
-#endif // !SRC_ENGINE_APPLICATION_HPP
+#endif // !VULKAN_VOXELS_SRC_ENGINE_APPLICATION_HPP
