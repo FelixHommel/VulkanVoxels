@@ -53,7 +53,7 @@ public:
     /// \brief Bind the vertex buffer of the model
     ///
     /// \param commandBuffer the VkCommandBuffer that the vertex buffer is bound to
-    void bind(VkCommandBuffer commandBuffer);
+    void bind(VkCommandBuffer commandBuffer) const;
     /// \brief Draw the vertices in the vertex buffer
     ///
     /// \param commandBuffer the VkCommandBuffer that the vertices are drawn to

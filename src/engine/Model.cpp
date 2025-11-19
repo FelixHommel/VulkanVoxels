@@ -61,10 +61,10 @@ Model::~Model()
     vkFreeMemory(device.device(), m_vertexBufferMemory, nullptr);
 }
 
-void Model::bind(const VkCommandBuffer commandBuffer)
+void Model::bind(const VkCommandBuffer commandBuffer) const
 {
-    const std::array<VkBuffer, 1> buffers{m_vertexBuffer};
-    const std::array<VkDeviceSize, 1> offsets{ 0 };
+    const std::array<VkBuffer, 1> buffers{ m_vertexBuffer };
+    constexpr std::array<VkDeviceSize, 1> offsets{ 0 };
     vkCmdBindVertexBuffers(commandBuffer, 0, 1, buffers.data(), offsets.data());
 }
 
