@@ -32,7 +32,7 @@ public:
     /// \param far far clipping plane
     void setPerspectiveProjection(float fovy, float aspectRatio, float near, float far);
 
-    const glm::mat4& getProjection() const noexcept { return m_projectionMatrix; }
+    [[nodiscard]] const glm::mat4& getProjection() const noexcept { return m_projectionMatrix; }
 
 private:
     glm::mat4 m_projectionMatrix{ 1.f };
