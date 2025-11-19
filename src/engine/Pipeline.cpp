@@ -80,7 +80,7 @@ Pipeline::~Pipeline()
     vkDestroyPipeline(device.device(), m_graphicsPipeline, nullptr);
 }
 
-void Pipeline::bind(const VkCommandBuffer commandBuffer)
+void Pipeline::bind(const VkCommandBuffer commandBuffer) const
 {
     vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, m_graphicsPipeline);
 }
@@ -166,7 +166,7 @@ void Pipeline::defaultPipelineConfigInfo(PipelineConfigInfo& configInfo)
 ///
 /// \param code the compiled shader byte code
 /// \param shaderModule where the shader module is saved
-void Pipeline::createShaderModule(const std::vector<char>& code, VkShaderModule* shaderModule)
+void Pipeline::createShaderModule(const std::vector<char>& code, VkShaderModule* shaderModule) const
 {
     VkShaderModuleCreateInfo createInfo{};
     createInfo.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;

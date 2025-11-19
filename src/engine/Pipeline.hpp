@@ -63,10 +63,10 @@ public:
     /// \brief Bind the Pipeline to a command buffer
     ///
     /// \param commandBuffer the VkCommandBuffer to which the pipeline is being bound
-    void bind(VkCommandBuffer commandBuffer);
+    void bind(VkCommandBuffer commandBuffer) const;
 
 private:
-    void createShaderModule(const std::vector<char>& code, VkShaderModule* shaderModule);
+    void createShaderModule(const std::vector<char>& code, VkShaderModule* shaderModule) const;
 
     static std::vector<char> readFile(const std::filesystem::path& filepath);
 
