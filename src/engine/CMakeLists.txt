@@ -12,6 +12,7 @@ add_library(${NAME}
     ./renderSystems/BasicRenderSystem.cpp
     ./utility/Camera.cpp
     ./utility/Model.cpp
+    ./utility/KeyboardMovementController.cpp
 )
 
 target_sources(${NAME}
@@ -28,6 +29,7 @@ target_sources(${NAME}
             ./utility/Camera.hpp
             ./utility/Model.hpp
             ./utility/Object.hpp
+            ./utility/KeyboardMovementController.hpp
 )
 
 target_include_directories(${NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})

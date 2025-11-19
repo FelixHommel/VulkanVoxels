@@ -25,6 +25,7 @@ public:
     Window& operator=(const Window&) = delete;
     Window& operator=(Window&&) = delete;
 
+    [[nodiscard]] GLFWwindow* getHandle() const noexcept { return m_window; }
     [[nodiscard]] bool shouldClose() const { return glfwWindowShouldClose(m_window) != 0; }
     [[nodiscard]] VkExtent2D getExtent() const noexcept { return { .width = m_width, .height = m_height }; }
     [[nodiscard]] bool wasWindowResized() const noexcept { return m_wasResized; }
