@@ -55,11 +55,12 @@ public:
     [[nodiscard]] VkRenderPass getRenderPass() const noexcept { return m_renderPass; }
     [[nodiscard]] VkFramebuffer getFramebuffer(std::size_t index) const;
 
-    bool compareSwapFormats(const Swapchain& swapchain) const noexcept
-    {
-        return swapchain.m_swapchainImageFormat == m_swapchainImageFormat &&
-            swapchain.m_swapchainDepthFormat == m_swapchainDepthFormat;
-    }
+    /// \brief Check if the swapchain formats match
+    ///
+    /// Compare the image and depth format to check if they are compatible
+    ///
+    /// \param swapchain the swapchain to compare formats with
+    [[nodiscard]] bool compareSwapFormats(const Swapchain& swapchain) const noexcept;
 
 private:
     /** External objects */

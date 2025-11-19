@@ -129,10 +129,18 @@ VkResult Swapchain::submitCommandBuffer(const VkCommandBuffer* commandBuffer, co
 
 VkFramebuffer Swapchain::getFramebuffer(std::size_t index) const
 {
-    if(index >= m_swapchainFramebuffers.size())
-        throw std::out_of_range("The element that was tried to access does not exist");
+    if (index >= m_swapchainFramebuffers.size())
+        throw std::out_of_range(
+            "The element that was tried to access does not exist"
+        );
 
     return m_swapchainFramebuffers[index];
+}
+
+bool Swapchain::compareSwapFormats(const Swapchain& swapchain) const noexcept
+{
+    return swapchain.m_swapchainImageFormat == m_swapchainImageFormat &&
+        swapchain.m_swapchainDepthFormat == m_swapchainDepthFormat;
 }
 
 /**
