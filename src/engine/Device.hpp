@@ -156,7 +156,7 @@ private:
 
     bool isDeviceSuitable(VkPhysicalDevice phDevice) const;
     static std::vector<const char*> getRequiredExtensions();
-    [[nodiscard]] bool checkValidationLayerSupport() const noexcept;
+    [[nodiscard]] bool checkValidationLayerSupport() const;
     QueueFamilyIndices findQueueFamilies(VkPhysicalDevice phDevice) const;
     static void populateDebugMessengerCreateInfo(VkDebugUtilsMessengerCreateInfoEXT& createInfo);
     static void hasGlfwRequiredInstanceExtensions();
