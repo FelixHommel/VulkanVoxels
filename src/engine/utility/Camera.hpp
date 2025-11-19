@@ -31,11 +31,30 @@ public:
     /// \param near near clipping plane
     /// \param far far clipping plane
     void setPerspectiveProjection(float fovy, float aspectRatio, float near, float far);
+    /// \brief Camera is looking in a specific direction
+    ///
+    /// \param position position of the camera
+    /// \param direction direction in which the camera is pointing
+    /// \param up which direction is up
+    void setViewDirection(const glm::vec3& position, const glm::vec3& direction, const glm::vec3& up = glm::vec3{ 0.f, -1.f, 0.f });
+    /// \brief Camera is locked to a spcific point in space
+    ///
+    /// \param position position of the camera
+    /// \param target which position to target
+    /// \param up which direction is up
+    void setViewTarget(const glm::vec3& position, const glm::vec3& target, const glm::vec3& up = glm::vec3{ 0.f, -1.f, 0.f });
+    /// \brief Use euler angles to specify the orientation of the camera
+    ///
+    /// \param position position of the camera
+    /// \param rotation rotation of the camera
+    void setViewXYZ(const glm::vec3& position, const glm::vec3& rotation);
 
     [[nodiscard]] const glm::mat4& getProjection() const noexcept { return m_projectionMatrix; }
+    [[nodiscard]] const glm::mat4& getView() const noexcept { return m_viewMatrix; }
 
 private:
     glm::mat4 m_projectionMatrix{ 1.f };
+    glm::mat4 m_viewMatrix{ 1.f };
 };
 
 } // !vv

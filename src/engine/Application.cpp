@@ -1,5 +1,6 @@
 #include "Application.hpp"
 
+#include "glm/ext/vector_float3.hpp"
 #include "renderSystems/BasicRenderSystem.hpp"
 #include "utility/Camera.hpp"
 #include "utility/Object.hpp"
@@ -22,14 +23,14 @@ void Application::run()
 {
     BasicRenderSystem basicRenderSystem{ m_device, m_renderer.getRenderPass() };
     Camera camera{};
+    camera.setViewTarget(glm::vec3{ -1.f, -2.f, -2.f }, glm::vec3{ 0.f, 0.f, 2.5f });
 
     while(!m_window.shouldClose())
     {
         glfwPollEvents();
 
         const float aspectRatio{ m_renderer.getAspectRatio() };
-        // camera.setOrthographicProjection(-aspectRatio, aspectRatio, -1, 1, 0.1f, 10.f);
-        camera.setPerspectiveProjection(glm::radians(45.f), aspectRatio, 0.1f, 10.f);
+        camera.setPerspectiveProjection(glm::radians(50.f), aspectRatio, 0.1f, 10.f);
 
         if (const auto commandBuffer{ m_renderer.beginFrame() })
         {
