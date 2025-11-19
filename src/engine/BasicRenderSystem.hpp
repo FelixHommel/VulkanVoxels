@@ -54,9 +54,9 @@ public:
     /// \brief Render a list of \ref Object
     ///
     /// \param commandBuffer which VkCommandBuffer is drawn to
-    /// \param objects a vector of \ref Object which are the objcts that are being rendered
+    /// \param objects a vector of \ref Object which are the objects that are being rendered
     /// \param camera the \ref Camera which is in use
-    void renderObjects(VkCommandBuffer commandBuffer, std::vector<Object>& objects, const Camera& camera);
+    void renderObjects(VkCommandBuffer commandBuffer, std::vector<Object>& objects, const Camera& camera) const;
 
 private:
     static constexpr auto VERTEX_SHADER_PATH{ PROJECT_ROOT "resources/compiledShaders/simpleVert.spv" };

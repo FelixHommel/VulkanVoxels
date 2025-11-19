@@ -30,7 +30,7 @@ BasicRenderSystem::~BasicRenderSystem()
     vkDestroyPipelineLayout(device.device(), m_pipelineLayout, nullptr);
 }
 
-void BasicRenderSystem::renderObjects(VkCommandBuffer commandBuffer, std::vector<Object>& objects, const Camera& camera)
+void BasicRenderSystem::renderObjects(VkCommandBuffer commandBuffer, std::vector<Object>& objects, const Camera& camera) const
 {
     m_pipeline->bind(commandBuffer);
 
@@ -60,7 +60,7 @@ void BasicRenderSystem::renderObjects(VkCommandBuffer commandBuffer, std::vector
 /// \brief Create a PipelineLayout that can be used to create a Pipeline
 void BasicRenderSystem::createPipelineLayout()
 {
-    const VkPushConstantRange pushConstantRange{
+    constexpr VkPushConstantRange pushConstantRange{
         .stageFlags = VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT,
         .offset = 0,
         .size = sizeof(SimplePushConstantData)
