@@ -3,11 +3,12 @@
 #include "Model.hpp"
 #include "utility/FileIO.hpp"
 
+#include <vulkan/vulkan_core.h>
+
 #include <array>
 #include <cassert>
 #include <stdexcept>
 #include <vector>
-#include <vulkan/vulkan_core.h>
 
 namespace vv
 {

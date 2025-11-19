@@ -6,9 +6,6 @@
 #include "Renderer.hpp"
 #include "Window.hpp"
 
-#include <vulkan/vulkan_core.h>
-
-#include <cstdint>
 #include <memory>
 
 namespace vv

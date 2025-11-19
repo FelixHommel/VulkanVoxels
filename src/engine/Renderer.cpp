@@ -1,12 +1,14 @@
 #include "Renderer.hpp"
+
 #include "Swapchain.hpp"
+
+#include <vulkan/vulkan_core.h>
 
 #include <array>
 #include <cassert>
 #include <memory>
 #include <stdexcept>
 #include <vector>
-#include <vulkan/vulkan_core.h>
 
 namespace vv
 {
