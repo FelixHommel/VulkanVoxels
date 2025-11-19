@@ -1,12 +1,12 @@
 #include "Pipeline.hpp"
 
 #include "Model.hpp"
-#include "utility/FileIO.hpp"
 
 #include <vulkan/vulkan_core.h>
 
 #include <array>
 #include <cassert>
+#include <fstream>
 #include <stdexcept>
 #include <vector>
 
@@ -24,8 +24,8 @@ Pipeline::Pipeline(Device& device,
     assert(configInfo.renderPass != VK_NULL_HANDLE && "Cannot create graphics pipeline: no render pass provided");
 #endif
 
-    auto vertCode{ File::read(vertexShaderPath) };
-    auto fragCode{ File::read(fragmentShaderPath) };
+    auto vertCode{ readFile(vertexShaderPath) };
+    auto fragCode{ readFile(fragmentShaderPath) };
 
     createShaderModule(vertCode, &m_vertexShaderModule);
     createShaderModule(fragCode, &m_fragmentShaderModule);
@@ -175,6 +175,29 @@ void Pipeline::createShaderModule(const std::vector<char>& code, VkShaderModule*
 
     if(vkCreateShaderModule(device.device(), &createInfo, nullptr, shaderModule) != VK_SUCCESS)
         throw std::runtime_error("failed to create shader");
+}
+
+/// \brief Read the file and return its content
+///
+/// \param filepath std::filesystem::path to the location of the file
+///
+/// \return std::vector of chars containing the file contents
+std::vector<char> Pipeline::readFile(const std::filesystem::path& filepath)
+{
+    std::ifstream fileHandle{};
+    fileHandle.open(filepath, std::ios::ate | std::ios::binary);
+
+    if(!fileHandle.is_open())
+        throw std::runtime_error("Failed to open file: " + filepath.string());
+
+    const auto fileSize{ fileHandle.tellg() };
+    std::vector<char> buffer(static_cast<std::size_t>(fileSize));
+
+    fileHandle.seekg(0);
+    fileHandle.read(buffer.data(), fileSize);
+
+    fileHandle.close();
+    return buffer;
 }
 
 } // !vv

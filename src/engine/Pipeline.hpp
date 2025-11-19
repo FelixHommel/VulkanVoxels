@@ -68,6 +68,8 @@ public:
 private:
     void createShaderModule(const std::vector<char>& code, VkShaderModule* shaderModule);
 
+    static std::vector<char> readFile(const std::filesystem::path& filepath);
+
     Device& device;
     VkPipeline m_graphicsPipeline{};
     VkShaderModule m_vertexShaderModule{};

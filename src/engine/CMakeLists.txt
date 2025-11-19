@@ -18,7 +18,6 @@ target_sources(${NAME}
     PRIVATE
         FILE_SET HEADERS
         FILES
-            ./utility/FileIO.hpp
             ./Application.hpp
             ./Window.hpp
             ./Pipeline.hpp
