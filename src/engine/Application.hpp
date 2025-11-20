@@ -34,7 +34,8 @@ public:
     static constexpr auto WINDOW_TITLE{ "VulkanVoxels" };
 
 private:
-    static constexpr auto OBJ_PATH{ PROJECT_ROOT "resources/models/smooth_vase.obj" };
+    static constexpr auto SMOOTH_VASE_PATH{ PROJECT_ROOT "resources/models/smooth_vase.obj" };
+    static constexpr auto FLAT_VASE_PATH{ PROJECT_ROOT "resources/models/flat_vase.obj" };
 
     Window m_window{ WINDOW_WIDTH, WINDOW_HEIGHT, WINDOW_TITLE };
     Device m_device{ m_window };

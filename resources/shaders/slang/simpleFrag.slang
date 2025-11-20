@@ -10,7 +10,7 @@ struct FSOutput
 struct PushData
 {
     float4x4 transform;
-    float3 color;
+    float4x4 normalMatrix;
 };
 
 [[push_constant]]

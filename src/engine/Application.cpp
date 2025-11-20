@@ -1,8 +1,6 @@
 #include "Application.hpp"
 
 #include "renderSystems/BasicRenderSystem.hpp"
-#include "spdlog/common.h"
-#include "spdlog/spdlog.h"
 #include "utility/Camera.hpp"
 #include "utility/KeyboardMovementController.hpp"
 #include "utility/Object.hpp"
@@ -65,13 +63,20 @@ void Application::run()
 /// \brief Load all objects that are being used
 void Application::loadObjects()
 {
-    std::shared_ptr<Model> model{ Model::loadFromFile(m_device, OBJ_PATH) };
-    Object obj{};
-    obj.model = model;
-    obj.transform.translation = { 0.f, 0.f, 2.5f };
-    obj.transform.scale = glm::vec3{ 3.f };
+    std::shared_ptr<Model> model{ Model::loadFromFile(m_device, FLAT_VASE_PATH) };
+    Object flatVase{};
+    flatVase.model = model;
+    flatVase.transform.translation = { -0.5f, 0.5f, 2.5f };
+    flatVase.transform.scale = glm::vec3{ 3.f, 1.5f, 3.f };
 
-    m_objects.push_back(std::move(obj));
+    model = Model::loadFromFile(m_device, SMOOTH_VASE_PATH);
+    Object smoothVase{};
+    smoothVase.model = model;
+    smoothVase.transform.translation = { 0.5f, 0.5f, 2.5f };
+    smoothVase.transform.scale = glm::vec3{ 3.f, 1.f, 3.f };
+
+    m_objects.push_back(std::move(flatVase));
+    m_objects.push_back(std::move(smoothVase));
 }
 
 } // !vv

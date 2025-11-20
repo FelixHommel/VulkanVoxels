@@ -25,7 +25,7 @@ namespace vv
 struct SimplePushConstantData
 {
     glm::mat4 transform{ 1.f };
-    alignas(16) glm::vec3 color{};
+    glm::mat4 normalMatrix{ 1.f };
 };
 
 /// \brief Render System to render standard \ref Object

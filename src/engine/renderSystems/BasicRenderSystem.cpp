@@ -37,9 +37,10 @@ void BasicRenderSystem::renderObjects(const VkCommandBuffer commandBuffer, std::
     auto projectionView{ camera.getProjection() * camera.getView() };
     for(auto& obj : objects)
     {
+        auto modelMatrix{ obj.transform.mat4() };
         SimplePushConstantData pushData{
-            .transform = projectionView * obj.transform.mat4(),
-            .color = obj.color
+            .transform = projectionView * modelMatrix,
+            .normalMatrix = obj.transform.normalMatrix()
         };
 
         vkCmdPushConstants(

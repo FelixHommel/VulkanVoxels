@@ -12,6 +12,7 @@ add_library(${NAME}
     ./renderSystems/BasicRenderSystem.cpp
     ./utility/Camera.cpp
     ./utility/Model.cpp
+    ./utility/Object.cpp
     ./utility/KeyboardMovementController.cpp
     ./external/tiny_obj_loader_impl.cpp
 )
