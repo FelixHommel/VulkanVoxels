@@ -34,6 +34,8 @@ public:
     static constexpr auto WINDOW_TITLE{ "VulkanVoxels" };
 
 private:
+    static constexpr auto OBJ_PATH{ PROJECT_ROOT "resources/models/smooth_vase.obj" };
+
     Window m_window{ WINDOW_WIDTH, WINDOW_HEIGHT, WINDOW_TITLE };
     Device m_device{ m_window };
     Renderer m_renderer{ m_window, m_device };
@@ -41,7 +43,6 @@ private:
     std::vector<Object> m_objects;
 
     void loadObjects();
-    static std::unique_ptr<Model> loadCubeModel(Device& device, const glm::vec3& offset);
 };
 
 } // !vv

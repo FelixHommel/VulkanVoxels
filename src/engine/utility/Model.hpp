@@ -9,6 +9,8 @@
 #include <vulkan/vulkan_core.h>
 
 #include <cstdint>
+#include <filesystem>
+#include <memory>
 #include <vector>
 
 namespace vv
@@ -29,13 +31,20 @@ public:
     /// \date 11/19/2025
     struct Vertex
     {
-        glm::vec3 position;
-        glm::vec3 color;
+        glm::vec3 position{};
+        glm::vec3 color{};
+        glm::vec3 normal{};
+        glm::vec2 uv{};
 
         /// \brief Provide the information about the Binding that the Pipeline needs
         static std::vector<VkVertexInputBindingDescription> getBindingDescriptions();
         /// \brief Provide the information about the Attributes that the Pipeline needs
         static std::vector<VkVertexInputAttributeDescription> getAttributeDescriptions();
+
+        bool operator==(const Vertex& other) const
+        {
+            return position == other.position && color == other.color && normal == other.normal && uv == other.uv;
+        }
     };
 
     /// \brief Helper struct that stores the vertices and potential indices of a mesh
@@ -46,6 +55,11 @@ public:
     {
         std::vector<Vertex> vertices;
         std::vector<std::uint32_t> indices;
+
+        /// \brief Use tinyobj to parse obj file and carve out vertex and index buffer content
+        ///
+        /// \param filepath path to the obj file
+        void loadModel(const std::filesystem::path& filepath);
     };
 
     /// \brief Create a new \ref Model
@@ -59,6 +73,12 @@ public:
     Model(Model&&) = delete;
     Model& operator=(const Model&) = delete;
     Model& operator=(Model&&) = delete;
+
+    /// \brief Load a .obj file
+    ///
+    /// \param device \ref Device to create the vertex and index buffers on
+    /// \param fileapth path to the obj file
+    static std::unique_ptr<Model> loadFromFile(Device& device, const std::filesystem::path& filepath);
 
     /// \brief Bind the vertex buffer of the model
     ///

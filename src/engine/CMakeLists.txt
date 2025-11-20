@@ -13,6 +13,7 @@ add_library(${NAME}
     ./utility/Camera.cpp
     ./utility/Model.cpp
     ./utility/KeyboardMovementController.cpp
+    ./external/tiny_obj_loader_impl.cpp
 )
 
 target_sources(${NAME}
@@ -30,6 +31,8 @@ target_sources(${NAME}
             ./utility/Model.hpp
             ./utility/Object.hpp
             ./utility/KeyboardMovementController.hpp
+            ./utility/Utils.hpp
+            ./external/tiny_obj_loader.h
 )
 
 target_include_directories(${NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
