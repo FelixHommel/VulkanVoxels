@@ -4,6 +4,7 @@ include (${PROJECT_SOURCE_DIR}/cmake/StaticAnalyzers.cmake)
 
 add_library(${NAME}
     ./Application.cpp
+    ./core/Buffer.cpp
     ./core/Device.cpp
     ./core/Pipeline.cpp
     ./core/Renderer.cpp
@@ -22,6 +23,7 @@ target_sources(${NAME}
         FILE_SET HEADERS
         FILES
             ./Application.hpp
+            ./core/Buffer.hpp
             ./core/Device.hpp
             ./core/Pipeline.hpp
             ./core/Renderer.hpp
@@ -29,6 +31,7 @@ target_sources(${NAME}
             ./core/Window.hpp
             ./renderSystems/BasicRenderSystem.hpp
             ./utility/Camera.hpp
+            ./utility/FrameInfo.hpp
             ./utility/Model.hpp
             ./utility/Object.hpp
             ./utility/KeyboardMovementController.hpp

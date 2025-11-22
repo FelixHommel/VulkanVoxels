@@ -1,6 +1,7 @@
 #ifndef VULKAN_VOXELS_SRC_ENGINE_UTILITY_MODEL_HPP
 #define VULKAN_VOXELS_SRC_ENGINE_UTILITY_MODEL_HPP
 
+#include "core/Buffer.hpp"
 #include "core/Device.hpp"
 
 #define GLM_FORCE_RADIANS
@@ -67,7 +68,7 @@ public:
     /// \param device \ref Device that is used to allocate the vertex buffer memory
     /// \param vertices vector containing the vertices that make up the Model Mesh
     Model(Device& device, const Builder& builder);
-    ~Model();
+    ~Model() = default;
 
     Model(const Model&) = delete;
     Model(Model&&) = delete;
@@ -92,14 +93,12 @@ public:
 private:
     Device& device;
 
-    VkBuffer m_vertexBuffer{ VK_NULL_HANDLE };
-    VkDeviceMemory m_vertexBufferMemory{ VK_NULL_HANDLE };
-    std::uint32_t m_vertexCount;
+    std::unique_ptr<Buffer> m_vertexBuffer;
+    std::uint32_t m_vertexCount{};
 
     bool m_hasIndexBuffer{ false };
-    VkBuffer m_indexBuffer{ VK_NULL_HANDLE };
-    VkDeviceMemory m_indexBufferMemory{ VK_NULL_HANDLE };
-    std::uint32_t m_indexCount;
+    std::unique_ptr<Buffer> m_indexBuffer;
+    std::uint32_t m_indexCount{};
 
     void createVertexBuffer(const std::vector<Vertex>& vertices);
     void createIndexBuffer(const std::vector<std::uint32_t>& indices);

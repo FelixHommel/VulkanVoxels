@@ -4,12 +4,22 @@
 #include "core/Device.hpp"
 #include "core/Renderer.hpp"
 #include "core/Window.hpp"
+#include "glm/geometric.hpp"
 #include "utility/Object.hpp"
 
-#include <memory>
+namespace
+{
+    constexpr glm::vec3 DEFAULT_LIGHT_DIRECTION{ glm::vec3{ 1.f, -3.f, -1.f } };
+}
 
 namespace vv
 {
+
+struct GloablUBO
+{
+    glm::mat4 porjectionView{ 1.f };
+    glm::vec3 lightDirection{ glm::normalize(::DEFAULT_LIGHT_DIRECTION) };
+};
 
 /// \brief The Application coordinates everything to work with each other
 /// 

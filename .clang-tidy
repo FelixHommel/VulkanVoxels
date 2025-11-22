@@ -156,5 +156,5 @@ CheckOptions:
   - { key: readability-identifier-naming.MemberCase, value: camelBack }
   - { key: readability-identifier-naming.ProtectedMemberPrefix, value: m_ }
   - { key: readability-identifier-naming.PrivateMemberPrefix, value: m_ }
-  - { kwy: misc-include-cleaner.IgnoreHeaders, value: glm/.* }
+  - { key: misc-include-cleaner.IgnoreHeaders, value: "glm/.*" }
 UseColor: true

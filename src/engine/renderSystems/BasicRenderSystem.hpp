@@ -3,7 +3,7 @@
 
 #include "core/Device.hpp"
 #include "core/Pipeline.hpp"
-#include "utility/Camera.hpp"
+#include "utility/FrameInfo.hpp"
 #include "utility/Object.hpp"
 
 #define GLM_FORCE_RADIANS
@@ -52,10 +52,9 @@ public:
 
     /// \brief Render a list of \ref Object
     ///
-    /// \param commandBuffer which VkCommandBuffer is drawn to
+    /// \param frameInfo \ref FrameInfo with data about the current frame
     /// \param objects a vector of \ref Object which are the objects that are being rendered
-    /// \param camera the \ref Camera which is in use
-    void renderObjects(VkCommandBuffer commandBuffer, std::vector<Object>& objects, const Camera& camera) const;
+    void renderObjects(FrameInfo& frameInfo, std::vector<Object>& objects) const;
 
 private:
     static constexpr auto VERTEX_SHADER_PATH{ PROJECT_ROOT "resources/compiledShaders/simpleVert.spv" };

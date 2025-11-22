@@ -1,14 +1,17 @@
 #include "Application.hpp"
 
+#include "core/Buffer.hpp"
+#include "core/Swapchain.hpp"
 #include "renderSystems/BasicRenderSystem.hpp"
+#include "spdlog/spdlog.h"
 #include "utility/Camera.hpp"
 #include "utility/KeyboardMovementController.hpp"
 #include "utility/Object.hpp"
 
 #define GLM_FORCE_RADIANS
 #define GLM_FORCE_DEPTH_ZERO_TO_ONE
-#include "glm/ext/vector_float3.hpp"
 #include "GLFW/glfw3.h"
+#include "glm/ext/vector_float3.hpp"
 #include <vulkan/vulkan_core.h>
 
 #include <chrono>
@@ -25,6 +28,20 @@ Application::Application()
 
 void Application::run()
 {
+    std::vector<std::unique_ptr<Buffer>> uboBuffers(Swapchain::MAX_FRAMES_IN_FLIGHT);
+    for(std::size_t i{ 0 }; i < uboBuffers.size(); ++i)
+    {
+        uboBuffers[i] = std::make_unique<Buffer>(
+            m_device,
+            sizeof(GloablUBO),
+            1,
+            VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
+            VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT,
+            m_device.properties.limits.minUniformBufferOffsetAlignment
+        );
+        uboBuffers[i]->map();
+    }
+
     BasicRenderSystem basicRenderSystem{ m_device, m_renderer.getRenderPass() };
     KeyboardMovementController cameraController{};
     Camera camera{};
@@ -46,11 +63,24 @@ void Application::run()
         const float aspectRatio{ m_renderer.getAspectRatio() };
         camera.setPerspectiveProjection(glm::radians(50.f), aspectRatio, 0.1f, 10.f);
 
-        if (const auto commandBuffer{ m_renderer.beginFrame() })
+        if (auto* const commandBuffer{ m_renderer.beginFrame() })
         {
+            std::size_t frameIndex{ m_renderer.getFrameIndex() };
+            FrameInfo frameInfo{
+                .frameIndex = frameIndex,
+                .dt = dt,
+                .commandBuffer = commandBuffer,
+                .camera = camera
+            };
+            GloablUBO ubo{};
+            ubo.porjectionView = camera.getProjection() * camera.getView();
+
+            uboBuffers[frameIndex]->writeToBuffer(ubo);
+            uboBuffers[frameIndex]->flush();
+
             m_renderer.beginRenderPass(commandBuffer);
 
-            basicRenderSystem.renderObjects(commandBuffer, m_objects, camera);
+            basicRenderSystem.renderObjects(frameInfo, m_objects);
 
             m_renderer.endRenderPass(commandBuffer);
             m_renderer.endFrame();
