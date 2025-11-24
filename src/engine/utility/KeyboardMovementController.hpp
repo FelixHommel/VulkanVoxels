@@ -38,12 +38,17 @@ public:
     KeyboardMovementController() = default;
     ~KeyboardMovementController() = default;
 
+    KeyboardMovementController(const KeyboardMovementController&) = default;
+    KeyboardMovementController(KeyboardMovementController&&) = delete;
+    KeyboardMovementController& operator=(const KeyboardMovementController&) = default;
+    KeyboardMovementController& operator=(KeyboardMovementController&&) = delete;
+
     /// \brief Move an object based on key input
     ///
     /// \param window GLFWwindow pointer to get keyboard input
     /// \param dt delta time
     /// \param object the object that the input transformation is applied to
-    void moveInPlaneXZ(GLFWwindow* window, float dt, Object& object);
+    static void moveInPlaneXZ(GLFWwindow* window, float dt, Object& object);
 
 private:
     static constexpr float moveSpeed{ 3.f };

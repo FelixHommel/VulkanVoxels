@@ -6,6 +6,7 @@
 #include <vulkan/vulkan_core.h>
 
 #include <cstdint>
+#include <iterator>
 #include <type_traits>
 
 namespace vv

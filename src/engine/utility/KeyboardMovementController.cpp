@@ -4,10 +4,10 @@
 
 #define GLM_FORCE_RADIANS
 #define GLM_FORCE_DEPTH_ZERO_TO_ONE
+#include "GLFW/glfw3.h"
 #include "glm/common.hpp"
 #include "glm/geometric.hpp"
 #include "glm/gtc/constants.hpp"
-#include "GLFW/glfw3.h"
 
 #include <cmath>
 #include <limits>
@@ -35,7 +35,7 @@ void KeyboardMovementController::moveInPlaneXZ(GLFWwindow* window, float dt, Obj
         object.transform.rotation += lookSpeed * dt * glm::normalize(rotate);
 
     //NOTE: Limit pitch values between about +/- ~85 degrees
-    object.transform.rotation.x = glm::clamp(object.transform.rotation.x, -1.5f, 1.5f);
+    object.transform.rotation.x = glm::clamp(object.transform.rotation.x, -1.5f, 1.5f); // NOLINT
     object.transform.rotation.y = glm::mod(object.transform.rotation.y, glm::two_pi<float>());
 
     const float yaw{ object.transform.rotation.y };

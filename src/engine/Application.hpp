@@ -7,6 +7,9 @@
 #include "glm/geometric.hpp"
 #include "utility/Object.hpp"
 
+#include <cstdint>
+#include <vector>
+
 namespace
 {
     constexpr glm::vec3 DEFAULT_LIGHT_DIRECTION{ glm::vec3{ 1.f, -3.f, -1.f } };

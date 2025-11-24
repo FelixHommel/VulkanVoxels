@@ -1,12 +1,17 @@
 #include "Pipeline.hpp"
 
+#include "core/Device.hpp"
 #include "utility/Model.hpp"
 
 #include <vulkan/vulkan_core.h>
 
 #include <array>
 #include <cassert>
+#include <cstddef>
+#include <cstdint>
+#include <filesystem>
 #include <fstream>
+#include <ios>
 #include <stdexcept>
 #include <vector>
 
@@ -14,9 +19,9 @@ namespace vv
 {
 
 Pipeline::Pipeline(Device& device,
-            const std::filesystem::path& vertexShaderPath,
-            const std::filesystem::path& fragmentShaderPath,
-            const PipelineConfigInfo& configInfo)
+    const std::filesystem::path& vertexShaderPath,
+    const std::filesystem::path& fragmentShaderPath,
+    const PipelineConfigInfo& configInfo)
     : device{ device }
 {
 #if defined(VV_ENABLE_ASSERTS)
@@ -80,7 +85,7 @@ Pipeline::~Pipeline()
     vkDestroyPipeline(device.device(), m_graphicsPipeline, nullptr);
 }
 
-void Pipeline::bind(const VkCommandBuffer commandBuffer) const
+void Pipeline::bind(VkCommandBuffer commandBuffer) const
 {
     vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, m_graphicsPipeline);
 }

@@ -7,6 +7,7 @@
 #define GLM_FORCE_DEPTH_ZERO_TO_ONE
 #include "glm/glm.hpp"
 
+#include <cstdint>
 #include <memory>
 
 namespace vv
@@ -45,6 +46,7 @@ public:
     using id_t = std::uint16_t;
 
     Object() : m_id{ s_nextId++ } {}
+    ~Object() = default;
 
     Object(const Object&) = delete;
     Object& operator=(const Object&) = delete;
@@ -53,9 +55,9 @@ public:
 
     [[nodiscard]] id_t getId() const noexcept { return m_id; }
 
-    std::shared_ptr<Model> model{};
-    glm::vec3 color{};
-    TransformComponent transform{};
+    std::shared_ptr<Model> model; // NOLINT
+    glm::vec3 color{}; // NOLINT
+    TransformComponent transform{}; // NOLINT
 
 private:
     id_t m_id;

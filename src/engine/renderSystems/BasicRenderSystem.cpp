@@ -1,6 +1,9 @@
 #include "BasicRenderSystem.hpp"
 
+#include "core/Device.hpp"
+#include "core/Pipeline.hpp"
 #include "utility/Camera.hpp"
+#include "utility/FrameInfo.hpp"
 #include "utility/Object.hpp"
 
 #define GLM_FORCE_RADIANS

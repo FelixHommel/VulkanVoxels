@@ -1,13 +1,19 @@
 #include "Renderer.hpp"
 
-#include "Swapchain.hpp"
+#include "core/Device.hpp"
+#include "core/Swapchain.hpp"
+#include "core/Window.hpp"
 
+#include "GLFW/glfw3.h"
 #include <vulkan/vulkan_core.h>
 
 #include <array>
 #include <cassert>
+#include <cstddef>
+#include <cstdint>
 #include <memory>
 #include <stdexcept>
+#include <utility>
 #include <vector>
 
 namespace vv
@@ -62,7 +68,7 @@ VkCommandBuffer Renderer::beginFrame()
 
     m_isFrameStarted = true;
 
-    const auto commandBuffer{ getCurrentCommandBuffer() };
+    auto* const commandBuffer{ getCurrentCommandBuffer() };
     VkCommandBufferBeginInfo beginInfo{};
     beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
 
@@ -78,7 +84,7 @@ void Renderer::endFrame()
     assert(m_isFrameStarted && "cannot call endFrame() while there is no frame in progress");
 #endif
 
-    const auto commandBuffer{ getCurrentCommandBuffer() };
+    auto* const commandBuffer{ getCurrentCommandBuffer() };
     if (vkEndCommandBuffer(commandBuffer) != VK_SUCCESS)
         throw std::runtime_error("failed to record command buffer");
 
@@ -95,7 +101,7 @@ void Renderer::endFrame()
     m_currentFrameIndex = (m_currentFrameIndex + 1) % Swapchain::MAX_FRAMES_IN_FLIGHT;
 }
 
-void Renderer::beginRenderPass(const VkCommandBuffer commandBuffer) const
+void Renderer::beginRenderPass(VkCommandBuffer commandBuffer) const
 {
 #if defined(VV_ENABLE_ASSERTS)
     assert(m_isFrameStarted && "Cannot call beginRenderPass() while there is no frame in progress");
@@ -142,7 +148,7 @@ void Renderer::beginRenderPass(const VkCommandBuffer commandBuffer) const
     vkCmdSetScissor(commandBuffer, 0, 1, &scissor);
 }
 
-void Renderer::endRenderPass(const VkCommandBuffer commandBuffer) const
+void Renderer::endRenderPass(VkCommandBuffer commandBuffer) const
 {
 #if defined(VV_ENABLE_ASSERTS)
     assert(m_isFrameStarted && "Cannot call endRenderPass() while there is no frame in progress");

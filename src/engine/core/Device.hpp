@@ -32,7 +32,7 @@ struct QueueFamilyIndices
     std::optional<std::uint32_t> graphicsFamily;
     std::optional<std::uint32_t> presentFamily;
 
-    [[nodiscard]] constexpr bool isComplete() const noexcept { return graphicsFamily.has_value() && presentFamily.has_value(); }
+    [[nodiscard]]  constexpr bool isComplete() const noexcept { return graphicsFamily.has_value() && presentFamily.has_value(); }
 };
 
 /// \brief The Device is a logical abstraction over the physical GPU

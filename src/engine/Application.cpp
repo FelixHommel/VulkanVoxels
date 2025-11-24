@@ -3,9 +3,10 @@
 #include "core/Buffer.hpp"
 #include "core/Swapchain.hpp"
 #include "renderSystems/BasicRenderSystem.hpp"
-#include "spdlog/spdlog.h"
 #include "utility/Camera.hpp"
+#include "utility/FrameInfo.hpp"
 #include "utility/KeyboardMovementController.hpp"
+#include "utility/Model.hpp"
 #include "utility/Object.hpp"
 
 #define GLM_FORCE_RADIANS
@@ -15,7 +16,9 @@
 #include <vulkan/vulkan_core.h>
 
 #include <chrono>
+#include <cstddef>
 #include <memory>
+#include <utility>
 #include <vector>
 
 namespace vv
@@ -43,7 +46,6 @@ void Application::run()
     }
 
     BasicRenderSystem basicRenderSystem{ m_device, m_renderer.getRenderPass() };
-    KeyboardMovementController cameraController{};
     Camera camera{};
     Object viewer{};
 
@@ -57,11 +59,14 @@ void Application::run()
         float dt{ std::chrono::duration<float, std::chrono::seconds::period>(newTime - currentTime).count() };
         currentTime = newTime;
 
-        cameraController.moveInPlaneXZ(m_window.getHandle(), dt, viewer);
+        KeyboardMovementController::moveInPlaneXZ(m_window.getHandle(), dt, viewer);
         camera.setViewXYZ(viewer.transform.translation, viewer.transform.rotation);
 
         const float aspectRatio{ m_renderer.getAspectRatio() };
-        camera.setPerspectiveProjection(glm::radians(50.f), aspectRatio, 0.1f, 10.f);
+        constexpr float fov{ 50.f };
+        constexpr float nearPlane{ 0.1f };
+        constexpr float farPlane{ 10.f };
+        camera.setPerspectiveProjection(glm::radians(fov), aspectRatio, nearPlane, farPlane);
 
         if (auto* const commandBuffer{ m_renderer.beginFrame() })
         {
@@ -93,17 +98,21 @@ void Application::run()
 /// \brief Load all objects that are being used
 void Application::loadObjects()
 {
+    constexpr glm::vec3 vaseScale{ glm::vec3{ 3.f, 1.5f, 3.f } };
+    constexpr glm::vec3 flatVasePos{ glm::vec3{ -0.5f, 0.5f, 2.5f } };
+    constexpr glm::vec3 smoothVasePos{ glm::vec3{ 0.5f, 0.5f, 2.5f } };
+
     std::shared_ptr<Model> model{ Model::loadFromFile(m_device, FLAT_VASE_PATH) };
     Object flatVase{};
     flatVase.model = model;
-    flatVase.transform.translation = { -0.5f, 0.5f, 2.5f };
-    flatVase.transform.scale = glm::vec3{ 3.f, 1.5f, 3.f };
+    flatVase.transform.translation = flatVasePos;
+    flatVase.transform.scale = vaseScale;
 
     model = Model::loadFromFile(m_device, SMOOTH_VASE_PATH);
     Object smoothVase{};
     smoothVase.model = model;
-    smoothVase.transform.translation = { 0.5f, 0.5f, 2.5f };
-    smoothVase.transform.scale = glm::vec3{ 3.f, 1.f, 3.f };
+    smoothVase.transform.translation = smoothVasePos;
+    smoothVase.transform.scale = vaseScale;
 
     m_objects.push_back(std::move(flatVase));
     m_objects.push_back(std::move(smoothVase));

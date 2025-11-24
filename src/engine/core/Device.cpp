@@ -1,14 +1,19 @@
 #include "Device.hpp"
 
+#include "core/Window.hpp"
+
 #include "GLFW/glfw3.h"
 #include "spdlog/common.h"
 #include "spdlog/spdlog.h"
 #include <vulkan/vk_platform.h>
 #include <vulkan/vulkan_core.h>
 
+#include <cstdint>
 #include <cstring>
 #include <set>
+#include <span>
 #include <stdexcept>
+#include <string>
 #include <unordered_set>
 #include <vector>
 
@@ -43,10 +48,10 @@ namespace
     }
 
     VkResult CreateDebugUtilsMessengerEXT(
-        const VkInstance instance,
-            const VkDebugUtilsMessengerCreateInfoEXT* pCreateInfo,
-            const VkAllocationCallbacks* pAllocator,
-            VkDebugUtilsMessengerEXT* pDebugMessenger)
+        VkInstance instance,
+        VkDebugUtilsMessengerCreateInfoEXT* pCreateInfo,
+        VkAllocationCallbacks* pAllocator,
+        VkDebugUtilsMessengerEXT* pDebugMessenger)
     {
         const auto func{ reinterpret_cast<PFN_vkCreateDebugUtilsMessengerEXT>(vkGetInstanceProcAddr(instance, "vkCreateDebugUtilsMessengerEXT")) };
 
@@ -57,9 +62,9 @@ namespace
     }
 
     void DestroyDebugUtilsMessengerEXT(
-        const VkInstance instance,
-        const VkDebugUtilsMessengerEXT debugMessenger,
-            const VkAllocationCallbacks* pAllocator)
+        VkInstance instance,
+        VkDebugUtilsMessengerEXT debugMessenger,
+        VkAllocationCallbacks* pAllocator)
     {
         const auto func{ reinterpret_cast<PFN_vkDestroyDebugUtilsMessengerEXT>(vkGetInstanceProcAddr(instance, "vkDestroyDebugUtilsMessengerEXT")) };
 
@@ -173,7 +178,7 @@ VkCommandBuffer Device::beginSingleTimeCommand() const
     return commandBuffer;
 }
 
-void Device::endSingleTimeCommand(const VkCommandBuffer commandBuffer) const
+void Device::endSingleTimeCommand(VkCommandBuffer commandBuffer) const
 {
     vkEndCommandBuffer(commandBuffer);
 
@@ -188,12 +193,9 @@ void Device::endSingleTimeCommand(const VkCommandBuffer commandBuffer) const
     vkFreeCommandBuffers(m_device, m_commandPool, 1, &commandBuffer);
 }
 
-void Device::copyBuffer(
-    const VkBuffer srcBuffer,
-    const VkBuffer dstBuffer,
-    const VkDeviceSize size) const
+void Device::copyBuffer(VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize size) const
 {
-    const VkCommandBuffer commandBuffer{beginSingleTimeCommand()};
+    VkCommandBuffer commandBuffer{ beginSingleTimeCommand() };
 
     const VkBufferCopy copyRegion{
         .srcOffset = 0,
@@ -206,14 +208,9 @@ void Device::copyBuffer(
     endSingleTimeCommand(commandBuffer);
 }
 
-void Device::copyBufferToImage(
-    const VkBuffer buffer,
-    const VkImage image,
-    const std::uint32_t width,
-    const std::uint32_t height,
-    const std::uint32_t layerCount) const
+void Device::copyBufferToImage(VkBuffer buffer, VkImage image, std::uint32_t width, std::uint32_t height, std::uint32_t layerCount) const
 {
-    const VkCommandBuffer commandBuffer{ beginSingleTimeCommand() };
+    VkCommandBuffer commandBuffer{ beginSingleTimeCommand() };
 
     VkBufferImageCopy region{};
     region.bufferOffset = 0;
@@ -233,8 +230,7 @@ void Device::copyBufferToImage(
     endSingleTimeCommand(commandBuffer);
 }
 
-void Device::createImageWithInfo(const VkImageCreateInfo& imageInfo,
-    const VkMemoryPropertyFlags properties, VkImage& image, VkDeviceMemory& imageMemory) const
+void Device::createImageWithInfo(const VkImageCreateInfo& imageInfo, const VkMemoryPropertyFlags properties, VkImage& image, VkDeviceMemory& imageMemory) const
 {
     if(vkCreateImage(m_device, &imageInfo, nullptr, &image) != VK_SUCCESS)
         throw std::runtime_error("failed to create image");
@@ -392,15 +388,15 @@ void Device::createLogicalDevice()
 
 void Device::createCommandPool()
 {
-    const QueueFamilyIndices queueFamilyIndices{ findPhysicalQueueFamilies() };
+    const QueueFamilyIndices indices{ findPhysicalQueueFamilies() };
 
-    if(!queueFamilyIndices.graphicsFamily.has_value())
+    if(!indices.graphicsFamily.has_value())
         throw std::runtime_error("failed to find graphics queue family");
 
     VkCommandPoolCreateInfo createInfo{};
     createInfo.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
     createInfo.flags = VK_COMMAND_POOL_CREATE_TRANSIENT_BIT | VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT;
-    createInfo.queueFamilyIndex = queueFamilyIndices.graphicsFamily.value();
+    createInfo.queueFamilyIndex = indices.graphicsFamily.value();
 
     if(vkCreateCommandPool(m_device, &createInfo, nullptr, &m_commandPool) != VK_SUCCESS)
         throw std::runtime_error("failed to create command pool");
@@ -474,8 +470,7 @@ bool Device::checkValidationLayerSupport() const
     return true;
 }
 
-QueueFamilyIndices Device::findQueueFamilies(const VkPhysicalDevice phDevice
-) const
+QueueFamilyIndices Device::findQueueFamilies(VkPhysicalDevice phDevice) const
 {
     QueueFamilyIndices indices{};
 
@@ -544,7 +539,7 @@ void Device::hasGlfwRequiredInstanceExtensions()
     }
 }
 
-bool Device::checkDeviceExtensionSupport(const VkPhysicalDevice phDevice) const
+bool Device::checkDeviceExtensionSupport(VkPhysicalDevice phDevice) const
 {
     std::uint32_t extensionCount{};
     vkEnumerateDeviceExtensionProperties(phDevice, nullptr, &extensionCount, nullptr);
@@ -558,7 +553,7 @@ bool Device::checkDeviceExtensionSupport(const VkPhysicalDevice phDevice) const
     return requiredExtensions.empty();
 }
 
-SwapchainSupportDetails Device::querySwapchainSupport(const VkPhysicalDevice phDevice) const
+SwapchainSupportDetails Device::querySwapchainSupport(VkPhysicalDevice phDevice) const
 {
     SwapchainSupportDetails details{};
     vkGetPhysicalDeviceSurfaceCapabilitiesKHR(phDevice, m_surface, &details.capabilities);

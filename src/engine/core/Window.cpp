@@ -3,10 +3,12 @@
 #include "GLFW/glfw3.h"
 #include "spdlog/common.h"
 #include "spdlog/spdlog.h"
+#include <vulkan/vulkan_core.h>
 
 #include <cstdint>
 #include <stdexcept>
 #include <string>
+#include <utility>
 
 namespace vv
 {
@@ -36,8 +38,7 @@ Window::~Window()
     glfwTerminate();
 }
 
-void Window::createWindowSurface(
-    const VkInstance instance, VkSurfaceKHR* surface) const
+void Window::createWindowSurface(VkInstance instance, VkSurfaceKHR* surface) const
 {
     if(glfwCreateWindowSurface(instance, m_window, nullptr, surface) != 0)
         throw std::runtime_error("Failed to create window surface");

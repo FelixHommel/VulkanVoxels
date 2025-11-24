@@ -1,10 +1,14 @@
 #include "Buffer.hpp"
 
+#include "core/Device.hpp"
+
 #include <vulkan/vulkan_core.h>
 
 #include <cassert>
 #include <cstddef>
+#include <cstdint>
 #include <cstring>
+#include <iterator>
 
 namespace vv
 {
@@ -19,7 +23,7 @@ Buffer::Buffer(
     : device(device)
     , m_elementCount{ elementCount }
     , m_elementSize{ elementSize }
-    , m_alignmentSize{ getAlignment(elementSize, minOffsetAlignment) }
+    , m_alignmentSize{ getAlignment(m_elementSize, minOffsetAlignment) }
     , m_usageFlags{ usageFlags }
     , m_memoryPropertyFlags{ memoryPropertyFlags }
     , m_bufferSize{ m_alignmentSize * m_elementCount }

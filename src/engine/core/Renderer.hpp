@@ -7,8 +7,10 @@
 
 #include <vulkan/vulkan_core.h>
 
+#include <cstddef>
 #include <cstdint>
 #include <memory>
+#include <vector>
 
 namespace vv
 {
