@@ -26,6 +26,7 @@ struct FrameInfo
     float dt;
     VkCommandBuffer commandBuffer;
     Camera& camera; // NOLINT
+    VkDescriptorSet gloablDescriptorSet;
 };
 
 } // !vv

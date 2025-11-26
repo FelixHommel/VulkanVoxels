@@ -14,24 +14,33 @@ struct VSOutput
 
 struct PushData
 {
-    float4x4 transform;
+    float4x4 modelMatrix;
     float4x4 normalMatrix;
 };
 
 [[push_constant]]
 PushData push;
 
-static const float3 DIRECTION_TO_LIGHT = normalize(float3(1.0, -3.0, -1.0));
+struct GlobalUniformBuffer
+{
+    float4x4 projectionViewMatrix;
+    float3 directionToLight;
+};
+
+// NOTE: vk::binding(binding, set): https://docs.shader-slang.org/en/latest/coming-from-glsl.html#option-2-glsl-style-layout-syntax
+[[vk::binding(0, 0)]]
+ConstantBuffer<GlobalUniformBuffer> ubo;
+
 static const float AMBIENT_LIGHT_STRENGTH = 0.02;
 
 [shader("vertex")]
 VSOutput main(VSInput input)
 {
     float3 normalWorldSpace = normalize(mul(float3x3(push.normalMatrix), input.normal));
-    float lightIntensity = AMBIENT_LIGHT_STRENGTH + max(dot(normalWorldSpace, DIRECTION_TO_LIGHT), 0);
+    float lightIntensity = AMBIENT_LIGHT_STRENGTH + max(dot(normalWorldSpace, ubo.directionToLight), 0);
 
     VSOutput output;
-    output.position = mul(push.transform, float4(input.position, 1.0));
+    output.position = mul(mul(ubo.projectionViewMatrix, push.modelMatrix), float4(input.position, 1.0));
     output.color = lightIntensity * input.color;
 
     return output;

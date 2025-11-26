@@ -25,7 +25,7 @@ namespace vv
 /// \date 11/19/2025
 struct SimplePushConstantData
 {
-    glm::mat4 transform{ 1.f };
+    glm::mat4 modelMatrix{ 1.f };
     glm::mat4 normalMatrix{ 1.f };
 };
 
@@ -43,7 +43,8 @@ public:
     ///
     /// \param device Reference to a \ref Device to create the \ref Pipeline on
     /// \param renderPass Which RenderPass to use in the pipeline
-    BasicRenderSystem(Device& device, VkRenderPass renderPass);
+    /// \param gloablSetLayout the layout of globally used descriptor sets
+    BasicRenderSystem(Device& device, VkRenderPass renderPass, VkDescriptorSetLayout globalSetLayout);
     ~BasicRenderSystem();
 
     BasicRenderSystem(const BasicRenderSystem&) = delete;
@@ -66,7 +67,7 @@ private:
     std::unique_ptr<Pipeline> m_pipeline;
     VkPipelineLayout m_pipelineLayout{ VK_NULL_HANDLE };
 
-    void createPipelineLayout();
+    void createPipelineLayout(VkDescriptorSetLayout globalSetLayout);
     void createPipeline(VkRenderPass renderPass);
 };
 

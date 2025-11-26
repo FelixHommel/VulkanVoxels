@@ -1,0 +1,64 @@
+#include "DescriptorSetLayout.hpp"
+
+#include <vulkan/vulkan_core.h>
+
+#include <cassert>
+#include <memory>
+#include <stdexcept>
+#include <vector>
+
+namespace vv
+{
+
+DescriptorSetLayout::Builder& DescriptorSetLayout::Builder::addBinding(
+    std::uint32_t binding,
+    VkDescriptorType descriptorType,
+    VkShaderStageFlags stageFlags,
+    std::uint32_t count)
+{
+#if defined(VV_ENABLE_ASSERTS)
+    assert(!m_bindings.contains(binding) && "Binding is already in use");
+#endif
+
+    VkDescriptorSetLayoutBinding layoutBinding = {};
+    layoutBinding.binding = binding;
+    layoutBinding.descriptorType = descriptorType;
+    layoutBinding.descriptorCount = count;
+    layoutBinding.stageFlags = stageFlags;
+
+    m_bindings[binding] = layoutBinding;
+
+    return *this;
+}
+
+std::unique_ptr<DescriptorSetLayout> DescriptorSetLayout::Builder::build() const
+{
+    return std::make_unique<DescriptorSetLayout>(device, m_bindings);
+}
+
+DescriptorSetLayout::DescriptorSetLayout(
+    Device& device,
+    std::unordered_map<std::uint32_t, VkDescriptorSetLayoutBinding> bindings
+)
+    : device(device)
+    , m_bindings{ bindings }
+{
+    std::vector<VkDescriptorSetLayoutBinding> layoutBindings{};
+    for(auto [_, b] : m_bindings)
+        layoutBindings.push_back(b);
+
+    VkDescriptorSetLayoutCreateInfo createInfo = {};
+    createInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
+    createInfo.bindingCount = static_cast<std::uint32_t>(layoutBindings.size());
+    createInfo.pBindings = layoutBindings.data();
+
+    if(vkCreateDescriptorSetLayout(device.device(), &createInfo, nullptr, &m_descriptorSetLayout) != VK_SUCCESS)
+        throw std::runtime_error("failed to create descriptor set layout");
+}
+
+DescriptorSetLayout::~DescriptorSetLayout()
+{
+    vkDestroyDescriptorSetLayout(device.device(), m_descriptorSetLayout, nullptr);
+}
+
+} // !vv

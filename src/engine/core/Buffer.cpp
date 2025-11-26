@@ -44,9 +44,6 @@ VkResult Buffer::map(VkDeviceSize size, VkDeviceSize offset)
     assert(m_buffer != VK_NULL_HANDLE && m_bufferMemory != VK_NULL_HANDLE && "map() called before buffer is craeted");
 #endif
 
-    if(size == VK_WHOLE_SIZE)
-        return vkMapMemory(device.device(), m_bufferMemory, offset, m_bufferSize, 0, &m_mapped);
-
     return vkMapMemory(device.device(), m_bufferMemory, offset, size, 0, &m_mapped);
 }
 

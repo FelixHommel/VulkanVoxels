@@ -21,10 +21,10 @@
 namespace vv
 {
 
-BasicRenderSystem::BasicRenderSystem(Device& device, VkRenderPass renderPass)
+BasicRenderSystem::BasicRenderSystem(Device& device, VkRenderPass renderPass, VkDescriptorSetLayout globalSetLayout)
     : device(device)
 {
-    createPipelineLayout();
+    createPipelineLayout(globalSetLayout);
     createPipeline(renderPass);
 }
 
@@ -37,11 +37,20 @@ void BasicRenderSystem::renderObjects(FrameInfo& frameInfo, std::vector<Object>&
 {
     m_pipeline->bind(frameInfo.commandBuffer);
 
-    const auto projectionView{ frameInfo.camera.getProjection() * frameInfo.camera.getView() };
+    vkCmdBindDescriptorSets(
+        frameInfo.commandBuffer,
+        VK_PIPELINE_BIND_POINT_GRAPHICS,
+        m_pipelineLayout,
+        0,
+        1,
+        &frameInfo.gloablDescriptorSet,
+        0,
+        nullptr);
+
     for(auto& obj : objects)
     {
         const SimplePushConstantData pushData{
-            .transform = projectionView * obj.transform.mat4(),
+            .modelMatrix = obj.transform.mat4(),
             .normalMatrix = obj.transform.normalMatrix()
         };
 
@@ -59,18 +68,19 @@ void BasicRenderSystem::renderObjects(FrameInfo& frameInfo, std::vector<Object>&
 }
 
 /// \brief Create a PipelineLayout that can be used to create a Pipeline
-void BasicRenderSystem::createPipelineLayout()
+void BasicRenderSystem::createPipelineLayout(VkDescriptorSetLayout globalSetLayout)
 {
     constexpr VkPushConstantRange pushConstantRange{
         .stageFlags = VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT,
         .offset = 0,
         .size = sizeof(SimplePushConstantData)
     };
+    std::vector<VkDescriptorSetLayout> descriptorSetLayouts{ globalSetLayout };
 
     VkPipelineLayoutCreateInfo createInfo{};
     createInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
-    createInfo.setLayoutCount = 0;
-    createInfo.pSetLayouts = nullptr;
+    createInfo.setLayoutCount = static_cast<std::uint32_t>(descriptorSetLayouts.size());
+    createInfo.pSetLayouts = descriptorSetLayouts.data();
     createInfo.pushConstantRangeCount = 1;
     createInfo.pPushConstantRanges = &pushConstantRange;
 

@@ -1,6 +1,7 @@
 #ifndef VULKAN_VOXELS_SRC_ENGINE_APPLICATION_HPP
 #define VULKAN_VOXELS_SRC_ENGINE_APPLICATION_HPP
 
+#include "core/DescriptorPool.hpp"
 #include "core/Device.hpp"
 #include "core/Renderer.hpp"
 #include "core/Window.hpp"
@@ -8,6 +9,7 @@
 #include "utility/Object.hpp"
 
 #include <cstdint>
+#include <memory>
 #include <vector>
 
 namespace
@@ -54,6 +56,7 @@ private:
     Device m_device{ m_window };
     Renderer m_renderer{ m_window, m_device };
 
+    std::unique_ptr<DescriptorPool> m_globalPool;
     std::vector<Object> m_objects;
 
     void loadObjects();

@@ -5,6 +5,9 @@ include (${PROJECT_SOURCE_DIR}/cmake/StaticAnalyzers.cmake)
 add_library(${NAME}
     ./Application.cpp
     ./core/Buffer.cpp
+    ./core/DescriptorPool.cpp
+    ./core/DescriptorSetLayout.cpp
+    ./core/DescriptorWriter.cpp
     ./core/Device.cpp
     ./core/Pipeline.cpp
     ./core/Renderer.cpp
@@ -24,6 +27,9 @@ target_sources(${NAME}
         FILES
             ./Application.hpp
             ./core/Buffer.hpp
+            ./core/DescriptorPool.hpp
+            ./core/DescriptorSetLayout.hpp
+            ./core/DescriptorWriter.hpp
             ./core/Device.hpp
             ./core/Pipeline.hpp
             ./core/Renderer.hpp

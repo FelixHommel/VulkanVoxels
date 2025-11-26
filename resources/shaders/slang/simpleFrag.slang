@@ -9,7 +9,7 @@ struct FSOutput
 
 struct PushData
 {
-    float4x4 transform;
+    float4x4 modelMatrix;
     float4x4 normalMatrix;
 };
 

@@ -1,6 +1,9 @@
 #include "Application.hpp"
 
 #include "core/Buffer.hpp"
+#include "core/DescriptorPool.hpp"
+#include "core/DescriptorSetLayout.hpp"
+#include "core/DescriptorWriter.hpp"
 #include "core/Swapchain.hpp"
 #include "renderSystems/BasicRenderSystem.hpp"
 #include "utility/Camera.hpp"
@@ -26,6 +29,12 @@ namespace vv
 
 Application::Application()
 {
+    m_globalPool =
+        DescriptorPool::Builder(m_device)
+            .setMaxSets(Swapchain::MAX_FRAMES_IN_FLIGHT)
+            .addPoolSize(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, Swapchain::MAX_FRAMES_IN_FLIGHT)
+            .build();
+
     loadObjects();
 }
 
@@ -45,7 +54,23 @@ void Application::run()
         uboBuffers[i]->map();
     }
 
-    BasicRenderSystem basicRenderSystem{ m_device, m_renderer.getRenderPass() };
+    auto globalSetLayout{
+        DescriptorSetLayout::Builder(m_device)
+            .addBinding(0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_VERTEX_BIT)
+            .build()
+    };
+
+    std::vector<VkDescriptorSet> globalDescriptorSets(Swapchain::MAX_FRAMES_IN_FLIGHT);
+    for(std::size_t i{ 0 }; i < globalDescriptorSets.size(); ++i)
+    {
+        auto bufferInfo{ uboBuffers[i]->descriptorInfo() };
+
+        DescriptorWriter(*globalSetLayout, *m_globalPool)
+            .writeBuffer(0, &bufferInfo)
+            .build(globalDescriptorSets[i]);
+    }
+
+    BasicRenderSystem basicRenderSystem{ m_device, m_renderer.getRenderPass(), globalSetLayout->getDescriptorLayout() };
     Camera camera{};
     Object viewer{};
 
@@ -75,7 +100,8 @@ void Application::run()
                 .frameIndex = frameIndex,
                 .dt = dt,
                 .commandBuffer = commandBuffer,
-                .camera = camera
+                .camera = camera,
+                .gloablDescriptorSet = globalDescriptorSets[frameIndex]
             };
             GloablUBO ubo{};
             ubo.porjectionView = camera.getProjection() * camera.getView();
