@@ -24,24 +24,32 @@ PushData push;
 struct GlobalUniformBuffer
 {
     float4x4 projectionViewMatrix;
-    float3 directionToLight;
+    float4 ambientLightColor;
+    float3 lightPosition;
+    float4 lightColor;
 };
 
 // NOTE: vk::binding(binding, set): https://docs.shader-slang.org/en/latest/coming-from-glsl.html#option-2-glsl-style-layout-syntax
 [[vk::binding(0, 0)]]
 ConstantBuffer<GlobalUniformBuffer> ubo;
 
-static const float AMBIENT_LIGHT_STRENGTH = 0.02;
-
 [shader("vertex")]
 VSOutput main(VSInput input)
 {
+    float4 worldPos = mul(push.modelMatrix, float4(input.position, 1.0));
+
     float3 normalWorldSpace = normalize(mul(float3x3(push.normalMatrix), input.normal));
-    float lightIntensity = AMBIENT_LIGHT_STRENGTH + max(dot(normalWorldSpace, ubo.directionToLight), 0);
+
+    float3 directionToLight = ubo.lightPosition - worldPos.xyz;
+    float attenuation = 1.0 / dot(directionToLight, directionToLight); // dot(x, x) == distance^2
+    
+    float3 lightColor = ubo.lightColor.xyz * ubo.lightColor.w * attenuation;
+    float3 ambientLight = ubo.ambientLightColor.xyz * ubo.ambientLightColor.w;
+    float3 diffuseLight = lightColor * max(dot(normalWorldSpace, normalize(directionToLight)), 0);
 
     VSOutput output;
-    output.position = mul(mul(ubo.projectionViewMatrix, push.modelMatrix), float4(input.position, 1.0));
-    output.color = lightIntensity * input.color;
+    output.position = mul(ubo.projectionViewMatrix, worldPos);
+    output.color = (diffuseLight + ambientLight) * input.color;
 
     return output;
 }

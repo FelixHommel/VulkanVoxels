@@ -15,6 +15,8 @@
 namespace
 {
     constexpr glm::vec3 DEFAULT_LIGHT_DIRECTION{ glm::vec3{ 1.f, -3.f, -1.f } };
+    constexpr unsigned int UBO_ALIGNMENT{ 16 };
+    constexpr float AMBIENT_LIGHT_INTENSITY{ 0.02f };
 }
 
 namespace vv
@@ -23,7 +25,9 @@ namespace vv
 struct GloablUBO
 {
     glm::mat4 porjectionView{ 1.f };
-    glm::vec3 lightDirection{ glm::normalize(::DEFAULT_LIGHT_DIRECTION) };
+    glm::vec4 ambientLightColor{ 1.f, 1.f, 1.f, ::AMBIENT_LIGHT_INTENSITY };
+    glm::vec3 lightPosition{ -1.f };
+    alignas(::UBO_ALIGNMENT) glm::vec4 lightColor{ 1.f };
 };
 
 /// \brief The Application coordinates everything to work with each other
@@ -51,6 +55,7 @@ public:
 private:
     static constexpr auto SMOOTH_VASE_PATH{ PROJECT_ROOT "resources/models/smooth_vase.obj" };
     static constexpr auto FLAT_VASE_PATH{ PROJECT_ROOT "resources/models/flat_vase.obj" };
+    static constexpr auto QUAD_PATH{ PROJECT_ROOT "resources/models/quad.obj" };
 
     Window m_window{ WINDOW_WIDTH, WINDOW_HEIGHT, WINDOW_TITLE };
     Device m_device{ m_window };

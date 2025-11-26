@@ -11,6 +11,7 @@
 #include "utility/KeyboardMovementController.hpp"
 #include "utility/Model.hpp"
 #include "utility/Object.hpp"
+#include <algorithm>
 
 #define GLM_FORCE_RADIANS
 #define GLM_FORCE_DEPTH_ZERO_TO_ONE
@@ -73,6 +74,7 @@ void Application::run()
     BasicRenderSystem basicRenderSystem{ m_device, m_renderer.getRenderPass(), globalSetLayout->getDescriptorLayout() };
     Camera camera{};
     Object viewer{};
+    viewer.transform.translation.z = -2.5f; // NOLINT
 
     auto currentTime{ std::chrono::high_resolution_clock::now() };
 
@@ -90,7 +92,7 @@ void Application::run()
         const float aspectRatio{ m_renderer.getAspectRatio() };
         constexpr float fov{ 50.f };
         constexpr float nearPlane{ 0.1f };
-        constexpr float farPlane{ 10.f };
+        constexpr float farPlane{ 100.f };
         camera.setPerspectiveProjection(glm::radians(fov), aspectRatio, nearPlane, farPlane);
 
         if (auto* const commandBuffer{ m_renderer.beginFrame() })
@@ -125,8 +127,8 @@ void Application::run()
 void Application::loadObjects()
 {
     constexpr glm::vec3 vaseScale{ glm::vec3{ 3.f, 1.5f, 3.f } };
-    constexpr glm::vec3 flatVasePos{ glm::vec3{ -0.5f, 0.5f, 2.5f } };
-    constexpr glm::vec3 smoothVasePos{ glm::vec3{ 0.5f, 0.5f, 2.5f } };
+    constexpr glm::vec3 flatVasePos{ glm::vec3{ -0.5f, 0.5f, 0.f } };
+    constexpr glm::vec3 smoothVasePos{ glm::vec3{ 0.5f, 0.5f, 0.f } };
 
     std::shared_ptr<Model> model{ Model::loadFromFile(m_device, FLAT_VASE_PATH) };
     Object flatVase{};
@@ -142,6 +144,17 @@ void Application::loadObjects()
 
     m_objects.push_back(std::move(flatVase));
     m_objects.push_back(std::move(smoothVase));
+
+    constexpr glm::vec3 floorPos{ glm::vec3{ 0.f, 0.5f, 0.f } };
+    constexpr glm::vec3 floorScale{ glm::vec3{ 3.f, 1.f, 3.f } };
+
+    model = Model::loadFromFile(m_device, QUAD_PATH);
+    Object floor{};
+    floor.model = model;
+    floor.transform.translation = floorPos;
+    floor.transform.scale = floorScale;
+
+    m_objects.push_back(std::move(floor));
 }
 
 } // !vv
