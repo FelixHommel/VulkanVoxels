@@ -2,6 +2,7 @@
 #define VULKAN_VOXELS_SRC_ENGINE_UTILITY_FRAME_INFO_HPP
 
 #include "utility/Camera.hpp"
+#include "utility/Object.hpp"
 
 #include <vulkan/vulkan_core.h>
 
@@ -17,6 +18,8 @@ namespace vv
 /// - delta time
 /// - command buffer in use
 /// - camera
+/// - descriptor set
+/// - frame objects
 ///
 /// \author Felix Hommel
 /// \date 11/20/2025
@@ -27,6 +30,7 @@ struct FrameInfo
     VkCommandBuffer commandBuffer;
     Camera& camera; // NOLINT
     VkDescriptorSet gloablDescriptorSet;
+    Object::ObjectMap& objects; // NOLINT
 };
 
 } // !vv

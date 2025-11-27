@@ -11,7 +11,6 @@
 #include "utility/KeyboardMovementController.hpp"
 #include "utility/Model.hpp"
 #include "utility/Object.hpp"
-#include <algorithm>
 
 #define GLM_FORCE_RADIANS
 #define GLM_FORCE_DEPTH_ZERO_TO_ONE
@@ -57,7 +56,7 @@ void Application::run()
 
     auto globalSetLayout{
         DescriptorSetLayout::Builder(m_device)
-            .addBinding(0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_VERTEX_BIT)
+            .addBinding(0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_ALL_GRAPHICS)
             .build()
     };
 
@@ -103,7 +102,8 @@ void Application::run()
                 .dt = dt,
                 .commandBuffer = commandBuffer,
                 .camera = camera,
-                .gloablDescriptorSet = globalDescriptorSets[frameIndex]
+                .gloablDescriptorSet = globalDescriptorSets[frameIndex],
+                .objects = m_objects
             };
             GloablUBO ubo{};
             ubo.porjectionView = camera.getProjection() * camera.getView();
@@ -113,7 +113,7 @@ void Application::run()
 
             m_renderer.beginRenderPass(commandBuffer);
 
-            basicRenderSystem.renderObjects(frameInfo, m_objects);
+            basicRenderSystem.renderObjects(frameInfo);
 
             m_renderer.endRenderPass(commandBuffer);
             m_renderer.endFrame();
@@ -135,15 +135,14 @@ void Application::loadObjects()
     flatVase.model = model;
     flatVase.transform.translation = flatVasePos;
     flatVase.transform.scale = vaseScale;
+    m_objects.emplace(flatVase.getId(), std::move(flatVase));
 
     model = Model::loadFromFile(m_device, SMOOTH_VASE_PATH);
     Object smoothVase{};
     smoothVase.model = model;
     smoothVase.transform.translation = smoothVasePos;
     smoothVase.transform.scale = vaseScale;
-
-    m_objects.push_back(std::move(flatVase));
-    m_objects.push_back(std::move(smoothVase));
+    m_objects.emplace(smoothVase.getId(), std::move(smoothVase));
 
     constexpr glm::vec3 floorPos{ glm::vec3{ 0.f, 0.5f, 0.f } };
     constexpr glm::vec3 floorScale{ glm::vec3{ 3.f, 1.f, 3.f } };
@@ -153,8 +152,7 @@ void Application::loadObjects()
     floor.model = model;
     floor.transform.translation = floorPos;
     floor.transform.scale = floorScale;
-
-    m_objects.push_back(std::move(floor));
+    m_objects.emplace(floor.getId(), std::move(floor));
 }
 
 } // !vv

@@ -62,7 +62,7 @@ private:
     Renderer m_renderer{ m_window, m_device };
 
     std::unique_ptr<DescriptorPool> m_globalPool;
-    std::vector<Object> m_objects;
+    Object::ObjectMap m_objects;
 
     void loadObjects();
 };

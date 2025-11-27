@@ -2,9 +2,7 @@
 
 #include "core/Device.hpp"
 #include "core/Pipeline.hpp"
-#include "utility/Camera.hpp"
 #include "utility/FrameInfo.hpp"
-#include "utility/Object.hpp"
 
 #define GLM_FORCE_RADIANS
 #define GLM_FORCE_DEPTH_ZERO_TO_ONE
@@ -33,7 +31,7 @@ BasicRenderSystem::~BasicRenderSystem()
     vkDestroyPipelineLayout(device.device(), m_pipelineLayout, nullptr);
 }
 
-void BasicRenderSystem::renderObjects(FrameInfo& frameInfo, std::vector<Object>& objects) const
+void BasicRenderSystem::renderObjects(FrameInfo& frameInfo) const
 {
     m_pipeline->bind(frameInfo.commandBuffer);
 
@@ -47,8 +45,11 @@ void BasicRenderSystem::renderObjects(FrameInfo& frameInfo, std::vector<Object>&
         0,
         nullptr);
 
-    for(auto& obj : objects)
+    for(auto& [_, obj] : frameInfo.objects)
     {
+        if(obj.model == nullptr)
+            continue;
+
         const SimplePushConstantData pushData{
             .modelMatrix = obj.transform.mat4(),
             .normalMatrix = obj.transform.normalMatrix()

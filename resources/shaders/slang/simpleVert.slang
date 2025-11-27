@@ -10,6 +10,8 @@ struct VSOutput
 {
     float4 position : SV_Position;
     float3 color;
+    float3 fragPosWorld;
+    float3 fragNormalWorld;
 };
 
 struct PushData
@@ -38,18 +40,11 @@ VSOutput main(VSInput input)
 {
     float4 worldPos = mul(push.modelMatrix, float4(input.position, 1.0));
 
-    float3 normalWorldSpace = normalize(mul(float3x3(push.normalMatrix), input.normal));
-
-    float3 directionToLight = ubo.lightPosition - worldPos.xyz;
-    float attenuation = 1.0 / dot(directionToLight, directionToLight); // dot(x, x) == distance^2
-    
-    float3 lightColor = ubo.lightColor.xyz * ubo.lightColor.w * attenuation;
-    float3 ambientLight = ubo.ambientLightColor.xyz * ubo.ambientLightColor.w;
-    float3 diffuseLight = lightColor * max(dot(normalWorldSpace, normalize(directionToLight)), 0);
-
     VSOutput output;
     output.position = mul(ubo.projectionViewMatrix, worldPos);
-    output.color = (diffuseLight + ambientLight) * input.color;
+    output.color = input.color;
+    output.fragPosWorld = worldPos.xyz;
+    output.fragNormalWorld = normalize(mul(float3x3(push.normalMatrix), input.normal));
 
     return output;
 }

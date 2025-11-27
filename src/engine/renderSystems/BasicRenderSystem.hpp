@@ -55,8 +55,7 @@ public:
     /// \brief Render a list of \ref Object
     ///
     /// \param frameInfo \ref FrameInfo with data about the current frame
-    /// \param objects a vector of \ref Object which are the objects that are being rendered
-    void renderObjects(FrameInfo& frameInfo, std::vector<Object>& objects) const;
+    void renderObjects(FrameInfo& frameInfo) const;
 
 private:
     static constexpr auto VERTEX_SHADER_PATH{ PROJECT_ROOT "resources/compiledShaders/simpleVert.spv" };

@@ -2,6 +2,7 @@
 #define VULKAN_VOXELS_SRC_ENGINE_UTILITY_OBJECT_HPP
 
 #include "Model.hpp"
+#include <unordered_map>
 
 #define GLM_FORCE_RADIANS
 #define GLM_FORCE_DEPTH_ZERO_TO_ONE
@@ -44,6 +45,7 @@ class Object
 {
 public:
     using id_t = std::uint16_t;
+    using ObjectMap = std::unordered_map<id_t, Object>;
 
     Object() : m_id{ s_nextId++ } {}
     ~Object() = default;
