@@ -6,6 +6,7 @@
 #include "core/DescriptorWriter.hpp"
 #include "core/Swapchain.hpp"
 #include "renderSystems/BasicRenderSystem.hpp"
+#include "renderSystems/PointLightRenderSystem.hpp"
 #include "utility/Camera.hpp"
 #include "utility/FrameInfo.hpp"
 #include "utility/KeyboardMovementController.hpp"
@@ -71,6 +72,7 @@ void Application::run()
     }
 
     BasicRenderSystem basicRenderSystem{ m_device, m_renderer.getRenderPass(), globalSetLayout->getDescriptorLayout() };
+    PointLightRenderSystem pointLightRenderSystem{ m_device, m_renderer.getRenderPass(), globalSetLayout->getDescriptorLayout() };
     Camera camera{};
     Object viewer{};
     viewer.transform.translation.z = -2.5f; // NOLINT
@@ -106,7 +108,8 @@ void Application::run()
                 .objects = m_objects
             };
             GloablUBO ubo{};
-            ubo.porjectionView = camera.getProjection() * camera.getView();
+            ubo.porjection = camera.getProjection();
+            ubo.view = camera.getView();
 
             uboBuffers[frameIndex]->writeToBuffer(ubo);
             uboBuffers[frameIndex]->flush();
@@ -114,6 +117,7 @@ void Application::run()
             m_renderer.beginRenderPass(commandBuffer);
 
             basicRenderSystem.renderObjects(frameInfo);
+            pointLightRenderSystem.render(frameInfo);
 
             m_renderer.endRenderPass(commandBuffer);
             m_renderer.endFrame();

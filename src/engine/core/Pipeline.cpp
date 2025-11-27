@@ -46,8 +46,8 @@ Pipeline::Pipeline(Device& device,
     shaderStages[1].module = m_fragmentShaderModule;
     shaderStages[1].pName = "main";
 
-    const auto bindingDescriptions{Model::Vertex::getBindingDescriptions()};
-    const auto attributeDescriptions{ Model::Vertex::getAttributeDescriptions() };
+    const auto& bindingDescriptions{ configInfo.bindingDescription };
+    const auto& attributeDescriptions{ configInfo.attributeDescription };
     VkPipelineVertexInputStateCreateInfo vertexInputInfo{};
     vertexInputInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
     vertexInputInfo.vertexBindingDescriptionCount = static_cast<std::uint32_t>(bindingDescriptions.size());
@@ -92,6 +92,9 @@ void Pipeline::bind(VkCommandBuffer commandBuffer) const
 
 void Pipeline::defaultPipelineConfigInfo(PipelineConfigInfo& configInfo)
 {
+    configInfo.bindingDescription = Model::Vertex::getBindingDescriptions();
+    configInfo.attributeDescription = Model::Vertex::getAttributeDescriptions();
+
     configInfo.viewportInfo = {};
     configInfo.viewportInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO;
     configInfo.viewportInfo.viewportCount = 1;

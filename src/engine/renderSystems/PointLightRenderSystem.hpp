@@ -1,0 +1,58 @@
+#ifndef VULKAN_VOXELS_SRC_ENGINE_RENDER_SYSTEMS_POINT_LIGHT_RENDER_SYSTEM_HPP
+#define VULKAN_VOXELS_SRC_ENGINE_RENDER_SYSTEMS_POINT_LIGHT_RENDER_SYSTEM_HPP
+
+#include "core/Device.hpp"
+#include "core/Pipeline.hpp"
+#include "utility/FrameInfo.hpp"
+
+#define GLM_FORCE_RADIANS
+#define GLM_FORCE_DEPTH_ZERO_TO_ONE
+#include "glm/glm.hpp"
+#include <vulkan/vulkan_core.h>
+
+#include <memory>
+
+namespace vv
+{
+
+/// \brief Render System to render point lights in a billboard style
+///
+/// \author Felix Hommel
+/// \date 11/27/2025
+class PointLightRenderSystem
+{
+public:
+    /// \brief Create a new \ref PointLightRenderSystem
+    ///
+    /// \param device Reference to a \ref Device to create the \ref Pipeline on
+    /// \param renderPass Which RenderPass to use in the pipeline
+    /// \param gloablSetLayout the layout of globally used descriptor sets
+    PointLightRenderSystem(Device& device, VkRenderPass renderPass, VkDescriptorSetLayout globalSetLayout);
+    ~PointLightRenderSystem();
+
+    PointLightRenderSystem(const PointLightRenderSystem&) = delete;
+    PointLightRenderSystem(PointLightRenderSystem&&) = delete;
+    PointLightRenderSystem& operator=(const PointLightRenderSystem&) = delete;
+    PointLightRenderSystem& operator=(PointLightRenderSystem&&) = delete;
+
+    /// \brief Render a point light
+    ///
+    /// \param frameInfo \ref FrameInfo with data about the current frame
+    void render(FrameInfo& frameInfo) const;
+
+private:
+    static constexpr auto VERTEX_SHADER_PATH{ PROJECT_ROOT "resources/compiledShaders/pointLightVert.spv" };
+    static constexpr auto FRAGMENT_SHADER_PATH{ PROJECT_ROOT "resources/compiledShaders/pointLightFrag.spv" };
+
+    Device& device;
+
+    std::unique_ptr<Pipeline> m_pipeline;
+    VkPipelineLayout m_pipelineLayout{ VK_NULL_HANDLE };
+
+    void createPipelineLayout(VkDescriptorSetLayout globalSetLayout);
+    void createPipeline(VkRenderPass renderPass);
+};
+
+} // !vv
+
+#endif // !VULKAN_VOXELS_SRC_ENGINE_RENDER_SYSTEMS_POINT_LIGHT_RENDER_SYSTEM_HPP

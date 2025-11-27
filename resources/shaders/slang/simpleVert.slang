@@ -25,7 +25,8 @@ PushData push;
 
 struct GlobalUniformBuffer
 {
-    float4x4 projectionViewMatrix;
+    float4x4 projection;
+    float4x4 view;
     float4 ambientLightColor;
     float3 lightPosition;
     float4 lightColor;
@@ -38,10 +39,10 @@ ConstantBuffer<GlobalUniformBuffer> ubo;
 [shader("vertex")]
 VSOutput main(VSInput input)
 {
-    float4 worldPos = mul(push.modelMatrix, float4(input.position, 1.0));
+    const float4 worldPos = mul(push.modelMatrix, float4(input.position, 1.0));
 
     VSOutput output;
-    output.position = mul(ubo.projectionViewMatrix, worldPos);
+    output.position = mul(mul(ubo.projection, ubo.view), worldPos);
     output.color = input.color;
     output.fragPosWorld = worldPos.xyz;
     output.fragNormalWorld = normalize(mul(float3x3(push.normalMatrix), input.normal));

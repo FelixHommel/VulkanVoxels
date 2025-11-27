@@ -14,6 +14,7 @@ add_library(${NAME}
     ./core/Swapchain.cpp
     ./core/Window.cpp
     ./renderSystems/BasicRenderSystem.cpp
+    ./renderSystems/PointLightRenderSystem.cpp
     ./utility/Camera.cpp
     ./utility/Model.cpp
     ./utility/Object.cpp
@@ -36,6 +37,7 @@ target_sources(${NAME}
             ./core/Swapchain.hpp
             ./core/Window.hpp
             ./renderSystems/BasicRenderSystem.hpp
+            ./renderSystems/PointLightRenderSystem.hpp
             ./utility/Camera.hpp
             ./utility/FrameInfo.hpp
             ./utility/Model.hpp

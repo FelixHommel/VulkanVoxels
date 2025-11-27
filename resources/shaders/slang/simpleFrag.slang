@@ -20,7 +20,8 @@ PushData push;
 
 struct GlobalUniformBuffer
 {
-    float4x4 projectionViewMatrix;
+    float4x4 projection;
+    float4x4 view;
     float4 ambientLightColor;
     float3 lightPosition;
     float4 lightColor;
@@ -33,12 +34,12 @@ ConstantBuffer<GlobalUniformBuffer> ubo;
 [shader("pixel")]
 FSOutput main(FSInput input)
 {
-    float3 directionToLight = ubo.lightPosition - input.fragPosWorld;
-    float attenuation = 1.0 / dot(directionToLight, directionToLight); // dot(x, x) == distance^2
+    const float3 directionToLight = ubo.lightPosition - input.fragPosWorld;
+    const float attenuation = 1.0 / dot(directionToLight, directionToLight); // dot(x, x) == distance^2
     
-    float3 lightColor = ubo.lightColor.xyz * ubo.lightColor.w * attenuation;
-    float3 ambientLight = ubo.ambientLightColor.xyz * ubo.ambientLightColor.w;
-    float3 diffuseLight = lightColor * max(dot(normalize(input.fragNormalWorld), normalize(directionToLight)), 0);
+    const float3 lightColor = ubo.lightColor.xyz * ubo.lightColor.w * attenuation;
+    const float3 ambientLight = ubo.ambientLightColor.xyz * ubo.ambientLightColor.w;
+    const float3 diffuseLight = lightColor * max(dot(normalize(input.fragNormalWorld), normalize(directionToLight)), 0);
 
     FSOutput output;
     output.color = float4((diffuseLight + ambientLight) * input.color, 1.0);

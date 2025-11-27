@@ -10,7 +10,6 @@
 
 #include <cstdint>
 #include <memory>
-#include <vector>
 
 namespace
 {
@@ -24,7 +23,8 @@ namespace vv
 
 struct GloablUBO
 {
-    glm::mat4 porjectionView{ 1.f };
+    glm::mat4 porjection{ 1.f };
+    glm::mat4 view{ 1.f };
     glm::vec4 ambientLightColor{ 1.f, 1.f, 1.f, ::AMBIENT_LIGHT_INTENSITY };
     glm::vec3 lightPosition{ -1.f };
     alignas(::UBO_ALIGNMENT) glm::vec4 lightColor{ 1.f };

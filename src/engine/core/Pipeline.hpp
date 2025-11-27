@@ -18,6 +18,9 @@ namespace vv
 /// \date 11//13/2025
 struct PipelineConfigInfo
 {
+    std::vector<VkVertexInputBindingDescription> bindingDescription;
+    std::vector<VkVertexInputAttributeDescription> attributeDescription;
+
     VkPipelineViewportStateCreateInfo viewportInfo{};
     VkPipelineInputAssemblyStateCreateInfo inputAssemblyInfo{};
     VkPipelineRasterizationStateCreateInfo rasterizationInfo{};
