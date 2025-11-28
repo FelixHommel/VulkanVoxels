@@ -23,13 +23,19 @@ struct PushData
 [[push_constant]]
 PushData push;
 
+struct PointLight
+{
+    float4 position;
+    float4 color;
+};
+
 struct GlobalUniformBuffer
 {
     float4x4 projection;
     float4x4 view;
     float4 ambientLightColor;
-    float3 lightPosition;
-    float4 lightColor;
+    PointLight pointLights[10];
+    int numLights;
 };
 
 // NOTE: vk::binding(binding, set): https://docs.shader-slang.org/en/latest/coming-from-glsl.html#option-2-glsl-style-layout-syntax

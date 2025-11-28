@@ -1,5 +1,11 @@
 # VulkanVoxels
 
+## TODO
+
+[ ] Add custom exception handling and replace the runtime\_exception with them
+[ ] Replace reference members with std::shared\_ptr
+[ ] investigate all // NOLINT and consider fixing the warning
+
 ## Roadmap
 
 > Items are in no particular order

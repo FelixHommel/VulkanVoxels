@@ -15,6 +15,17 @@
 namespace vv
 {
 
+/// \brief Push constant definition for point lights
+///
+/// \author Felix Hommel
+/// \date 11/28/2025
+struct PointLightPushConstants
+{
+    glm::vec4 position{};
+    glm::vec4 color{};
+    float radius;
+};
+
 /// \brief Render System to render point lights in a billboard style
 ///
 /// \author Felix Hommel
@@ -34,6 +45,11 @@ public:
     PointLightRenderSystem(PointLightRenderSystem&&) = delete;
     PointLightRenderSystem& operator=(const PointLightRenderSystem&) = delete;
     PointLightRenderSystem& operator=(PointLightRenderSystem&&) = delete;
+
+    /// \brief Update the point lights
+    ///
+    /// \param frameInfo \ref FrameInfo important frame related data
+    void update(FrameInfo& frameInfo, GloablUBO& ubo) const;
 
     /// \brief Render a point light
     ///

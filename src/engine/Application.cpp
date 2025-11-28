@@ -5,6 +5,8 @@
 #include "core/DescriptorSetLayout.hpp"
 #include "core/DescriptorWriter.hpp"
 #include "core/Swapchain.hpp"
+#include "glm/ext/matrix_transform.hpp"
+#include "glm/gtc/constants.hpp"
 #include "renderSystems/BasicRenderSystem.hpp"
 #include "renderSystems/PointLightRenderSystem.hpp"
 #include "utility/Camera.hpp"
@@ -111,6 +113,8 @@ void Application::run()
             ubo.porjection = camera.getProjection();
             ubo.view = camera.getView();
 
+            pointLightRenderSystem.update(frameInfo, ubo);
+
             uboBuffers[frameIndex]->writeToBuffer(ubo);
             uboBuffers[frameIndex]->flush();
 
@@ -157,6 +161,26 @@ void Application::loadObjects()
     floor.transform.translation = floorPos;
     floor.transform.scale = floorScale;
     m_objects.emplace(floor.getId(), std::move(floor));
+
+    const std::vector<glm::vec3> lightColors{
+        {1.f, .1f, .1f},
+        {.1f, .1f, 1.f},
+        {.1f, 1.f, .1f},
+        {1.f, 1.f, .1f},
+        {.1f, 1.f, 1.f},
+        {1.f, 1.f, 1.f}
+    };
+
+    for(std::size_t i{ 0 }; i < lightColors.size(); ++i)
+    {
+        Object pointLight{ Object::makePointLight(0.2f) };
+        pointLight.color = lightColors[i];
+        auto rotateLight{ glm::rotate(glm::mat4(1.f), (i * glm::two_pi<float>()) / lightColors.size(), {0.f, -1.f, 0.f}) };
+
+        pointLight.transform.translation = glm::vec3(rotateLight * glm::vec4(-1.f, -1.f, -1.f, 1.f));
+
+        m_objects.emplace(pointLight.getId(), std::move(pointLight));
+    }
 }
 
 } // !vv

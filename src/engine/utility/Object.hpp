@@ -2,7 +2,6 @@
 #define VULKAN_VOXELS_SRC_ENGINE_UTILITY_OBJECT_HPP
 
 #include "Model.hpp"
-#include <unordered_map>
 
 #define GLM_FORCE_RADIANS
 #define GLM_FORCE_DEPTH_ZERO_TO_ONE
@@ -10,9 +9,23 @@
 
 #include <cstdint>
 #include <memory>
+#include <unordered_map>
 
 namespace vv
 {
+
+/// \brief Component used by point lights to represent their individual properties
+///
+/// \author Felix Hommel
+/// \date 11/28/2025
+struct PointLightComponent
+{
+    static constexpr float DEFAULT_INTENSITY{ 10.f };
+    static constexpr float DEFAULT_RADIUS{ 0.1f };
+    static constexpr glm::vec3 DEFAULT_COLOR{ glm::vec3(1.f) };
+
+    float lightIntensity{ 1.f };
+};
 
 /// \brief Component to represent position and transformation in 3D Space
 ///
@@ -55,9 +68,15 @@ public:
     Object(Object&&) = default;
     Object& operator=(Object&&) = default;
 
+    static Object makePointLight(float intensity = PointLightComponent::DEFAULT_INTENSITY,
+            float radius = PointLightComponent::DEFAULT_RADIUS,
+            glm::vec3 color = PointLightComponent::DEFAULT_COLOR);
+
     [[nodiscard]] id_t getId() const noexcept { return m_id; }
 
     std::shared_ptr<Model> model; // NOLINT
+    std::unique_ptr<PointLightComponent> pointLight{ nullptr }; // NOLINT
+
     glm::vec3 color{}; // NOLINT
     TransformComponent transform{}; // NOLINT
 
