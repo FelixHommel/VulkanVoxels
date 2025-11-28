@@ -1,5 +1,5 @@
 struct FSInput {
-    float2 fragOffset;
+    [[vk::location(0)]] float2 fragOffset;
 };
 
 struct FSOutput
@@ -27,6 +27,7 @@ struct GlobalUniformBuffer
 {
     float4x4 projection;
     float4x4 view;
+    float4x4 inverseView;
     float4 ambientLightColor;
     PointLight pointLights[10];
     int numLights;

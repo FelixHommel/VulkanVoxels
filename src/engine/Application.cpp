@@ -112,6 +112,7 @@ void Application::run()
             GloablUBO ubo{};
             ubo.porjection = camera.getProjection();
             ubo.view = camera.getView();
+            ubo.inverseView = camera.getInverseView();
 
             pointLightRenderSystem.update(frameInfo, ubo);
 

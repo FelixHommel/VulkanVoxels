@@ -51,10 +51,12 @@ public:
 
     [[nodiscard]] const glm::mat4& getProjection() const noexcept { return m_projectionMatrix; }
     [[nodiscard]] const glm::mat4& getView() const noexcept { return m_viewMatrix; }
+    [[nodiscard]] const glm::mat4& getInverseView() const noexcept { return m_inverseViewMatrix; }
 
 private:
     glm::mat4 m_projectionMatrix{ 1.f };
     glm::mat4 m_viewMatrix{ 1.f };
+    glm::mat4 m_inverseViewMatrix{ 1.f };
 };
 
 } // !vv

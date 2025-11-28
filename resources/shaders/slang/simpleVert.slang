@@ -3,15 +3,15 @@ struct VSInput
     [[vk::location(0)]] float3 position;
     [[vk::location(1)]] float3 color;
     [[vk::location(2)]] float3 normal;
-    [[vk::location(3)]] float3 uv;
+    [[vk::location(3)]] float2 uv;
 };
 
 struct VSOutput
 {
     float4 position : SV_Position;
-    float3 color;
-    float3 fragPosWorld;
-    float3 fragNormalWorld;
+    [[vk::location(0)]] float3 color;
+    [[vk::location(1)]] float3 fragPosWorld;
+    [[vk::location(2)]] float3 fragNormalWorld;
 };
 
 struct PushData
@@ -33,6 +33,7 @@ struct GlobalUniformBuffer
 {
     float4x4 projection;
     float4x4 view;
+    float4x4 inverseView;
     float4 ambientLightColor;
     PointLight pointLights[10];
     int numLights;

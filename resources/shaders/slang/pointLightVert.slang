@@ -33,6 +33,7 @@ struct GlobalUniformBuffer
 {
     float4x4 projection;
     float4x4 view;
+    float4x4 inverseView;
     float4 ambientLightColor;
     PointLight pointLights[10];
     int numLights;
@@ -48,7 +49,7 @@ VSOutput main(uint vertexID : SV_VertexID)
     VSOutput output;
     output.fragOffset = OFFSETS[vertexID];
 
-    const float3 cameraRightWorld = float3(ubo.view[0][0], ubo.view[0][1], ubo.view[0][2]);
+    const float3 cameraRightWorld = float3(ubo.view[0][0], ubo.view[1][0], ubo.view[2][0]);
     const float3 cameraUpWorld = float3(ubo.view[0][1], ubo.view[1][1], ubo.view[2][1]);
 
     const float3 positionWorld = push.position.xyz +
