@@ -24,7 +24,7 @@ public:
     ///
     /// \param device \ref Device that is used to create the Swapchain
     /// \param windowExtent size of the window used to set the size for frame buffers
-    Swapchain(Device& device, VkExtent2D windowExtent);
+    Swapchain(std::shared_ptr<Device> device, VkExtent2D windowExtent);
     /// \brief Create a new \ref Swapchain
     ///
     /// This variant is used primarily for recreation of the swapchain therefore
@@ -33,7 +33,7 @@ public:
     /// \param device \ref Device that is used to create the Swapchain
     /// \param windowExtent size of the window to set the size for frame buffers
     /// \param previous the olf \ref Swapchain wrapped in a shared_ptr
-    Swapchain(Device& device, VkExtent2D windowExtent, std::shared_ptr<Swapchain> previous);
+    Swapchain(std::shared_ptr<Device> device, VkExtent2D windowExtent, std::shared_ptr<Swapchain> previous);
     ~Swapchain();
 
     Swapchain(const Swapchain&) = delete;
@@ -65,7 +65,7 @@ public:
 
 private:
     /** External objects */
-    Device& device;
+    std::shared_ptr<Device> device;
     VkExtent2D windowExtent;
 
     /** Core */

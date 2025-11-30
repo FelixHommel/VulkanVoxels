@@ -29,7 +29,7 @@ public:
     ///
     /// \param window the \ref Window that is rendered to
     /// \param device the \ref Device that is used
-    Renderer(Window& window, Device& device);
+    Renderer(std::shared_ptr<Window> window, std::shared_ptr<Device> device);
     ~Renderer();
 
     Renderer(const Renderer&) = delete;
@@ -66,8 +66,8 @@ public:
 private:
     static constexpr VkClearColorValue CLEAR_COLOR{ {0.1f, 0.1f, 0.1f, 1.f} };
 
-    Window& window;
-    Device& device;
+    std::shared_ptr<Window> window;
+    std::shared_ptr<Device> device;
     std::unique_ptr<Swapchain> m_swapchain;
     std::vector<VkCommandBuffer> m_commandBuffers;
 

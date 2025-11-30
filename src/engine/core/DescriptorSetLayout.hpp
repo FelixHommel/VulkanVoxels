@@ -13,7 +13,7 @@
 namespace vv
 {
 
-/// \brief A Descriptor set layout describes how a specific descriptor set looks like i.e., what are it's data
+/// \brief A Descriptor set layout describes how a specific descriptor set looks like i.e., what are its data
 ///
 /// \author Felix Hommel
 /// \date 11/24/2025
@@ -29,8 +29,8 @@ public:
     public:
         /// \brief Construct a new Builder
         ///
-        /// \param device \ref Device where the Descriptor set layout is craeted on
-        Builder(Device& device) : device(device) {}
+        /// \param device \ref Device where the Descriptor set layout is created on
+        Builder(std::shared_ptr<Device> device) : device{ std::move(device) } {}
 
         /// \brief Add a binding to the descriptor set layout
         ///
@@ -50,7 +50,7 @@ public:
         [[nodiscard]] std::unique_ptr<DescriptorSetLayout> build() const;
 
     private:
-        Device& device;
+        std::shared_ptr<Device> device;
         std::unordered_map<std::uint32_t, VkDescriptorSetLayoutBinding> m_bindings;
     };
 
@@ -59,7 +59,7 @@ public:
     /// \param device \ref Device where the Descriptor set layout is created on
     /// \param bindings a map containing the layout bindings
     DescriptorSetLayout(
-        Device& device,
+        std::shared_ptr<Device> device,
         std::unordered_map<std::uint32_t, VkDescriptorSetLayoutBinding> bindings
     );
     ~DescriptorSetLayout();
@@ -72,7 +72,7 @@ public:
     [[nodiscard]] VkDescriptorSetLayout getDescriptorLayout() const noexcept { return m_descriptorSetLayout; }
 
 private:
-    Device& device;
+    std::shared_ptr<Device> m_device;
     std::unordered_map<std::uint32_t, VkDescriptorSetLayoutBinding> m_bindings;
     VkDescriptorSetLayout m_descriptorSetLayout{ VK_NULL_HANDLE };
 

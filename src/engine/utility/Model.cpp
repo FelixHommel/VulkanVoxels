@@ -40,7 +40,6 @@ struct hash<vv::Model::Vertex>
 
 namespace vv
 {
-
 std::vector<VkVertexInputBindingDescription> Model::Vertex::getBindingDescriptions()
 {
     std::vector<VkVertexInputBindingDescription> bindingDescriptions(1);
@@ -127,14 +126,14 @@ void Model::Builder::loadModel(const std::filesystem::path& filepath)
     }
 }
 
-Model::Model(Device& device, const Builder& builder)
-    : device(device)
+Model::Model(std::shared_ptr<Device> device, const Builder& builder)
+    : device{ std::move(device) }
 {
     createVertexBuffer(builder.vertices);
     createIndexBuffer(builder.indices);
 }
 
-std::unique_ptr<Model> Model::loadFromFile(Device& device, const std::filesystem::path& filepath)
+std::unique_ptr<Model> Model::loadFromFile(std::shared_ptr<Device> device, const std::filesystem::path& filepath)
 {
     Builder builder{};
     builder.loadModel(filepath);
@@ -193,7 +192,7 @@ void Model::createVertexBuffer(const std::vector<Vertex>& vertices)
         VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT
     );
 
-    device.copyBuffer(stagingBuffer.getBuffer(), m_vertexBuffer->getBuffer(), bufferSize);
+    device->copyBuffer(stagingBuffer.getBuffer(), m_vertexBuffer->getBuffer(), bufferSize);
 }
 
 /// \brief Create a new Index Buffer using the data specified by the indices
@@ -231,7 +230,7 @@ void Model::createIndexBuffer(const std::vector<std::uint32_t>& indices)
         VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT
     );
 
-    device.copyBuffer(stagingBuffer.getBuffer(), m_indexBuffer->getBuffer(), bufferSize);
+    device->copyBuffer(stagingBuffer.getBuffer(), m_indexBuffer->getBuffer(), bufferSize);
 }
 
 

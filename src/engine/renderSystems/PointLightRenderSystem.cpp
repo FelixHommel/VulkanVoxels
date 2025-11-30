@@ -9,8 +9,8 @@
 #define GLM_FORCE_RADIANS
 #define GLM_FORCE_DEPTH_ZERO_TO_ONE
 #include "glm/glm.hpp"
-#include "glm/gtc/constants.hpp"
-#include "glm/gtc/matrix_transform.hpp"
+//#include "glm/gtc/constants.hpp"
+//#include "glm/gtc/matrix_transform.hpp"
 #include <vulkan/vulkan_core.h>
 
 #include <cassert>
@@ -21,8 +21,8 @@
 namespace vv
 {
 
-PointLightRenderSystem::PointLightRenderSystem(Device& device, VkRenderPass renderPass, VkDescriptorSetLayout globalSetLayout)
-    : device(device)
+PointLightRenderSystem::PointLightRenderSystem(std::shared_ptr<Device> device, VkRenderPass renderPass, VkDescriptorSetLayout globalSetLayout)
+    : device{ std::move(device) }
 {
     createPipelineLayout(globalSetLayout);
     createPipeline(renderPass);
@@ -30,10 +30,10 @@ PointLightRenderSystem::PointLightRenderSystem(Device& device, VkRenderPass rend
 
 PointLightRenderSystem::~PointLightRenderSystem()
 {
-    vkDestroyPipelineLayout(device.device(), m_pipelineLayout, nullptr);
+    vkDestroyPipelineLayout(device->device(), m_pipelineLayout, nullptr);
 }
 
-void PointLightRenderSystem::update(FrameInfo& frameInfo, GloablUBO& ubo) const
+void PointLightRenderSystem::update(FrameInfo& frameInfo, GlobalUBO& ubo) const
 {
     auto rotateLight{ glm::rotate(glm::mat4(1.f), 0.5f * frameInfo.dt, {0.f, -1.f, 0.f}) };
     int lightIndex{ 0 };
@@ -66,7 +66,7 @@ void PointLightRenderSystem::render(FrameInfo& frameInfo) const
         m_pipelineLayout,
         0,
         1,
-        &frameInfo.gloablDescriptorSet,
+        &frameInfo.globalDescriptorSet,
         0,
         nullptr);
 
@@ -112,7 +112,7 @@ void PointLightRenderSystem::createPipelineLayout(VkDescriptorSetLayout globalSe
     createInfo.pushConstantRangeCount = 1;
     createInfo.pPushConstantRanges = &pushConstantRange;
 
-    if(vkCreatePipelineLayout(device.device(), &createInfo, nullptr, &m_pipelineLayout) != VK_SUCCESS)
+    if(vkCreatePipelineLayout(device->device(), &createInfo, nullptr, &m_pipelineLayout) != VK_SUCCESS)
         throw std::runtime_error("failed to create pipeline layout");
 }
 

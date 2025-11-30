@@ -41,10 +41,10 @@ class BasicRenderSystem
 public:
     /// \brief Create a new \ref BasicRenderSystem
     ///
-    /// \param device Reference to a \ref Device to create the \ref Pipeline on
+    /// \param device \ref Device to create the \ref Pipeline on
     /// \param renderPass Which RenderPass to use in the pipeline
-    /// \param gloablSetLayout the layout of globally used descriptor sets
-    BasicRenderSystem(Device& device, VkRenderPass renderPass, VkDescriptorSetLayout globalSetLayout);
+    /// \param globalSetLayout the layout of globally used descriptor sets
+    BasicRenderSystem(std::shared_ptr<Device> device, VkRenderPass renderPass, VkDescriptorSetLayout globalSetLayout);
     ~BasicRenderSystem();
 
     BasicRenderSystem(const BasicRenderSystem&) = delete;
@@ -61,7 +61,7 @@ private:
     static constexpr auto VERTEX_SHADER_PATH{ PROJECT_ROOT "resources/compiledShaders/simpleVert.spv" };
     static constexpr auto FRAGMENT_SHADER_PATH{ PROJECT_ROOT "resources/compiledShaders/simpleFrag.spv" };
 
-    Device& device;
+    std::shared_ptr<Device> device;
 
     std::unique_ptr<Pipeline> m_pipeline;
     VkPipelineLayout m_pipelineLayout{ VK_NULL_HANDLE };

@@ -7,8 +7,8 @@
 #define GLM_FORCE_RADIANS
 #define GLM_FORCE_DEPTH_ZERO_TO_ONE
 #include "glm/glm.hpp"
-#include "glm/gtc/constants.hpp"
-#include "glm/gtc/matrix_transform.hpp"
+//#include "glm/gtc/constants.hpp"
+//#include "glm/gtc/matrix_transform.hpp"
 #include <vulkan/vulkan_core.h>
 
 #include <cassert>
@@ -19,8 +19,8 @@
 namespace vv
 {
 
-BasicRenderSystem::BasicRenderSystem(Device& device, VkRenderPass renderPass, VkDescriptorSetLayout globalSetLayout)
-    : device(device)
+BasicRenderSystem::BasicRenderSystem(std::shared_ptr<Device> device, VkRenderPass renderPass, VkDescriptorSetLayout globalSetLayout)
+    : device{ std::move(device) }
 {
     createPipelineLayout(globalSetLayout);
     createPipeline(renderPass);
@@ -28,7 +28,7 @@ BasicRenderSystem::BasicRenderSystem(Device& device, VkRenderPass renderPass, Vk
 
 BasicRenderSystem::~BasicRenderSystem()
 {
-    vkDestroyPipelineLayout(device.device(), m_pipelineLayout, nullptr);
+    vkDestroyPipelineLayout(device->device(), m_pipelineLayout, nullptr);
 }
 
 void BasicRenderSystem::renderObjects(FrameInfo& frameInfo) const
@@ -41,7 +41,7 @@ void BasicRenderSystem::renderObjects(FrameInfo& frameInfo) const
         m_pipelineLayout,
         0,
         1,
-        &frameInfo.gloablDescriptorSet,
+        &frameInfo.globalDescriptorSet,
         0,
         nullptr);
 
@@ -85,7 +85,7 @@ void BasicRenderSystem::createPipelineLayout(VkDescriptorSetLayout globalSetLayo
     createInfo.pushConstantRangeCount = 1;
     createInfo.pPushConstantRanges = &pushConstantRange;
 
-    if(vkCreatePipelineLayout(device.device(), &createInfo, nullptr, &m_pipelineLayout) != VK_SUCCESS)
+    if(vkCreatePipelineLayout(device->device(), &createInfo, nullptr, &m_pipelineLayout) != VK_SUCCESS)
         throw std::runtime_error("failed to create pipeline layout");
 }
 

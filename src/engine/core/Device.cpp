@@ -76,8 +76,8 @@ namespace
 namespace vv
 {
 
-Device::Device(Window& window)
-    : window{ window }
+Device::Device(std::shared_ptr<Window> window)
+    : window{ std::move(window) }
 {
     createInstance();
     setupDebugMessenger();
@@ -306,7 +306,7 @@ void Device::setupDebugMessenger()
 
 void Device::createSurface()
 {
-    window.createWindowSurface(m_instance, &m_surface);
+    window->createWindowSurface(m_instance, &m_surface);
 }
 
 void Device::pickPhysicalDevice()

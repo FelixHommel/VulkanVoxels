@@ -18,7 +18,7 @@
 #define GLM_FORCE_RADIANS
 #define GLM_FORCE_DEPTH_ZERO_TO_ONE
 #include "GLFW/glfw3.h"
-#include "glm/ext/vector_float3.hpp"
+#include "glm/glm.hpp"
 #include <vulkan/vulkan_core.h>
 
 #include <chrono>
@@ -32,12 +32,13 @@ namespace vv
 
 Application::Application()
 {
-    m_globalPool =
-        DescriptorPool::Builder(m_device)
-            .setMaxSets(Swapchain::MAX_FRAMES_IN_FLIGHT)
-            .addPoolSize(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, Swapchain::MAX_FRAMES_IN_FLIGHT)
-            .build();
-
+    m_window = std::make_shared<Window>(WINDOW_WIDTH, WINDOW_HEIGHT, WINDOW_TITLE);
+    m_device = std::make_shared<Device>(m_window);
+    m_renderer = std::make_unique<Renderer>(m_window, m_device);
+    m_globalPool = DescriptorPool::Builder(m_device)
+        .setMaxSets(Swapchain::MAX_FRAMES_IN_FLIGHT)
+        .addPoolSize(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, Swapchain::MAX_FRAMES_IN_FLIGHT)
+        .build();
     loadObjects();
 }
 
@@ -48,11 +49,11 @@ void Application::run()
     {
         uboBuffers[i] = std::make_unique<Buffer>(
             m_device,
-            sizeof(GloablUBO),
+            sizeof(GlobalUBO),
             1,
             VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
             VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT,
-            m_device.properties.limits.minUniformBufferOffsetAlignment
+            m_device->properties.limits.minUniformBufferOffsetAlignment
         );
         uboBuffers[i]->map();
     }
@@ -68,20 +69,20 @@ void Application::run()
     {
         auto bufferInfo{ uboBuffers[i]->descriptorInfo() };
 
-        DescriptorWriter(*globalSetLayout, *m_globalPool)
+        DescriptorWriter(globalSetLayout.get(), m_globalPool.get())
             .writeBuffer(0, &bufferInfo)
             .build(globalDescriptorSets[i]);
     }
 
-    BasicRenderSystem basicRenderSystem{ m_device, m_renderer.getRenderPass(), globalSetLayout->getDescriptorLayout() };
-    PointLightRenderSystem pointLightRenderSystem{ m_device, m_renderer.getRenderPass(), globalSetLayout->getDescriptorLayout() };
+    BasicRenderSystem basicRenderSystem{ m_device, m_renderer->getRenderPass(), globalSetLayout->getDescriptorLayout() };
+    PointLightRenderSystem pointLightRenderSystem{ m_device, m_renderer->getRenderPass(), globalSetLayout->getDescriptorLayout() };
     Camera camera{};
     Object viewer{};
     viewer.transform.translation.z = -2.5f; // NOLINT
 
     auto currentTime{ std::chrono::high_resolution_clock::now() };
 
-    while(!m_window.shouldClose())
+    while(!m_window->shouldClose())
     {
         glfwPollEvents();
 
@@ -89,28 +90,28 @@ void Application::run()
         float dt{ std::chrono::duration<float, std::chrono::seconds::period>(newTime - currentTime).count() };
         currentTime = newTime;
 
-        KeyboardMovementController::moveInPlaneXZ(m_window.getHandle(), dt, viewer);
+        KeyboardMovementController::moveInPlaneXZ(m_window->getHandle(), dt, viewer);
         camera.setViewXYZ(viewer.transform.translation, viewer.transform.rotation);
 
-        const float aspectRatio{ m_renderer.getAspectRatio() };
+        const float aspectRatio{ m_renderer->getAspectRatio() };
         constexpr float fov{ 50.f };
         constexpr float nearPlane{ 0.1f };
         constexpr float farPlane{ 100.f };
         camera.setPerspectiveProjection(glm::radians(fov), aspectRatio, nearPlane, farPlane);
 
-        if (auto* const commandBuffer{ m_renderer.beginFrame() })
+        if (auto* const commandBuffer{ m_renderer->beginFrame() })
         {
-            std::size_t frameIndex{ m_renderer.getFrameIndex() };
+            std::size_t frameIndex{ m_renderer->getFrameIndex() };
             FrameInfo frameInfo{
                 .frameIndex = frameIndex,
                 .dt = dt,
                 .commandBuffer = commandBuffer,
                 .camera = camera,
-                .gloablDescriptorSet = globalDescriptorSets[frameIndex],
+                .globalDescriptorSet = globalDescriptorSets[frameIndex],
                 .objects = m_objects
             };
-            GloablUBO ubo{};
-            ubo.porjection = camera.getProjection();
+            GlobalUBO ubo{};
+            ubo.projection = camera.getProjection();
             ubo.view = camera.getView();
             ubo.inverseView = camera.getInverseView();
 
@@ -119,17 +120,17 @@ void Application::run()
             uboBuffers[frameIndex]->writeToBuffer(ubo);
             uboBuffers[frameIndex]->flush();
 
-            m_renderer.beginRenderPass(commandBuffer);
+            m_renderer->beginRenderPass(commandBuffer);
 
             basicRenderSystem.renderObjects(frameInfo);
             pointLightRenderSystem.render(frameInfo);
 
-            m_renderer.endRenderPass(commandBuffer);
-            m_renderer.endFrame();
+            m_renderer->endRenderPass(commandBuffer);
+            m_renderer->endFrame();
         }
     }
 
-    vkDeviceWaitIdle(m_device.device());
+    vkDeviceWaitIdle(m_device->device());
 }
 
 /// \brief Load all objects that are being used

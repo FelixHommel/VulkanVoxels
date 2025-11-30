@@ -35,10 +35,10 @@ class PointLightRenderSystem
 public:
     /// \brief Create a new \ref PointLightRenderSystem
     ///
-    /// \param device Reference to a \ref Device to create the \ref Pipeline on
+    /// \param device \ref Device to create the \ref Pipeline on
     /// \param renderPass Which RenderPass to use in the pipeline
-    /// \param gloablSetLayout the layout of globally used descriptor sets
-    PointLightRenderSystem(Device& device, VkRenderPass renderPass, VkDescriptorSetLayout globalSetLayout);
+    /// \param globalSetLayout the layout of globally used descriptor sets
+    PointLightRenderSystem(std::shared_ptr<Device> device, VkRenderPass renderPass, VkDescriptorSetLayout globalSetLayout);
     ~PointLightRenderSystem();
 
     PointLightRenderSystem(const PointLightRenderSystem&) = delete;
@@ -49,7 +49,7 @@ public:
     /// \brief Update the point lights
     ///
     /// \param frameInfo \ref FrameInfo important frame related data
-    void update(FrameInfo& frameInfo, GloablUBO& ubo) const;
+    void update(FrameInfo& frameInfo, GlobalUBO& ubo) const;
 
     /// \brief Render a point light
     ///
@@ -60,7 +60,7 @@ private:
     static constexpr auto VERTEX_SHADER_PATH{ PROJECT_ROOT "resources/compiledShaders/pointLightVert.spv" };
     static constexpr auto FRAGMENT_SHADER_PATH{ PROJECT_ROOT "resources/compiledShaders/pointLightFrag.spv" };
 
-    Device& device;
+    std::shared_ptr<Device> device;
 
     std::unique_ptr<Pipeline> m_pipeline;
     VkPipelineLayout m_pipelineLayout{ VK_NULL_HANDLE };

@@ -14,7 +14,7 @@ namespace vv
 {
 
 Buffer::Buffer(
-            Device& device,
+            std::shared_ptr<Device> device,
             VkDeviceSize elementSize,
             std::uint32_t elementCount,
             VkBufferUsageFlags usageFlags,
@@ -28,14 +28,14 @@ Buffer::Buffer(
     , m_memoryPropertyFlags{ memoryPropertyFlags }
     , m_bufferSize{ m_alignmentSize * m_elementCount }
 {
-    device.createBuffer(m_bufferSize, m_usageFlags, m_memoryPropertyFlags, m_buffer, m_bufferMemory);
+    device->createBuffer(m_bufferSize, m_usageFlags, m_memoryPropertyFlags, m_buffer, m_bufferMemory);
 }
 
 Buffer::~Buffer()
 {
     unmap();
-    vkDestroyBuffer(device.device(), m_buffer, nullptr);
-    vkFreeMemory(device.device(), m_bufferMemory, nullptr);
+    vkDestroyBuffer(device->device(), m_buffer, nullptr);
+    vkFreeMemory(device->device(), m_bufferMemory, nullptr);
 }
 
 VkResult Buffer::map(VkDeviceSize size, VkDeviceSize offset)
@@ -44,7 +44,7 @@ VkResult Buffer::map(VkDeviceSize size, VkDeviceSize offset)
     assert(m_buffer != VK_NULL_HANDLE && m_bufferMemory != VK_NULL_HANDLE && "map() called before buffer is craeted");
 #endif
 
-    return vkMapMemory(device.device(), m_bufferMemory, offset, size, 0, &m_mapped);
+    return vkMapMemory(device->device(), m_bufferMemory, offset, size, 0, &m_mapped);
 }
 
 void Buffer::unmap()
@@ -52,7 +52,7 @@ void Buffer::unmap()
     if(m_mapped == nullptr)
         return;
 
-    vkUnmapMemory(device.device(), m_bufferMemory);
+    vkUnmapMemory(device->device(), m_bufferMemory);
     m_mapped = nullptr;
 
 }
@@ -65,7 +65,7 @@ VkResult Buffer::flush(VkDeviceSize size, VkDeviceSize offset)
     mappedRange.offset = offset;
     mappedRange.size = size;
 
-    return vkFlushMappedMemoryRanges(device.device(), 1, &mappedRange);
+    return vkFlushMappedMemoryRanges(device->device(), 1, &mappedRange);
 }
 
 VkDescriptorBufferInfo Buffer::descriptorInfo(VkDeviceSize size, VkDeviceSize offset)
@@ -85,7 +85,7 @@ VkResult Buffer::invalidate(VkDeviceSize size, VkDeviceSize offset)
     mappedRange.offset = offset;
     mappedRange.size = size;
 
-    return vkInvalidateMappedMemoryRanges(device.device(), 1, &mappedRange);
+    return vkInvalidateMappedMemoryRanges(device->device(), 1, &mappedRange);
 }
 
 /// \brief Determine the minimum sice that a element needs to be stored in the buffer

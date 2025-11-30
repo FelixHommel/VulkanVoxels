@@ -36,9 +36,9 @@ struct PointLight
 ///
 /// \author Felix Hommel
 /// \date 11/28.2025
-struct GloablUBO
+struct GlobalUBO
 {
-    glm::mat4 porjection{ 1.f };
+    glm::mat4 projection{ 1.f };
     glm::mat4 view{ 1.f };
     glm::mat4 inverseView{ 1.f };
     glm::vec4 ambientLightColor{ 1.f, 1.f, 1.f, ::AMBIENT_LIGHT_INTENSITY };
@@ -64,7 +64,7 @@ struct FrameInfo
     float dt;
     VkCommandBuffer commandBuffer;
     Camera& camera; // NOLINT
-    VkDescriptorSet gloablDescriptorSet;
+    VkDescriptorSet globalDescriptorSet;
     Object::ObjectMap& objects; // NOLINT
 };
 

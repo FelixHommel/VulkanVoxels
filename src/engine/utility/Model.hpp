@@ -67,7 +67,7 @@ public:
     ///
     /// \param device \ref Device that is used to allocate the vertex buffer memory
     /// \param vertices vector containing the vertices that make up the Model Mesh
-    Model(Device& device, const Builder& builder);
+    Model(std::shared_ptr<Device> device, const Builder& builder);
     ~Model() = default;
 
     Model(const Model&) = delete;
@@ -78,8 +78,8 @@ public:
     /// \brief Load a .obj file
     ///
     /// \param device \ref Device to create the vertex and index buffers on
-    /// \param fileapth path to the obj file
-    static std::unique_ptr<Model> loadFromFile(Device& device, const std::filesystem::path& filepath);
+    /// \param filepath path to the obj file
+    static std::unique_ptr<Model> loadFromFile(std::shared_ptr<Device> device, const std::filesystem::path& filepath);
 
     /// \brief Bind the vertex buffer of the model
     ///
@@ -91,7 +91,7 @@ public:
     void draw(VkCommandBuffer commandBuffer) const;
 
 private:
-    Device& device;
+    std::shared_ptr<Device> device;
 
     std::unique_ptr<Buffer> m_vertexBuffer;
     std::uint32_t m_vertexCount{};

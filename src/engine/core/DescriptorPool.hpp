@@ -28,8 +28,8 @@ public:
     public:
         /// \brief Construct a new Descriptor pool builder
         ///
-        /// \param device the \ref Devuce on which the descripto pool is created
-        Builder(Device& device) : device(device) {}
+        /// \param device the \ref Device on which the descriptor pool is created
+        Builder(std::shared_ptr<Device> device) : m_device{ std::move(device) } {}
 
         /// \brief add more descriptor types to the pool
         ///
@@ -52,7 +52,7 @@ public:
     private:
         static constexpr std::uint32_t DEFAULT_MAX_SETS{ 1000 };
 
-        Device& device; // NOLINT
+        std::shared_ptr<Device> m_device;
         std::vector<VkDescriptorPoolSize> m_poolSizes;
         std::uint32_t m_maxSets{ DEFAULT_MAX_SETS };
         VkDescriptorPoolCreateFlags m_createFlags{ 0 };
@@ -61,11 +61,11 @@ public:
     /// \brief Construct a new DescriptorPool
     ///
     /// \param device the device where the descriptor pool is created on
-    /// \param maxSize how many allocations the descriptor pool can do at a time
+    /// \param maxSets how many allocations the descriptor pool can do at a time
     /// \param createFlags configuration flags for construction
     /// \param poolSizes describes how many descriptors of a certain type are to allocate
     DescriptorPool(
-        Device& device,
+        std::shared_ptr<Device> device,
         std::uint32_t maxSets,
         VkDescriptorPoolCreateFlags createFlags,
         const std::vector<VkDescriptorPoolSize>& poolSizes
@@ -80,9 +80,9 @@ public:
     /// \brief Allocate a new descriptor
     ///
     /// \param descriptorLayout the layout of the descriptor
-    /// \param reference to the descriptor that is being allocated
+    /// \param descriptor reference to the descriptor that is being allocated
     ///
-    /// \returns *true* if the allocation was successfull, *false* otherwise
+    /// \returns *true* if the allocation was successful, *false* otherwise
     bool allocateDescriptor(VkDescriptorSetLayout descriptorLayout, VkDescriptorSet& descriptor) const;
     /// \brief Free the descriptor pool from descriptors that were allocated
     ///
@@ -94,7 +94,7 @@ public:
     void resetPool();
 
 private:
-    Device& device;
+    std::shared_ptr<Device> m_device;
     VkDescriptorPool m_descriptorPool{ VK_NULL_HANDLE };
 
     friend class DescriptorWriter;

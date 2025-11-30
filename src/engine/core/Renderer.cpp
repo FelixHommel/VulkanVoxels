@@ -19,9 +19,9 @@
 namespace vv
 {
 
-Renderer::Renderer(Window& window, Device& device)
-    : window(window)
-    , device(device)
+Renderer::Renderer(std::shared_ptr<Window> window, std::shared_ptr<Device> device)
+    : window{ std::move(window) }
+    , device{ std::move(device) }
 {
     recreateSwapchain();
     createCommandBuffers();
@@ -89,9 +89,9 @@ void Renderer::endFrame()
         throw std::runtime_error("failed to record command buffer");
 
     const auto result{ m_swapchain->submitCommandBuffer(&commandBuffer, &m_currentImageIndex) };
-    if(result == VK_ERROR_OUT_OF_DATE_KHR || result == VK_SUBOPTIMAL_KHR || window.wasWindowResized())
+    if(result == VK_ERROR_OUT_OF_DATE_KHR || result == VK_SUBOPTIMAL_KHR || window->wasWindowResized())
     {
-        window.resetWindowResizeFlag();
+        window->resetWindowResizeFlag();
         recreateSwapchain();
     }
     else if(result != VK_SUCCESS)
@@ -165,18 +165,18 @@ void Renderer::createCommandBuffers()
 
     VkCommandBufferAllocateInfo allocInfo{};
     allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
-    allocInfo.commandPool = device.commandPool();
+    allocInfo.commandPool = device->commandPool();
     allocInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
     allocInfo.commandBufferCount = static_cast<std::uint32_t>(m_commandBuffers.size());
     
-    if(vkAllocateCommandBuffers(device.device(), &allocInfo, m_commandBuffers.data()) != VK_SUCCESS)
+    if(vkAllocateCommandBuffers(device->device(), &allocInfo, m_commandBuffers.data()) != VK_SUCCESS)
         throw std::runtime_error("failed to allocate command buffers");
 }
 
 /// \brief Free the allocated command buffers
 void Renderer::freeCommandBuffers()
 {
-    vkFreeCommandBuffers(device.device(), device.commandPool(), static_cast<std::uint32_t>(m_commandBuffers.size()), m_commandBuffers.data());
+    vkFreeCommandBuffers(device->device(), device->commandPool(), static_cast<std::uint32_t>(m_commandBuffers.size()), m_commandBuffers.data());
     m_commandBuffers.clear();
 }
 
@@ -186,13 +186,13 @@ void Renderer::freeCommandBuffers()
 /// the size of the frame buffer
 void Renderer::recreateSwapchain()
 {
-    auto extent{ window.getExtent() };
+    auto extent{ window->getExtent() };
     while(extent.width == 0 || extent.height == 0)
     {
-        extent = window.getExtent();
+        extent = window->getExtent();
         glfwWaitEvents();
     }
-    vkDeviceWaitIdle(device.device());
+    vkDeviceWaitIdle(device->device());
 
     if(m_swapchain == nullptr)
         m_swapchain = std::make_unique<Swapchain>(device, extent);

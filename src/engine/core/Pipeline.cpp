@@ -13,16 +13,17 @@
 #include <fstream>
 #include <ios>
 #include <stdexcept>
+#include <utility>
 #include <vector>
 
 namespace vv
 {
 
-Pipeline::Pipeline(Device& device,
-    const std::filesystem::path& vertexShaderPath,
-    const std::filesystem::path& fragmentShaderPath,
-    const PipelineConfigInfo& configInfo)
-    : device{ device }
+Pipeline::Pipeline(std::shared_ptr<Device> device,
+            const std::filesystem::path& vertexShaderPath,
+            const std::filesystem::path& fragmentShaderPath,
+            const PipelineConfigInfo& configInfo)
+    : m_device{ std::move(device) }
 {
 #if defined(VV_ENABLE_ASSERTS)
     assert(configInfo.pipelineLayout != VK_NULL_HANDLE && "Cannot create graphics pipeline: no pipeline layout provided");
@@ -74,15 +75,15 @@ Pipeline::Pipeline(Device& device,
     pipelineInfo.basePipelineHandle = VK_NULL_HANDLE;
     pipelineInfo.basePipelineIndex = -1;
 
-    if(vkCreateGraphicsPipelines(device.device(), VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &m_graphicsPipeline) != VK_SUCCESS)
+    if(vkCreateGraphicsPipelines(m_device->device(), VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &m_graphicsPipeline) != VK_SUCCESS)
         throw std::runtime_error("failed to create graphics pipeline");
 }
 
 Pipeline::~Pipeline()
 {
-    vkDestroyShaderModule(device.device(), m_vertexShaderModule, nullptr);
-    vkDestroyShaderModule(device.device(), m_fragmentShaderModule, nullptr);
-    vkDestroyPipeline(device.device(), m_graphicsPipeline, nullptr);
+    vkDestroyShaderModule(m_device->device(), m_vertexShaderModule, nullptr);
+    vkDestroyShaderModule(m_device->device(), m_fragmentShaderModule, nullptr);
+    vkDestroyPipeline(m_device->device(), m_graphicsPipeline, nullptr);
 }
 
 void Pipeline::bind(VkCommandBuffer commandBuffer) const
@@ -181,7 +182,7 @@ void Pipeline::createShaderModule(const std::vector<char>& code, VkShaderModule*
     createInfo.codeSize = code.size();
     createInfo.pCode = reinterpret_cast<const std::uint32_t*>(code.data());
 
-    if(vkCreateShaderModule(device.device(), &createInfo, nullptr, shaderModule) != VK_SUCCESS)
+    if(vkCreateShaderModule(m_device->device(), &createInfo, nullptr, shaderModule) != VK_SUCCESS)
         throw std::runtime_error("failed to create shader");
 }
 

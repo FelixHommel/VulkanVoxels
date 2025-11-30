@@ -37,10 +37,10 @@ std::unique_ptr<DescriptorSetLayout> DescriptorSetLayout::Builder::build() const
 }
 
 DescriptorSetLayout::DescriptorSetLayout(
-    Device& device,
-    std::unordered_map<std::uint32_t, VkDescriptorSetLayoutBinding> bindings
+        std::shared_ptr<Device> device,
+        std::unordered_map<std::uint32_t, VkDescriptorSetLayoutBinding> bindings
 )
-    : device(device)
+    : m_device{ std::move(device) }
     , m_bindings{ bindings }
 {
     std::vector<VkDescriptorSetLayoutBinding> layoutBindings{};
@@ -52,13 +52,13 @@ DescriptorSetLayout::DescriptorSetLayout(
     createInfo.bindingCount = static_cast<std::uint32_t>(layoutBindings.size());
     createInfo.pBindings = layoutBindings.data();
 
-    if(vkCreateDescriptorSetLayout(device.device(), &createInfo, nullptr, &m_descriptorSetLayout) != VK_SUCCESS)
+    if(vkCreateDescriptorSetLayout(m_device->device(), &createInfo, nullptr, &m_descriptorSetLayout) != VK_SUCCESS)
         throw std::runtime_error("failed to create descriptor set layout");
 }
 
 DescriptorSetLayout::~DescriptorSetLayout()
 {
-    vkDestroyDescriptorSetLayout(device.device(), m_descriptorSetLayout, nullptr);
+    vkDestroyDescriptorSetLayout(m_device->device(), m_descriptorSetLayout, nullptr);
 }
 
 } // !vv

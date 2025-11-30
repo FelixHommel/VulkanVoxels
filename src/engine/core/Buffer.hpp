@@ -28,9 +28,9 @@ public:
     /// \param elementCount how many elements of data can fit in the buffer maximally
     /// \param usageFlags how the buffer is going to be used
     /// \param memoryPropertyFlags which properties the memory needs to fulfill
-    /// \param (optional) minOffsetAlignment the minimum required alignment for the offset member (in bytes)
+    /// \param minOffsetAlignment (optional) the minimum required alignment for the offset member (in bytes)
     Buffer(
-            Device& device,
+            std::shared_ptr<Device> device,
             VkDeviceSize elementSize,
             std::uint32_t elementCount,
             VkBufferUsageFlags usageFlags,
@@ -99,7 +99,7 @@ public:
     VkResult invalidate(VkDeviceSize size = VK_WHOLE_SIZE, VkDeviceSize offset = 0);
 
 private:
-    Device& device;
+    std::shared_ptr<Device> device;
 
     std::uint32_t m_elementCount; ///< How many elements of data are at maximum in the buffer
     VkDeviceSize m_elementSize; ///< How big a single element is (in byte)

@@ -48,7 +48,7 @@ public:
     /// \param vertexShaderPath filepath to the vertex shader in spir-v format
     /// \param fragmentShaderPath filepath to the fragment shader in spir-v format
     /// \param configInfo \ref PipelineConfigInfo that contains information of how the pipeline should be configured
-    Pipeline(Device& device,
+    Pipeline(std::shared_ptr<Device> device,
             const std::filesystem::path& vertexShaderPath,
             const std::filesystem::path& fragmentShaderPath,
             const PipelineConfigInfo& configInfo);
@@ -74,7 +74,7 @@ private:
 
     static std::vector<char> readFile(const std::filesystem::path& filepath);
 
-    Device& device;
+    std::shared_ptr<Device> m_device;
     VkPipeline m_graphicsPipeline{};
     VkShaderModule m_vertexShaderModule{};
     VkShaderModule m_fragmentShaderModule{};

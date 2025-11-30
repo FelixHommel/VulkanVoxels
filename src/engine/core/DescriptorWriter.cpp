@@ -1,22 +1,23 @@
 #include "DescriptorWriter.hpp"
-#include <cassert>
+
 #include <vulkan/vulkan_core.h>
+
+#include <cassert>
 
 namespace vv
 {
-
-DescriptorWriter::DescriptorWriter(DescriptorSetLayout& setLayout, DescriptorPool& pool)
-    : setLayout(setLayout)
-    , pool(pool)
+DescriptorWriter::DescriptorWriter(DescriptorSetLayout* setLayout, DescriptorPool* pool)
+    : setLayout{ setLayout }
+    , pool{ pool }
 {}
 
 DescriptorWriter& DescriptorWriter::writeBuffer(std::uint32_t binding, VkDescriptorBufferInfo* bufferInfo)
 {
 #if defined(VV_ENABLE_ASSERTS)
-    assert(setLayout.m_bindings.contains(binding) && "Layout does not contain specified binding");
+    assert(setLayout->m_bindings.contains(binding) && "Layout does not contain specified binding");
 #endif
 
-    auto& bindingDescription{ setLayout.m_bindings[binding] };
+    auto& bindingDescription{ setLayout->m_bindings[binding] };
 
 #if defined(VV_ENABLE_ASSERTS)
     assert(bindingDescription.descriptorCount == 1 && "Binding single descriptor info, but binding expects multiple");
@@ -37,10 +38,10 @@ DescriptorWriter& DescriptorWriter::writeBuffer(std::uint32_t binding, VkDescrip
 DescriptorWriter& DescriptorWriter::writeImage(std::uint32_t binding, VkDescriptorImageInfo* imageInfo)
 {
 #if defined(VV_ENABLE_ASSERTS)
-    assert(!setLayout.m_bindings.contains(binding) && "Layout does not contain specified binding");
+    assert(!setLayout->m_bindings.contains(binding) && "Layout does not contain specified binding");
 #endif
 
-    auto& bindingDescription{ setLayout.m_bindings[binding] };
+    auto& bindingDescription{ setLayout->m_bindings[binding] };
 
 #if defined(VV_ENABLE_ASSERTS)
     assert(bindingDescription.descriptorCount == 1 && "Binding single descriptor info, but binding expects multiple");
@@ -60,7 +61,7 @@ DescriptorWriter& DescriptorWriter::writeImage(std::uint32_t binding, VkDescript
 
 bool DescriptorWriter::build(VkDescriptorSet& set)
 {
-    bool success{ pool.allocateDescriptor(setLayout.getDescriptorLayout(), set) };
+    bool success{ pool->allocateDescriptor(setLayout->getDescriptorLayout(), set) };
 
     if(!success)
         return false;
@@ -75,7 +76,7 @@ void DescriptorWriter::overwrite(VkDescriptorSet& set)
     for(auto& write : m_writes)
         write.dstSet = set;
 
-    vkUpdateDescriptorSets(pool.device.device(), static_cast<std::uint32_t>(m_writes.size()), m_writes.data(), 0, nullptr);
+    vkUpdateDescriptorSets(pool->m_device->device(), static_cast<std::uint32_t>(m_writes.size()), m_writes.data(), 0, nullptr);
 }
 
 } // !vv

@@ -26,7 +26,7 @@ public:
     ///
     /// \param setLayout a \ref DescriptorSetLayout describes the layout of the descriptor
     /// \param pool the \ref DescriptorPool where the descriptor sets are allocated on
-    DescriptorWriter(DescriptorSetLayout& setLayout, DescriptorPool& pool);
+    DescriptorWriter(DescriptorSetLayout* setLayout, DescriptorPool* pool);
     ~DescriptorWriter() = default;
 
     DescriptorWriter(const DescriptorWriter&) = default;
@@ -47,18 +47,18 @@ public:
 
     /// \brief build the descriptor set
     ///
-    /// usese overwrite() internally
+    /// uses overwrite() internally
     ///
     /// \param set reference to the VkDescriptorSet that contains the data
     bool build(VkDescriptorSet& set);
     /// \brief update the descriptor 
     ///
-    /// \param the descriptor set which will be updated
+    /// \param set the descriptor set which will be updated
     void overwrite(VkDescriptorSet& set);
 
 private:
-    DescriptorSetLayout& setLayout;
-    DescriptorPool& pool;
+    DescriptorSetLayout* setLayout;
+    DescriptorPool* pool;
     std::vector<VkWriteDescriptorSet> m_writes;
 };
 

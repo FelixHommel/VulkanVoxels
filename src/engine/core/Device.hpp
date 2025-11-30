@@ -6,6 +6,7 @@
 #include <vulkan/vulkan_core.h>
 
 #include <cstdint>
+#include <memory>
 #include <optional>
 #include <vector>
 
@@ -49,7 +50,7 @@ public:
     false;
 #endif
 
-    explicit Device(Window& window);
+    explicit Device(std::shared_ptr<Window> window);
     ~Device();
 
     Device(const Device&) = delete;
@@ -145,7 +146,7 @@ private:
     VkQueue m_graphicsQueue{ VK_NULL_HANDLE };
     VkQueue m_presentQueue{ VK_NULL_HANDLE };
 
-    Window& window;
+    std::shared_ptr<Window> window;
 
     void createInstance();
     void setupDebugMessenger();
