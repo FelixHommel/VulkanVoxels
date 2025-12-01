@@ -13,9 +13,9 @@
 
 namespace
 {
-    constexpr unsigned int UBO_ALIGNMENT{ 16 };
-    constexpr float AMBIENT_LIGHT_INTENSITY{ 0.02f };
-}
+constexpr unsigned int UBO_ALIGNMENT{ 16 };
+constexpr float AMBIENT_LIGHT_INTENSITY{ 0.02f };
+} // namespace
 
 namespace vv
 {
@@ -26,8 +26,8 @@ namespace vv
 /// \date 11/28/2025
 struct PointLight
 {
-    glm::vec4 position{};
-    glm::vec4 color{};
+	glm::vec4 position{};
+	glm::vec4 color{};
 };
 
 #define MAX_LIGHTS 10
@@ -38,12 +38,12 @@ struct PointLight
 /// \date 11/28.2025
 struct GlobalUBO
 {
-    glm::mat4 projection{ 1.f };
-    glm::mat4 view{ 1.f };
-    glm::mat4 inverseView{ 1.f };
-    glm::vec4 ambientLightColor{ 1.f, 1.f, 1.f, ::AMBIENT_LIGHT_INTENSITY };
-    PointLight pointLights[MAX_LIGHTS];
-    int numLights;
+	glm::mat4 projection{ 1.f };
+	glm::mat4 view{ 1.f };
+	glm::mat4 inverseView{ 1.f };
+	glm::vec4 ambientLightColor{ 1.f, 1.f, 1.f, ::AMBIENT_LIGHT_INTENSITY };
+	PointLight pointLights[MAX_LIGHTS];
+	int numLights;
 };
 
 /// \brief FrameInfo is a collection of relevant data that regards the entire Frme
@@ -60,14 +60,14 @@ struct GlobalUBO
 /// \date 11/20/2025
 struct FrameInfo
 {
-    std::size_t frameIndex;
-    float dt;
-    VkCommandBuffer commandBuffer;
-    Camera& camera; // NOLINT
-    VkDescriptorSet globalDescriptorSet;
-    Object::ObjectMap& objects; // NOLINT
+	std::size_t frameIndex;
+	float dt;
+	VkCommandBuffer commandBuffer;
+	Camera& camera; // NOLINT
+	VkDescriptorSet globalDescriptorSet;
+	Object::ObjectMap& objects; // NOLINT
 };
 
-} // !vv
+} // namespace vv
 
 #endif // !VULKAN_VOXELS_SRC_ENGINE_UTILITY_FRAME_INFO_HPP

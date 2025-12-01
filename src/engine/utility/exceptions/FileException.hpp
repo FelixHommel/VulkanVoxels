@@ -19,19 +19,22 @@ public:
 	/// \param filepath the path to the file that caused the exception
 	/// \param location (optional) where the exception is thrown
 	explicit FileException(
-        std::string message,
-        std::string filepath,
-        std::source_location location = std::source_location::current()
-    );
+		std::string message,
+		std::string filepath,
+		std::source_location location = std::source_location::current()
+	);
 
-    [[nodiscard]] const std::string& filepath() const noexcept { return m_filepath; }
+	[[nodiscard]] const std::string& filepath() const noexcept
+	{
+		return m_filepath;
+	}
 
 	[[nodiscard]] std::string detailedMessage() const override;
 
 private:
-    std::string m_filepath;
+	std::string m_filepath;
 
-    void buildWhatMessage() override;
+	void buildWhatMessage() override;
 };
 
 } // namespace vv

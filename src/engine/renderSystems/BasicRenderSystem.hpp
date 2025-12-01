@@ -25,8 +25,8 @@ namespace vv
 /// \date 11/19/2025
 struct SimplePushConstantData
 {
-    glm::mat4 modelMatrix{ 1.f };
-    glm::mat4 normalMatrix{ 1.f };
+	glm::mat4 modelMatrix{ 1.f };
+	glm::mat4 normalMatrix{ 1.f };
 };
 
 /// \brief Render System to render standard \ref Object
@@ -39,37 +39,45 @@ struct SimplePushConstantData
 class BasicRenderSystem
 {
 public:
-    /// \brief Create a new \ref BasicRenderSystem
-    ///
-    /// \param device \ref Device to create the \ref Pipeline on
-    /// \param renderPass Which RenderPass to use in the pipeline
-    /// \param globalSetLayout the layout of globally used descriptor sets
-    BasicRenderSystem(std::shared_ptr<Device> device, VkRenderPass renderPass, VkDescriptorSetLayout globalSetLayout);
-    ~BasicRenderSystem();
+	/// \brief Create a new \ref BasicRenderSystem
+	///
+	/// \param device \ref Device to create the \ref Pipeline on
+	/// \param renderPass Which RenderPass to use in the pipeline
+	/// \param globalSetLayout the layout of globally used descriptor sets
+	BasicRenderSystem(
+		std::shared_ptr<Device> device,
+		VkRenderPass renderPass,
+		VkDescriptorSetLayout globalSetLayout
+	);
+	~BasicRenderSystem();
 
-    BasicRenderSystem(const BasicRenderSystem&) = delete;
-    BasicRenderSystem(BasicRenderSystem&&) = delete;
-    BasicRenderSystem& operator=(const BasicRenderSystem&) = delete;
-    BasicRenderSystem& operator=(BasicRenderSystem&&) = delete;
+	BasicRenderSystem(const BasicRenderSystem&) = delete;
+	BasicRenderSystem(BasicRenderSystem&&) = delete;
+	BasicRenderSystem& operator=(const BasicRenderSystem&) = delete;
+	BasicRenderSystem& operator=(BasicRenderSystem&&) = delete;
 
-    /// \brief Render a list of \ref Object
-    ///
-    /// \param frameInfo \ref FrameInfo with data about the current frame
-    void renderObjects(FrameInfo& frameInfo) const;
+	/// \brief Render a list of \ref Object
+	///
+	/// \param frameInfo \ref FrameInfo with data about the current frame
+	void renderObjects(FrameInfo& frameInfo) const;
 
 private:
-    static constexpr auto VERTEX_SHADER_PATH{ PROJECT_ROOT "resources/compiledShaders/simpleVert.spv" };
-    static constexpr auto FRAGMENT_SHADER_PATH{ PROJECT_ROOT "resources/compiledShaders/simpleFrag.spv" };
+	static constexpr auto VERTEX_SHADER_PATH{
+		PROJECT_ROOT "resources/compiledShaders/simpleVert.spv"
+	};
+	static constexpr auto FRAGMENT_SHADER_PATH{
+		PROJECT_ROOT "resources/compiledShaders/simpleFrag.spv"
+	};
 
-    std::shared_ptr<Device> device;
+	std::shared_ptr<Device> device;
 
-    std::unique_ptr<Pipeline> m_pipeline;
-    VkPipelineLayout m_pipelineLayout{ VK_NULL_HANDLE };
+	std::unique_ptr<Pipeline> m_pipeline;
+	VkPipelineLayout m_pipelineLayout{ VK_NULL_HANDLE };
 
-    void createPipelineLayout(VkDescriptorSetLayout globalSetLayout);
-    void createPipeline(VkRenderPass renderPass);
+	void createPipelineLayout(VkDescriptorSetLayout globalSetLayout);
+	void createPipeline(VkRenderPass renderPass);
 };
 
-} // !vv
+} // namespace vv
 
 #endif // !VULKAN_VOXELS_SRC_ENGINE_RENDER_SYSTEMS_BASIC_RENDER_SYSTEM_HPP
