@@ -1,6 +1,7 @@
 #include "DescriptorPool.hpp"
 
 #include "spdlog/spdlog.h"
+#include "utility/exceptions/VulkanException.hpp"
 
 #include <iostream>
 #include <vulkan/vulkan_core.h>
@@ -52,8 +53,9 @@ DescriptorPool::DescriptorPool(
     createInfo.maxSets = maxSets;
     createInfo.flags = createFlags;
 
-    if(vkCreateDescriptorPool(device->device(), &createInfo, nullptr, &m_descriptorPool) != VK_SUCCESS)
-        throw std::runtime_error("failed to create descriptor pool");
+	const VkResult result{ vkCreateDescriptorPool(device->device(), &createInfo, nullptr, &m_descriptorPool) };
+    if(result != VK_SUCCESS)
+        throw VulkanException("Failed to create descriptor pool", result);
 }
 
 DescriptorPool::~DescriptorPool()

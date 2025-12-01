@@ -2,6 +2,8 @@
 
 #include "core/Device.hpp"
 #include "utility/Model.hpp"
+#include "utility/exceptions/FileException.hpp"
+#include "utility/exceptions/VulkanException.hpp"
 
 #include <vulkan/vulkan_core.h>
 
@@ -75,8 +77,9 @@ Pipeline::Pipeline(std::shared_ptr<Device> device,
     pipelineInfo.basePipelineHandle = VK_NULL_HANDLE;
     pipelineInfo.basePipelineIndex = -1;
 
-    if(vkCreateGraphicsPipelines(m_device->device(), VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &m_graphicsPipeline) != VK_SUCCESS)
-        throw std::runtime_error("failed to create graphics pipeline");
+	const VkResult result{ vkCreateGraphicsPipelines(m_device->device(), VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &m_graphicsPipeline) };
+    if(result != VK_SUCCESS)
+        throw VulkanException("Failed to create graphics pipeline", result);
 }
 
 Pipeline::~Pipeline()
@@ -182,8 +185,9 @@ void Pipeline::createShaderModule(const std::vector<char>& code, VkShaderModule*
     createInfo.codeSize = code.size();
     createInfo.pCode = reinterpret_cast<const std::uint32_t*>(code.data());
 
-    if(vkCreateShaderModule(m_device->device(), &createInfo, nullptr, shaderModule) != VK_SUCCESS)
-        throw std::runtime_error("failed to create shader");
+	const VkResult result{ vkCreateShaderModule(m_device->device(), &createInfo, nullptr, shaderModule) };
+    if(result != VK_SUCCESS)
+        throw VulkanException("Failed to create shader", result);
 }
 
 /// \brief Read the file and return its content
@@ -197,7 +201,7 @@ std::vector<char> Pipeline::readFile(const std::filesystem::path& filepath)
     fileHandle.open(filepath, std::ios::ate | std::ios::binary);
 
     if(!fileHandle.is_open())
-        throw std::runtime_error("Failed to open file: " + filepath.string());
+		throw FileException("Failed to open shader file", filepath);
 
     const auto fileSize{ fileHandle.tellg() };
     std::vector<char> buffer(static_cast<std::size_t>(fileSize));

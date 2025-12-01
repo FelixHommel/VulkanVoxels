@@ -5,6 +5,9 @@
 #include "GLFW/glfw3.h"
 #include "spdlog/common.h"
 #include "spdlog/spdlog.h"
+#include "utility/exceptions/Exception.hpp"
+#include "utility/exceptions/VulkanException.hpp"
+
 #include <vulkan/vk_platform.h>
 #include <vulkan/vulkan_core.h>
 
@@ -110,7 +113,7 @@ std::uint32_t Device::findMemoryType(const std::uint32_t typeFilter, const VkMem
             return i;
     }
 
-    throw std::runtime_error("failed to find a suitable memoty type");
+    throw Exception("Failed to find a suitable memory type");
 }
 
 VkFormat Device::findSupportedFormat(const std::vector<VkFormat>& candidates, const VkImageTiling tiling, const VkFormatFeatureFlags features) const
@@ -127,7 +130,7 @@ VkFormat Device::findSupportedFormat(const std::vector<VkFormat>& candidates, co
             return format;
     }
 
-    throw std::runtime_error("failed to find a supported format");
+    throw Exception("Failed to find a supported format");
 }
 
 void Device::createBuffer(
@@ -141,8 +144,9 @@ void Device::createBuffer(
     createInfo.usage = usage;
     createInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
 
-    if(vkCreateBuffer(m_device, &createInfo, nullptr, &buffer) != VK_SUCCESS)
-        throw std::runtime_error("failed to create vertex buffer");
+	VkResult result{ vkCreateBuffer(m_device, &createInfo, nullptr, &buffer) };
+    if(result != VK_SUCCESS)
+        throw VulkanException("Failed to create vertex buffer", result);
 
     VkMemoryRequirements memRequirements{};
     vkGetBufferMemoryRequirements(m_device, buffer, &memRequirements);
@@ -152,8 +156,9 @@ void Device::createBuffer(
     allocInfo.allocationSize = memRequirements.size;
     allocInfo.memoryTypeIndex = findMemoryType(memRequirements.memoryTypeBits, properties);
 
-    if(vkAllocateMemory(m_device, &allocInfo, nullptr, &bufferMemory) != VK_SUCCESS)
-        throw std::runtime_error(" failed to allocate vertex buffer memory");
+	result = vkAllocateMemory(m_device, &allocInfo, nullptr, &bufferMemory);
+    if(result != VK_SUCCESS)
+        throw VulkanException("Failed to allocate vertex buffer memory", result);
 
     vkBindBufferMemory(m_device, buffer, bufferMemory, 0);
 }
@@ -232,8 +237,9 @@ void Device::copyBufferToImage(VkBuffer buffer, VkImage image, std::uint32_t wid
 
 void Device::createImageWithInfo(const VkImageCreateInfo& imageInfo, const VkMemoryPropertyFlags properties, VkImage& image, VkDeviceMemory& imageMemory) const
 {
-    if(vkCreateImage(m_device, &imageInfo, nullptr, &image) != VK_SUCCESS)
-        throw std::runtime_error("failed to create image");
+	VkResult result{ vkCreateImage(m_device, &imageInfo, nullptr, &image) };
+    if(result != VK_SUCCESS)
+        throw VulkanException("Failed to create image", result);
 
     VkMemoryRequirements memRequirements{};
     vkGetImageMemoryRequirements(m_device, image, &memRequirements);
@@ -243,17 +249,21 @@ void Device::createImageWithInfo(const VkImageCreateInfo& imageInfo, const VkMem
     allocInfo.allocationSize = memRequirements.size;
     allocInfo.memoryTypeIndex = findMemoryType(memRequirements.memoryTypeBits, properties);
 
-    if(vkAllocateMemory(m_device, &allocInfo, nullptr, &imageMemory) != VK_SUCCESS)
-        throw std::runtime_error("failed to allocate image memory");
+	result = vkAllocateMemory(m_device, &allocInfo, nullptr, &imageMemory);
+    if(result != VK_SUCCESS)
+    {
+	    throw VulkanException("Failed to allocate image memory", result);
+    }
 
-    if(vkBindImageMemory(m_device, image, imageMemory, 0) != VK_SUCCESS)
-        throw std::runtime_error("failed to bind image memory");
+	result = vkBindImageMemory(m_device, image, imageMemory, 0);
+    if(result != VK_SUCCESS)
+        throw VulkanException("Failed to bind image memory", result);
 }
 
 void Device::createInstance()
 {
     if(ENABLE_VALIDATION_LAYERS && !checkValidationLayerSupport())
-        throw std::runtime_error("validation layers enabled, but not available");
+        throw Exception("Validation layers enabled but not available");
 
     VkApplicationInfo appInfo{};
     appInfo.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO;
@@ -286,8 +296,9 @@ void Device::createInstance()
         createInfo.pNext = &debugMessengerCreateInfo;
     }
 
-    if(vkCreateInstance(&createInfo, nullptr, &m_instance) != 0)
-        throw std::runtime_error("failed to create vulkan instance");
+	const VkResult result{ vkCreateInstance(&createInfo, nullptr, &m_instance) };
+    if(result != 0)
+        throw VulkanException("Failed to create vulkan instance", result);
 
     hasGlfwRequiredInstanceExtensions();
 }
@@ -300,8 +311,9 @@ void Device::setupDebugMessenger()
     VkDebugUtilsMessengerCreateInfoEXT createInfo{};
     populateDebugMessengerCreateInfo(createInfo);
 
-    if(::CreateDebugUtilsMessengerEXT(m_instance, &createInfo, nullptr, &m_debugMessenger) != VK_SUCCESS)
-        throw std::runtime_error("failed to create debug messenger");
+	const VkResult result{ ::CreateDebugUtilsMessengerEXT(m_instance, &createInfo, nullptr, &m_debugMessenger) };
+    if(result != VK_SUCCESS)
+        throw VulkanException("Failed to create debug messenger", result);
 }
 
 void Device::createSurface()
@@ -315,9 +327,9 @@ void Device::pickPhysicalDevice()
     vkEnumeratePhysicalDevices(m_instance, &deviceCount, nullptr);
 
     if(deviceCount == 0)
-        throw std::runtime_error("failed to find any GPUs that support vulkan");
+        throw Exception("Failed to find any GPUs that support vulkan");
 
-    spdlog::log(spdlog::level::info, "Found {} devices", deviceCount);
+    spdlog::info("Found {} devices", deviceCount);
 
     std::vector<VkPhysicalDevice> devices(deviceCount);
     vkEnumeratePhysicalDevices(m_instance, &deviceCount, devices.data());
@@ -332,10 +344,10 @@ void Device::pickPhysicalDevice()
     }
 
     if(m_physicalDevice == VK_NULL_HANDLE)
-        throw std::runtime_error("failed to find a suitable GPU");
+        throw Exception("Failed to find a suitable GPU");
 
     vkGetPhysicalDeviceProperties(m_physicalDevice, &properties);
-    spdlog::log(spdlog::level::info, "Chosen physical device: {}", properties.deviceName);
+    spdlog::info("Chosen physical device: {}", properties.deviceName);
 }
 
 void Device::createLogicalDevice()
@@ -343,7 +355,7 @@ void Device::createLogicalDevice()
     const QueueFamilyIndices indices{ findQueueFamilies(m_physicalDevice) };
 
     if(!indices.isComplete())
-        throw std::runtime_error("failed to find queues");
+        throw Exception("Failed to find queues");
 
     std::vector<VkDeviceQueueCreateInfo> queueCreateInfos;
     const std::set<std::uint32_t> uniqueQueueFamilies{ indices.graphicsFamily.value(), indices.presentFamily.value() };
@@ -379,8 +391,9 @@ void Device::createLogicalDevice()
         createInfo.ppEnabledLayerNames = VALIDATION_LAYERS.data();
     }
 
-    if(vkCreateDevice(m_physicalDevice, &createInfo, nullptr, &m_device) != VK_SUCCESS)
-        throw std::runtime_error("failed to create logical device");
+	const VkResult result{ vkCreateDevice(m_physicalDevice, &createInfo, nullptr, &m_device) };
+    if(result != VK_SUCCESS)
+        throw VulkanException("Failed to create logical device", result);
 
     vkGetDeviceQueue(m_device, indices.graphicsFamily.value(), 0, &m_graphicsQueue);
     vkGetDeviceQueue(m_device, indices.presentFamily.value(), 0, &m_presentQueue);
@@ -391,15 +404,16 @@ void Device::createCommandPool()
     const QueueFamilyIndices indices{ findPhysicalQueueFamilies() };
 
     if(!indices.graphicsFamily.has_value())
-        throw std::runtime_error("failed to find graphics queue family");
+        throw Exception("Failed to find graphics queue family");
 
     VkCommandPoolCreateInfo createInfo{};
     createInfo.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
     createInfo.flags = VK_COMMAND_POOL_CREATE_TRANSIENT_BIT | VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT;
     createInfo.queueFamilyIndex = indices.graphicsFamily.value();
 
-    if(vkCreateCommandPool(m_device, &createInfo, nullptr, &m_commandPool) != VK_SUCCESS)
-        throw std::runtime_error("failed to create command pool");
+	const VkResult result{ vkCreateCommandPool(m_device, &createInfo, nullptr, &m_commandPool) };
+    if(result != VK_SUCCESS)
+        throw VulkanException("failed to create command pool", result);
 }
 
 bool Device::isDeviceSuitable(VkPhysicalDevice phDevice) const
@@ -528,7 +542,7 @@ void Device::hasGlfwRequiredInstanceExtensions()
         available.insert(extension.extensionName);
     }
 
-    spdlog::log(spdlog::level::info, "rquired extensions:");
+    spdlog::info("Required extensions:");
     const auto requiredExtensions{ getRequiredExtensions() };
     for(const auto& required : requiredExtensions)
     {

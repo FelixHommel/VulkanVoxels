@@ -21,6 +21,8 @@ add_library(${NAME}
     ./utility/KeyboardMovementController.cpp
     ./utility/exceptions/Exception.cpp
     ./utility/exceptions/VulkanException.cpp
+    ./utility/exceptions/FileException.cpp
+    ./utility/exceptions/ResourceException.cpp
     ./external/tiny_obj_loader_impl.cpp
 )
 
@@ -48,6 +50,8 @@ target_sources(${NAME}
             ./utility/Utils.hpp
             ./utility/exceptions/Exception.hpp
             ./utility/exceptions/VulkanException.hpp
+            ./utility/exceptions/FileException.hpp
+            ./utility/exceptions/ResourceException.hpp
             ./external/tiny_obj_loader.h
 )
 

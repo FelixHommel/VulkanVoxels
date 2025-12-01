@@ -78,7 +78,6 @@ Checks: >
   misc-include-cleaner,
   misc-misleading-identifier,
   misc-misplaced-const,
-  misc-non-private-member-variables-in-classes,
   misc-redundant-expression,
   misc-throw-by-value-catch-by-reference,
   misc-unused-parameters,

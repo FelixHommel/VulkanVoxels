@@ -3,6 +3,8 @@
 #include "GLFW/glfw3.h"
 #include "spdlog/common.h"
 #include "spdlog/spdlog.h"
+#include "utility/exceptions/VulkanException.hpp"
+
 #include <vulkan/vulkan_core.h>
 
 #include <cstdint>
@@ -40,8 +42,9 @@ Window::~Window()
 
 void Window::createWindowSurface(VkInstance instance, VkSurfaceKHR* surface) const
 {
-    if(glfwCreateWindowSurface(instance, m_window, nullptr, surface) != 0)
-        throw std::runtime_error("Failed to create window surface");
+	const VkResult result{ glfwCreateWindowSurface(instance, m_window, nullptr, surface) };
+    if(result != VK_SUCCESS)
+		throw VulkanException("Failed to create window surface", result);
 }
 
 /// \brief Callback function for when the window is resized

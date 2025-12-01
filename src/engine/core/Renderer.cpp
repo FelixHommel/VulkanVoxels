@@ -5,14 +5,14 @@
 #include "core/Window.hpp"
 
 #include "GLFW/glfw3.h"
+#include "utility/exceptions/VulkanException.hpp"
+
 #include <vulkan/vulkan_core.h>
 
 #include <array>
 #include <cassert>
 #include <cstddef>
-#include <cstdint>
 #include <memory>
-#include <stdexcept>
 #include <utility>
 #include <vector>
 
@@ -56,7 +56,7 @@ VkCommandBuffer Renderer::beginFrame()
     assert(!m_isFrameStarted && "Cannot call beginFrame() while a frame is already in progress");
 #endif
 
-    const auto result{ m_swapchain->acquireNextImage(&m_currentImageIndex) };
+    VkResult result{ m_swapchain->acquireNextImage(&m_currentImageIndex) };
     if(result == VK_ERROR_OUT_OF_DATE_KHR)
     {
         recreateSwapchain();
@@ -64,7 +64,7 @@ VkCommandBuffer Renderer::beginFrame()
     }
 
     if(result != VK_SUCCESS && result != VK_SUBOPTIMAL_KHR)
-        throw std::runtime_error("failed to acquire swapchain image");
+        throw VulkanException("Failed to acquire swapchain image", result);
 
     m_isFrameStarted = true;
 
@@ -72,8 +72,9 @@ VkCommandBuffer Renderer::beginFrame()
     VkCommandBufferBeginInfo beginInfo{};
     beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
 
-    if(vkBeginCommandBuffer(commandBuffer, &beginInfo) != VK_SUCCESS)
-        throw std::runtime_error("failed to begin recording command buffer");
+	result = vkBeginCommandBuffer(commandBuffer, &beginInfo);
+    if(result != VK_SUCCESS)
+        throw VulkanException("Failed to begin recording command buffer", result);
 
     return commandBuffer;
 }
@@ -81,21 +82,25 @@ VkCommandBuffer Renderer::beginFrame()
 void Renderer::endFrame()
 {
 #if defined(VV_ENABLE_ASSERTS)
-    assert(m_isFrameStarted && "cannot call endFrame() while there is no frame in progress");
+    assert(m_isFrameStarted && "Cannot call endFrame() while there is no frame in progress");
 #endif
 
     auto* const commandBuffer{ getCurrentCommandBuffer() };
-    if (vkEndCommandBuffer(commandBuffer) != VK_SUCCESS)
-        throw std::runtime_error("failed to record command buffer");
 
-    const auto result{ m_swapchain->submitCommandBuffer(&commandBuffer, &m_currentImageIndex) };
+	VkResult result{ vkEndCommandBuffer(commandBuffer) };
+    if (result != VK_SUCCESS)
+    {
+	    throw VulkanException("Failed to record command buffer", result);
+    }
+
+	result = m_swapchain->submitCommandBuffer(&commandBuffer, &m_currentImageIndex);
     if(result == VK_ERROR_OUT_OF_DATE_KHR || result == VK_SUBOPTIMAL_KHR || window->wasWindowResized())
     {
         window->resetWindowResizeFlag();
         recreateSwapchain();
     }
     else if(result != VK_SUCCESS)
-        throw std::runtime_error("failed to present swapchain image");
+        throw VulkanException("Failed to present swapchain image", result);
 
     m_isFrameStarted = false;
     m_currentFrameIndex = (m_currentFrameIndex + 1) % Swapchain::MAX_FRAMES_IN_FLIGHT;
@@ -105,7 +110,7 @@ void Renderer::beginRenderPass(VkCommandBuffer commandBuffer) const
 {
 #if defined(VV_ENABLE_ASSERTS)
     assert(m_isFrameStarted && "Cannot call beginRenderPass() while there is no frame in progress");
-    assert(commandBuffer == getCurrentCommandBuffer() && "cannot begin render pass on command buffer from a different frame");
+    assert(commandBuffer == getCurrentCommandBuffer() && "Cannot begin render pass on command buffer from a different frame");
 #endif
 
     std::array<VkClearValue, 2> clearValues{};
@@ -168,9 +173,10 @@ void Renderer::createCommandBuffers()
     allocInfo.commandPool = device->commandPool();
     allocInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
     allocInfo.commandBufferCount = static_cast<std::uint32_t>(m_commandBuffers.size());
-    
-    if(vkAllocateCommandBuffers(device->device(), &allocInfo, m_commandBuffers.data()) != VK_SUCCESS)
-        throw std::runtime_error("failed to allocate command buffers");
+
+	const VkResult result{ vkAllocateCommandBuffers(device->device(), &allocInfo, m_commandBuffers.data()) };
+    if(result != VK_SUCCESS)
+        throw VulkanException("Failed to allocate command buffers", result);
 }
 
 /// \brief Free the allocated command buffers
@@ -202,7 +208,7 @@ void Renderer::recreateSwapchain()
         m_swapchain = std::make_unique<Swapchain>(device, extent, oldSwapchain);
 
         if(!oldSwapchain->compareSwapFormats(*m_swapchain))
-            throw std::runtime_error("swapchain image or depth format has changed");
+            throw VulkanException("Swapchain image or depth format has changed", VK_ERROR_OUT_OF_DATE_KHR);
     }
 }
 
