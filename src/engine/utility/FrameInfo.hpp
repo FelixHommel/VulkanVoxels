@@ -60,9 +60,9 @@ struct FrameInfo
 	std::size_t frameIndex;
 	float dt;
 	VkCommandBuffer commandBuffer;
-    std::shared_ptr<Camera> camera;
+	std::shared_ptr<Camera> camera;
 	VkDescriptorSet globalDescriptorSet;
-    std::shared_ptr<Object::ObjectMap> objects;
+	std::shared_ptr<Object::ObjectMap> objects;
 };
 
 } // namespace vv

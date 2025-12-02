@@ -13,11 +13,7 @@
 namespace vv
 {
 
-Window::Window(
-	const std::uint32_t width,
-	const std::uint32_t height,
-	std::string title
-)
+Window::Window(const std::uint32_t width, const std::uint32_t height, std::string title)
 	: m_width{ width }
 	, m_height{ height }
 	, m_title{ std::move(title) }
@@ -28,13 +24,8 @@ Window::Window(
 	glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
 	glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
 
-	m_window = glfwCreateWindow(
-		static_cast<int>(m_width),
-		static_cast<int>(m_height),
-		m_title.c_str(),
-		nullptr,
-		nullptr
-	);
+	m_window =
+		glfwCreateWindow(static_cast<int>(m_width), static_cast<int>(m_height), m_title.c_str(), nullptr, nullptr);
 	glfwSetWindowUserPointer(m_window, this);
 
 	glfwSetFramebufferSizeCallback(m_window, framebufferResizeCallback);
@@ -46,14 +37,9 @@ Window::~Window()
 	glfwTerminate();
 }
 
-void Window::createWindowSurface(
-	VkInstance instance,
-	VkSurfaceKHR* surface
-) const
+void Window::createWindowSurface(VkInstance instance, VkSurfaceKHR* surface) const
 {
-	const VkResult result{
-		glfwCreateWindowSurface(instance, m_window, nullptr, surface)
-	};
+	const VkResult result{ glfwCreateWindowSurface(instance, m_window, nullptr, surface) };
 	if(result != VK_SUCCESS)
 		throw VulkanException("Failed to create window surface", result);
 }
@@ -63,11 +49,7 @@ void Window::createWindowSurface(
 /// \param window pointer to a GLFW window
 /// \param width the new width of the window
 /// \param height the new height of the window
-void Window::framebufferResizeCallback(
-	GLFWwindow* window,
-	const int width,
-	const int height
-)
+void Window::framebufferResizeCallback(GLFWwindow* window, const int width, const int height)
 {
 	auto* pWindow{ static_cast<Window*>(glfwGetWindowUserPointer(window)) };
 

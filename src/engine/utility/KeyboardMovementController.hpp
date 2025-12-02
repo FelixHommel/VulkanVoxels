@@ -40,10 +40,8 @@ public:
 
 	KeyboardMovementController(const KeyboardMovementController&) = default;
 	KeyboardMovementController(KeyboardMovementController&&) = delete;
-	KeyboardMovementController& operator=(const KeyboardMovementController&
-	) = default;
-	KeyboardMovementController& operator=(KeyboardMovementController&&
-	) = delete;
+	KeyboardMovementController& operator=(const KeyboardMovementController&) = default;
+	KeyboardMovementController& operator=(KeyboardMovementController&&) = delete;
 
 	/// \brief Move an object based on key input
 	///
@@ -55,8 +53,8 @@ public:
 private:
 	static constexpr float moveSpeed{ 3.f };
 	static constexpr float lookSpeed{ 1.f };
-    static constexpr float ROTATION_CLAMP_MIN{ -1.5f };
-    static constexpr float ROTATION_CLAMP_MAX{ 1.5f };
+	static constexpr float ROTATION_CLAMP_MIN{ -1.5f };
+	static constexpr float ROTATION_CLAMP_MAX{ 1.5f };
 	static constexpr KeyMappings keys{};
 };
 

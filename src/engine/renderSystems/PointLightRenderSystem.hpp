@@ -61,12 +61,8 @@ public:
 	void render(FrameInfo& frameInfo) const;
 
 private:
-	static constexpr auto VERTEX_SHADER_PATH{
-		PROJECT_ROOT "resources/compiledShaders/pointLightVert.spv"
-	};
-	static constexpr auto FRAGMENT_SHADER_PATH{
-		PROJECT_ROOT "resources/compiledShaders/pointLightFrag.spv"
-	};
+	static constexpr auto VERTEX_SHADER_PATH{ PROJECT_ROOT "resources/compiledShaders/pointLightVert.spv" };
+	static constexpr auto FRAGMENT_SHADER_PATH{ PROJECT_ROOT "resources/compiledShaders/pointLightFrag.spv" };
 
 	std::shared_ptr<Device> device;
 

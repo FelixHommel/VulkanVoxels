@@ -10,11 +10,7 @@
 namespace vv
 {
 
-FileException::FileException(
-	std::string message,
-	std::string filepath,
-	std::source_location location
-)
+FileException::FileException(std::string message, std::string filepath, std::source_location location)
 	: Exception{ std::move(message), location }
 	, m_filepath{ std::move(filepath) }
 {
@@ -25,8 +21,7 @@ std::string FileException::detailedMessage() const
 {
 	std::ostringstream oss;
 	oss << "File IO Error(" << m_filepath << "): " << m_message << "\n"
-		<< " at " << m_location.file_name() << ":" << m_location.line()
-		<< " in " << m_location.function_name() << "\n"
+		<< " at " << m_location.file_name() << ":" << m_location.line() << " in " << m_location.function_name() << "\n"
 		<< "Stack trace:\n";
 
 	return oss.str();

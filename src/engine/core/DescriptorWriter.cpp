@@ -10,34 +10,22 @@
 
 namespace vv
 {
-DescriptorWriter::DescriptorWriter(
-	DescriptorSetLayout* setLayout,
-	DescriptorPool* pool
-)
+DescriptorWriter::DescriptorWriter(DescriptorSetLayout* setLayout, DescriptorPool* pool)
 	: setLayout{ setLayout }
 	, pool{ pool }
 {
 }
 
-DescriptorWriter& DescriptorWriter::writeBuffer(
-	std::uint32_t binding,
-	VkDescriptorBufferInfo* bufferInfo
-)
+DescriptorWriter& DescriptorWriter::writeBuffer(std::uint32_t binding, VkDescriptorBufferInfo* bufferInfo)
 {
 #if defined(VV_ENABLE_ASSERTS)
-	assert(
-		setLayout->m_bindings.contains(binding) &&
-		"Layout does not contain specified binding"
-	);
+	assert(setLayout->m_bindings.contains(binding) && "Layout does not contain specified binding");
 #endif
 
 	auto& bindingDescription{ setLayout->m_bindings[binding] };
 
 #if defined(VV_ENABLE_ASSERTS)
-	assert(
-		bindingDescription.descriptorCount == 1 &&
-		"Binding single descriptor info, but binding expects multiple"
-	);
+	assert(bindingDescription.descriptorCount == 1 && "Binding single descriptor info, but binding expects multiple");
 #endif
 
 	VkWriteDescriptorSet write = {};
@@ -52,25 +40,16 @@ DescriptorWriter& DescriptorWriter::writeBuffer(
 	return *this;
 }
 
-DescriptorWriter& DescriptorWriter::writeImage(
-	std::uint32_t binding,
-	VkDescriptorImageInfo* imageInfo
-)
+DescriptorWriter& DescriptorWriter::writeImage(std::uint32_t binding, VkDescriptorImageInfo* imageInfo)
 {
 #if defined(VV_ENABLE_ASSERTS)
-	assert(
-		!setLayout->m_bindings.contains(binding) &&
-		"Layout does not contain specified binding"
-	);
+	assert(!setLayout->m_bindings.contains(binding) && "Layout does not contain specified binding");
 #endif
 
 	auto& bindingDescription{ setLayout->m_bindings[binding] };
 
 #if defined(VV_ENABLE_ASSERTS)
-	assert(
-		bindingDescription.descriptorCount == 1 &&
-		"Binding single descriptor info, but binding expects multiple"
-	);
+	assert(bindingDescription.descriptorCount == 1 && "Binding single descriptor info, but binding expects multiple");
 #endif
 
 	VkWriteDescriptorSet write = {};
@@ -87,9 +66,7 @@ DescriptorWriter& DescriptorWriter::writeImage(
 
 bool DescriptorWriter::build(VkDescriptorSet& set)
 {
-	bool success{
-		pool->allocateDescriptor(setLayout->getDescriptorLayout(), set)
-	};
+	bool success{ pool->allocateDescriptor(setLayout->getDescriptorLayout(), set) };
 
 	if(!success)
 		return false;
@@ -105,11 +82,7 @@ void DescriptorWriter::overwrite(VkDescriptorSet& set)
 		write.dstSet = set;
 
 	vkUpdateDescriptorSets(
-		pool->m_device->device(),
-		static_cast<std::uint32_t>(m_writes.size()),
-		m_writes.data(),
-		0,
-		nullptr
+		pool->m_device->device(), static_cast<std::uint32_t>(m_writes.size()), m_writes.data(), 0, nullptr
 	);
 }
 

@@ -29,17 +29,10 @@ void Camera::setOrthographicProjection(
 	m_projectionMatrix[3][2] = -near / (far - near);
 }
 
-void Camera::setPerspectiveProjection(
-	const float fovy,
-	const float aspectRatio,
-	const float near,
-	const float far
-)
+void Camera::setPerspectiveProjection(const float fovy, const float aspectRatio, const float near, const float far)
 {
 #if defined(VV_ENABLE_ASSERTS)
-	assert(
-		glm::abs(aspectRatio - std::numeric_limits<float>::epsilon()) > 0.0f
-	);
+	assert(glm::abs(aspectRatio - std::numeric_limits<float>::epsilon()) > 0.0f);
 #endif
 
 	const float tanHalfFovy = std::tan(fovy / 2.f);
@@ -51,11 +44,7 @@ void Camera::setPerspectiveProjection(
 	m_projectionMatrix[3][2] = -(far * near) / (far - near);
 }
 
-void Camera::setViewDirection(
-	const glm::vec3& position,
-	const glm::vec3& direction,
-	const glm::vec3& up
-)
+void Camera::setViewDirection(const glm::vec3& position, const glm::vec3& direction, const glm::vec3& up)
 {
 	const glm::vec3 w{ glm::normalize(direction) };
 	const glm::vec3 u{ glm::normalize(glm::cross(w, up)) };
@@ -90,11 +79,7 @@ void Camera::setViewDirection(
 	m_inverseViewMatrix[3][2] = position.z;
 }
 
-void Camera::setViewTarget(
-	const glm::vec3& position,
-	const glm::vec3& target,
-	const glm::vec3& up
-)
+void Camera::setViewTarget(const glm::vec3& position, const glm::vec3& target, const glm::vec3& up)
 {
 	setViewDirection(position, target - position, up);
 }
@@ -107,12 +92,8 @@ void Camera::setViewXYZ(const glm::vec3& position, const glm::vec3& rotation)
 	const float s2{ glm::sin(rotation.x) };
 	const float c1{ glm::cos(rotation.y) };
 	const float s1{ glm::sin(rotation.y) };
-	const glm::vec3 u{ (c1 * c3) + (s1 * s2 * s3),
-		               (c2 * s3),
-		               (c1 * s2 * s3) - (c3 * s1) };
-	const glm::vec3 v{ (c3 * s1 * s2) - (c1 * s3),
-		               (c2 * c3),
-		               (c1 * c3 * s2) + (s1 * s3) };
+	const glm::vec3 u{ (c1 * c3) + (s1 * s2 * s3), (c2 * s3), (c1 * s2 * s3) - (c3 * s1) };
+	const glm::vec3 v{ (c3 * s1 * s2) - (c1 * s3), (c2 * c3), (c1 * c3 * s2) + (s1 * s3) };
 	const glm::vec3 w{ (c2 * s1), -s2, (c1 * c2) };
 
 	m_viewMatrix = glm::mat4{ 1.f };

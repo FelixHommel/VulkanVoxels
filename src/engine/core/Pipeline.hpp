@@ -73,10 +73,7 @@ public:
 	void bind(VkCommandBuffer commandBuffer) const;
 
 private:
-	void createShaderModule(
-		const std::vector<char>& code,
-		VkShaderModule* shaderModule
-	) const;
+	void createShaderModule(const std::vector<char>& code, VkShaderModule* shaderModule) const;
 
 	static std::vector<char> readFile(const std::filesystem::path& filepath);
 

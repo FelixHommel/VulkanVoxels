@@ -27,10 +27,7 @@ public:
 		std::source_location location = std::source_location::current()
 	);
 
-	[[nodiscard]] const std::string& filepath() const noexcept
-	{
-		return m_filepath;
-	}
+	[[nodiscard]] const std::string& filepath() const noexcept { return m_filepath; }
 
 	[[nodiscard]] std::string detailedMessage() const override;
 

@@ -38,18 +38,12 @@ public:
 	///
 	/// \param binding the binding number where the buffer is accessible
 	/// \param bufferInfo the VkDescriptorBufferInfo struct that contains the descriptors details
-	DescriptorWriter& writeBuffer(
-		std::uint32_t binding,
-		VkDescriptorBufferInfo* bufferInfo
-	);
+	DescriptorWriter& writeBuffer(std::uint32_t binding, VkDescriptorBufferInfo* bufferInfo);
 	/// \brief add a new image descriptor
 	///
 	/// \param binding the binding number where the buffer is accessible
 	/// \param imageInfo the VkDescriptorImageInfo struct that contains the descriptors details
-	DescriptorWriter& writeImage(
-		std::uint32_t binding,
-		VkDescriptorImageInfo* imageInfo
-	);
+	DescriptorWriter& writeImage(std::uint32_t binding, VkDescriptorImageInfo* imageInfo);
 
 	/// \brief build the descriptor set
 	///

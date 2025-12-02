@@ -15,11 +15,7 @@
 namespace vv
 {
 
-void KeyboardMovementController::moveInPlaneXZ(
-	GLFWwindow* window,
-	float dt,
-	Object& object
-)
+void KeyboardMovementController::moveInPlaneXZ(GLFWwindow* window, float dt, Object& object)
 {
 	if(glfwGetKey(window, keys.quit) == GLFW_PRESS)
 		glfwSetWindowShouldClose(window, GLFW_TRUE);
@@ -39,10 +35,8 @@ void KeyboardMovementController::moveInPlaneXZ(
 		object.transform.rotation += lookSpeed * dt * glm::normalize(rotate);
 
 	// NOTE: Limit pitch values between about +/- ~85 degrees
-	object.transform.rotation.x =
-		glm::clamp(object.transform.rotation.x, ROTATION_CLAMP_MIN, ROTATION_CLAMP_MAX);
-	object.transform.rotation.y =
-		glm::mod(object.transform.rotation.y, glm::two_pi<float>());
+	object.transform.rotation.x = glm::clamp(object.transform.rotation.x, ROTATION_CLAMP_MIN, ROTATION_CLAMP_MAX);
+	object.transform.rotation.y = glm::mod(object.transform.rotation.y, glm::two_pi<float>());
 
 	const float yaw{ object.transform.rotation.y };
 	const glm::vec3 forward{ std::sin(yaw), 0.f, std::cos(yaw) };

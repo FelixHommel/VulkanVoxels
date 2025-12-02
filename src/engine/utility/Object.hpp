@@ -87,9 +87,7 @@ public:
 
 private:
 	id_t m_id;
-	inline static id_t s_nextId{
-		0
-	}; // NOTE: This means that currently there can be a max of 65535 Objects
+	inline static id_t s_nextId{ 0 }; // NOTE: This means that currently there can be a max of 65535 Objects
 };
 
 } // namespace vv

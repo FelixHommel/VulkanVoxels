@@ -12,11 +12,7 @@
 namespace vv
 {
 
-VulkanException::VulkanException(
-	std::string message,
-	VkResult result,
-	std::source_location location
-)
+VulkanException::VulkanException(std::string message, VkResult result, std::source_location location)
 	: Exception{ std::move(message), location }
 	, m_result{ result }
 {
@@ -27,10 +23,8 @@ std::string VulkanException::detailedMessage() const
 {
 	std::ostringstream oss;
 	oss << "Vulkan Error: " << m_message << "\n"
-		<< " Result code: " << vkResultToString(m_result) << "(" << m_result
-		<< ")\n"
-		<< " at " << m_location.file_name() << ":" << m_location.line()
-		<< " in " << m_location.function_name() << "\n"
+		<< " Result code: " << vkResultToString(m_result) << "(" << m_result << ")\n"
+		<< " at " << m_location.file_name() << ":" << m_location.line() << " in " << m_location.function_name() << "\n"
 		<< "Stack trace:\n";
 
 	return oss.str();

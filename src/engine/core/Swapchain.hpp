@@ -33,11 +33,7 @@ public:
 	/// \param device \ref Device that is used to create the Swapchain
 	/// \param windowExtent size of the window to set the size for frame buffers
 	/// \param previous the olf \ref Swapchain wrapped in a shared_ptr
-	Swapchain(
-		std::shared_ptr<Device> device,
-		VkExtent2D windowExtent,
-		std::shared_ptr<Swapchain> previous
-	);
+	Swapchain(std::shared_ptr<Device> device, VkExtent2D windowExtent, std::shared_ptr<Swapchain> previous);
 	~Swapchain();
 
 	Swapchain(const Swapchain&) = delete;
@@ -47,36 +43,20 @@ public:
 
 	static constexpr std::uint32_t MAX_FRAMES_IN_FLIGHT{ 2 };
 
-	[[nodiscard]] std::size_t imageCount() const
-	{
-		return m_swapchainImages.size();
-	}
-	[[nodiscard]] VkExtent2D getExtent() const
-	{
-		return m_swapchainImageExtent;
-	}
+	[[nodiscard]] std::size_t imageCount() const { return m_swapchainImages.size(); }
+	[[nodiscard]] VkExtent2D getExtent() const { return m_swapchainImageExtent; }
 	[[nodiscard]] float extentAspectRatio() const noexcept
 	{
-		return static_cast<float>(m_swapchainImageExtent.width) /
-		       static_cast<float>(m_swapchainImageExtent.height);
+		return static_cast<float>(m_swapchainImageExtent.width) / static_cast<float>(m_swapchainImageExtent.height);
 	}
 
 	/** Presentation utility */
 	[[nodiscard]] VkResult acquireNextImage(std::uint32_t* imageIndex) const;
-	[[nodiscard]] VkResult submitCommandBuffer(
-		const VkCommandBuffer* commandBuffer,
-		const std::uint32_t* imageIndex
-	);
+	[[nodiscard]] VkResult submitCommandBuffer(const VkCommandBuffer* commandBuffer, const std::uint32_t* imageIndex);
 
 	/** Raw handle access */
-	[[nodiscard]] VkSwapchainKHR getHandle() const noexcept
-	{
-		return m_swapchain;
-	}
-	[[nodiscard]] VkRenderPass getRenderPass() const noexcept
-	{
-		return m_renderPass;
-	}
+	[[nodiscard]] VkSwapchainKHR getHandle() const noexcept { return m_swapchain; }
+	[[nodiscard]] VkRenderPass getRenderPass() const noexcept { return m_renderPass; }
 	[[nodiscard]] VkFramebuffer getFramebuffer(std::size_t index) const;
 
 	/// \brief Check if the swapchain formats match
@@ -84,9 +64,7 @@ public:
 	/// Compare the image and depth format to check if they are compatible
 	///
 	/// \param swapchain the swapchain to compare formats with
-	[[nodiscard]] bool compareSwapFormats(
-		const Swapchain& swapchain
-	) const noexcept;
+	[[nodiscard]] bool compareSwapFormats(const Swapchain& swapchain) const noexcept;
 
 private:
 	/** External objects */
@@ -125,18 +103,12 @@ private:
 	void createSyncObjects();
 
 	/** Supporting methods */
-	[[nodiscard]] VkExtent2D chooseSwapExtent(
-		const VkSurfaceCapabilitiesKHR& capabilities
-	) const;
+	[[nodiscard]] VkExtent2D chooseSwapExtent(const VkSurfaceCapabilitiesKHR& capabilities) const;
 	[[nodiscard]] VkFormat findDepthFormat() const;
 
 	/** Supporting functions */
-	static VkSurfaceFormatKHR chooseSwapSurfaceFormat(
-		const std::vector<VkSurfaceFormatKHR>& availableFormats
-	);
-	static VkPresentModeKHR chooseSwapPresentMode(
-		const std::vector<VkPresentModeKHR>& availablePresentModes
-	);
+	static VkSurfaceFormatKHR chooseSwapSurfaceFormat(const std::vector<VkSurfaceFormatKHR>& availableFormats);
+	static VkPresentModeKHR chooseSwapPresentMode(const std::vector<VkPresentModeKHR>& availablePresentModes);
 };
 
 } // namespace vv

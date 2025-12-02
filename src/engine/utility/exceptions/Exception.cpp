@@ -19,8 +19,7 @@ std::string Exception::detailedMessage() const
 	// NOTE: On demand creation because there is no guarantee this will be called
 	std::ostringstream oss;
 	oss << "Exception: " << m_message << "\n"
-		<< " at " << m_location.file_name() << ":" << m_location.line()
-		<< " in " << m_location.function_name() << "\n";
+		<< " at " << m_location.file_name() << ":" << m_location.line() << " in " << m_location.function_name() << "\n";
 
 	return oss.str();
 }
@@ -31,8 +30,7 @@ std::string Exception::detailedMessage() const
 void Exception::buildWhatMessage()
 {
 	std::ostringstream oss;
-	oss << m_message << "[" << m_location.file_name() << ":"
-		<< m_location.line() << "]";
+	oss << m_message << "[" << m_location.file_name() << ":" << m_location.line() << "]";
 
 	m_message = oss.str();
 }

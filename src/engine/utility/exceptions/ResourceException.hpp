@@ -20,10 +20,7 @@ public:
 	///
 	/// \param message the exception message
 	/// \param location (optional) where the exception is thrown
-	explicit ResourceException(
-		std::string message,
-		std::source_location location = std::source_location::current()
-	);
+	explicit ResourceException(std::string message, std::source_location location = std::source_location::current());
 
 private:
 };

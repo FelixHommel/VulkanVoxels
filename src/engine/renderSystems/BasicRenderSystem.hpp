@@ -42,11 +42,7 @@ public:
 	/// \param device \ref Device to create the \ref Pipeline on
 	/// \param renderPass Which RenderPass to use in the pipeline
 	/// \param globalSetLayout the layout of globally used descriptor sets
-	BasicRenderSystem(
-		std::shared_ptr<Device> device,
-		VkRenderPass renderPass,
-		VkDescriptorSetLayout globalSetLayout
-	);
+	BasicRenderSystem(std::shared_ptr<Device> device, VkRenderPass renderPass, VkDescriptorSetLayout globalSetLayout);
 	~BasicRenderSystem();
 
 	BasicRenderSystem(const BasicRenderSystem&) = delete;
@@ -60,12 +56,8 @@ public:
 	void renderObjects(FrameInfo& frameInfo) const;
 
 private:
-	static constexpr auto VERTEX_SHADER_PATH{
-		PROJECT_ROOT "resources/compiledShaders/simpleVert.spv"
-	};
-	static constexpr auto FRAGMENT_SHADER_PATH{
-		PROJECT_ROOT "resources/compiledShaders/simpleFrag.spv"
-	};
+	static constexpr auto VERTEX_SHADER_PATH{ PROJECT_ROOT "resources/compiledShaders/simpleVert.spv" };
+	static constexpr auto FRAGMENT_SHADER_PATH{ PROJECT_ROOT "resources/compiledShaders/simpleFrag.spv" };
 
 	std::shared_ptr<Device> device;
 

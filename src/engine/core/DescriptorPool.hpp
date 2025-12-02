@@ -39,10 +39,7 @@ public:
 		///
 		/// \param descriptorType for which type of descriptor pool size is being added
 		/// \param count how many descriptors of the type are added
-		Builder& addPoolSize(
-			VkDescriptorType descriptorType,
-			std::uint32_t count
-		);
+		Builder& addPoolSize(VkDescriptorType descriptorType, std::uint32_t count);
 		/// \brief configure the flags that are used to create the descriptor pool
 		///
 		/// \param createFlags configuration flags
@@ -90,10 +87,7 @@ public:
 	/// \param descriptor reference to the descriptor that is being allocated
 	///
 	/// \returns *true* if the allocation was successful, *false* otherwise
-	bool allocateDescriptor(
-		VkDescriptorSetLayout descriptorLayout,
-		VkDescriptorSet& descriptor
-	) const;
+	bool allocateDescriptor(VkDescriptorSetLayout descriptorLayout, VkDescriptorSet& descriptor) const;
 	/// \brief Free the descriptor pool from descriptors that were allocated
 	///
 	/// \param descriptors the descriptors that are being freed

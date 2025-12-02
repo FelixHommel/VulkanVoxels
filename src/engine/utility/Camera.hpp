@@ -23,26 +23,14 @@ public:
 	/// \param bottom bottom plane
 	/// \param near near plane
 	/// \param far far plane
-	void setOrthographicProjection(
-		float left,
-		float right,
-		float top,
-		float bottom,
-		float near,
-		float far
-	);
+	void setOrthographicProjection(float left, float right, float top, float bottom, float near, float far);
 	/// \brief Use a Perspective projection
 	///
 	/// \param fovy FOV on the y plane
 	/// \param aspectRatio aspect ratio of the framebuffer
 	/// \param near near clipping plane
 	/// \param far far clipping plane
-	void setPerspectiveProjection(
-		float fovy,
-		float aspectRatio,
-		float near,
-		float far
-	);
+	void setPerspectiveProjection(float fovy, float aspectRatio, float near, float far);
 	/// \brief Camera is looking in a specific direction
 	///
 	/// \param position position of the camera
@@ -69,18 +57,9 @@ public:
 	/// \param rotation rotation of the camera
 	void setViewXYZ(const glm::vec3& position, const glm::vec3& rotation);
 
-	[[nodiscard]] const glm::mat4& getProjection() const noexcept
-	{
-		return m_projectionMatrix;
-	}
-	[[nodiscard]] const glm::mat4& getView() const noexcept
-	{
-		return m_viewMatrix;
-	}
-	[[nodiscard]] const glm::mat4& getInverseView() const noexcept
-	{
-		return m_inverseViewMatrix;
-	}
+	[[nodiscard]] const glm::mat4& getProjection() const noexcept { return m_projectionMatrix; }
+	[[nodiscard]] const glm::mat4& getView() const noexcept { return m_viewMatrix; }
+	[[nodiscard]] const glm::mat4& getInverseView() const noexcept { return m_inverseViewMatrix; }
 
 private:
 	glm::mat4 m_projectionMatrix{ 1.f };

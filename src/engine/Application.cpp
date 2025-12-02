@@ -35,25 +35,19 @@ namespace vv
 
 Application::Application()
 {
-	m_window =
-		std::make_shared<Window>(WINDOW_WIDTH, WINDOW_HEIGHT, WINDOW_TITLE);
+	m_window = std::make_shared<Window>(WINDOW_WIDTH, WINDOW_HEIGHT, WINDOW_TITLE);
 	m_device = std::make_shared<Device>(m_window);
 	m_renderer = std::make_unique<Renderer>(m_window, m_device);
 	m_globalPool = DescriptorPool::Builder(m_device)
 	                   .setMaxSets(Swapchain::MAX_FRAMES_IN_FLIGHT)
-	                   .addPoolSize(
-						   VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
-						   Swapchain::MAX_FRAMES_IN_FLIGHT
-					   )
+	                   .addPoolSize(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, Swapchain::MAX_FRAMES_IN_FLIGHT)
 	                   .build();
 	loadObjects();
 }
 
 void Application::run()
 {
-	std::vector<std::unique_ptr<Buffer>> uboBuffers(
-		Swapchain::MAX_FRAMES_IN_FLIGHT
-	);
+	std::vector<std::unique_ptr<Buffer>> uboBuffers(Swapchain::MAX_FRAMES_IN_FLIGHT);
 	for(std::size_t i{ 0 }; i < uboBuffers.size(); ++i)
 	{
 		uboBuffers[i] = std::make_unique<Buffer>(
@@ -68,16 +62,10 @@ void Application::run()
 	}
 
 	auto globalSetLayout{ DescriptorSetLayout::Builder(m_device)
-		                      .addBinding(
-								  0,
-								  VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
-								  VK_SHADER_STAGE_ALL_GRAPHICS
-							  )
+		                      .addBinding(0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_ALL_GRAPHICS)
 		                      .build() };
 
-	std::vector<VkDescriptorSet> globalDescriptorSets(
-		Swapchain::MAX_FRAMES_IN_FLIGHT
-	);
+	std::vector<VkDescriptorSet> globalDescriptorSets(Swapchain::MAX_FRAMES_IN_FLIGHT);
 	for(std::size_t i{ 0 }; i < globalDescriptorSets.size(); ++i)
 	{
 		auto bufferInfo{ uboBuffers[i]->descriptorInfo() };
@@ -89,14 +77,11 @@ void Application::run()
 
 	BasicRenderSystem basicRenderSystem{ m_device,
 		                                 m_renderer->getRenderPass(),
-		                                 globalSetLayout->getDescriptorLayout(
-										 ) };
-	PointLightRenderSystem pointLightRenderSystem{
-		m_device,
-		m_renderer->getRenderPass(),
-		globalSetLayout->getDescriptorLayout()
-	};
-    std::shared_ptr<Camera> camera{ std::make_shared<Camera>() };
+		                                 globalSetLayout->getDescriptorLayout() };
+	PointLightRenderSystem pointLightRenderSystem{ m_device,
+		                                           m_renderer->getRenderPass(),
+		                                           globalSetLayout->getDescriptorLayout() };
+	std::shared_ptr<Camera> camera{ std::make_shared<Camera>() };
 	Object viewer{};
 	viewer.transform.translation.z = CAMERA_START_OFFSET_Z;
 
@@ -107,26 +92,17 @@ void Application::run()
 		glfwPollEvents();
 
 		auto newTime{ std::chrono::high_resolution_clock::now() };
-		float dt{ std::chrono::duration<float, std::chrono::seconds::period>(
-					  newTime - currentTime
-		)
-			          .count() };
+		float dt{ std::chrono::duration<float, std::chrono::seconds::period>(newTime - currentTime).count() };
 		currentTime = newTime;
 
-		KeyboardMovementController::moveInPlaneXZ(
-			m_window->getHandle(), dt, viewer
-		);
-		camera->setViewXYZ(
-			viewer.transform.translation, viewer.transform.rotation
-		);
+		KeyboardMovementController::moveInPlaneXZ(m_window->getHandle(), dt, viewer);
+		camera->setViewXYZ(viewer.transform.translation, viewer.transform.rotation);
 
 		const float aspectRatio{ m_renderer->getAspectRatio() };
 		constexpr float fov{ 50.f };
 		constexpr float nearPlane{ 0.1f };
 		constexpr float farPlane{ 100.f };
-		camera->setPerspectiveProjection(
-			glm::radians(fov), aspectRatio, nearPlane, farPlane
-		);
+		camera->setPerspectiveProjection(glm::radians(fov), aspectRatio, nearPlane, farPlane);
 
 		if(auto* const commandBuffer{ m_renderer->beginFrame() })
 		{
@@ -135,8 +111,7 @@ void Application::run()
 				                 .dt = dt,
 				                 .commandBuffer = commandBuffer,
 				                 .camera = camera,
-				                 .globalDescriptorSet =
-				                     globalDescriptorSets[frameIndex],
+				                 .globalDescriptorSet = globalDescriptorSets[frameIndex],
 				                 .objects = m_objects };
 			GlobalUBO ubo{};
 			ubo.projection = camera->getProjection();
@@ -168,9 +143,7 @@ void Application::loadObjects()
 	constexpr glm::vec3 flatVasePos{ glm::vec3{ -0.5f, 0.5f, 0.f } };
 	constexpr glm::vec3 smoothVasePos{ glm::vec3{ 0.5f, 0.5f, 0.f } };
 
-	std::shared_ptr<Model> model{
-		Model::loadFromFile(m_device, FLAT_VASE_PATH)
-	};
+	std::shared_ptr<Model> model{ Model::loadFromFile(m_device, FLAT_VASE_PATH) };
 	Object flatVase{};
 	flatVase.model = model;
 	flatVase.transform.translation = flatVasePos;
@@ -194,10 +167,8 @@ void Application::loadObjects()
 	floor.transform.scale = floorScale;
 	m_objects->emplace(floor.getId(), std::move(floor));
 
-	const std::vector<glm::vec3> lightColors{
-		{ 1.f, .1f, .1f }, { .1f, .1f, 1.f }, { .1f, 1.f, .1f },
-		{ 1.f, 1.f, .1f }, { .1f, 1.f, 1.f }, { 1.f, 1.f, 1.f }
-	};
+	const std::vector<glm::vec3> lightColors{ { 1.f, .1f, .1f }, { .1f, .1f, 1.f }, { .1f, 1.f, .1f },
+		                                      { 1.f, 1.f, .1f }, { .1f, 1.f, 1.f }, { 1.f, 1.f, 1.f } };
 
 	for(std::size_t i{ 0 }; i < lightColors.size(); ++i)
 	{
@@ -209,8 +180,7 @@ void Application::loadObjects()
 			{ 0.f, -1.f, 0.f }
 		) };
 
-		pointLight.transform.translation =
-			glm::vec3(rotateLight * glm::vec4(-1.f, -1.f, -1.f, 1.f));
+		pointLight.transform.translation = glm::vec3(rotateLight * glm::vec4(-1.f, -1.f, -1.f, 1.f));
 
 		m_objects->emplace(pointLight.getId(), std::move(pointLight));
 	}

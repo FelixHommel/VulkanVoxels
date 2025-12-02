@@ -54,8 +54,7 @@ public:
 
 	private:
 		std::shared_ptr<Device> device;
-		std::unordered_map<std::uint32_t, VkDescriptorSetLayoutBinding>
-			m_bindings;
+		std::unordered_map<std::uint32_t, VkDescriptorSetLayoutBinding> m_bindings;
 	};
 
 	/// \brief Construct a new DescriptorSetLayout
@@ -73,10 +72,7 @@ public:
 	DescriptorSetLayout& operator=(const DescriptorSetLayout&) = delete;
 	DescriptorSetLayout& operator=(DescriptorSetLayout&&) = delete;
 
-	[[nodiscard]] VkDescriptorSetLayout getDescriptorLayout() const noexcept
-	{
-		return m_descriptorSetLayout;
-	}
+	[[nodiscard]] VkDescriptorSetLayout getDescriptorLayout() const noexcept { return m_descriptorSetLayout; }
 
 private:
 	std::shared_ptr<Device> m_device;

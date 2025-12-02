@@ -52,10 +52,8 @@ void BasicRenderSystem::renderObjects(FrameInfo& frameInfo) const
 		if(obj.model == nullptr)
 			continue;
 
-		const SimplePushConstantData pushData{
-			.modelMatrix = obj.transform.mat4(),
-			.normalMatrix = obj.transform.normalMatrix()
-		};
+		const SimplePushConstantData pushData{ .modelMatrix = obj.transform.mat4(),
+			                                   .normalMatrix = obj.transform.normalMatrix() };
 
 		vkCmdPushConstants(
 			frameInfo.commandBuffer,
@@ -72,28 +70,22 @@ void BasicRenderSystem::renderObjects(FrameInfo& frameInfo) const
 }
 
 /// \brief Create a PipelineLayout that can be used to create a Pipeline
-void BasicRenderSystem::createPipelineLayout(
-	VkDescriptorSetLayout globalSetLayout
-)
+void BasicRenderSystem::createPipelineLayout(VkDescriptorSetLayout globalSetLayout)
 {
-	constexpr VkPushConstantRange pushConstantRange{
-		.stageFlags = VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT,
-		.offset = 0,
-		.size = sizeof(SimplePushConstantData)
-	};
+	constexpr VkPushConstantRange pushConstantRange{ .stageFlags =
+		                                                 VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT,
+		                                             .offset = 0,
+		                                             .size = sizeof(SimplePushConstantData) };
 	std::vector<VkDescriptorSetLayout> descriptorSetLayouts{ globalSetLayout };
 
 	VkPipelineLayoutCreateInfo createInfo{};
 	createInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
-	createInfo.setLayoutCount =
-		static_cast<std::uint32_t>(descriptorSetLayouts.size());
+	createInfo.setLayoutCount = static_cast<std::uint32_t>(descriptorSetLayouts.size());
 	createInfo.pSetLayouts = descriptorSetLayouts.data();
 	createInfo.pushConstantRangeCount = 1;
 	createInfo.pPushConstantRanges = &pushConstantRange;
 
-	if(vkCreatePipelineLayout(
-		   device->device(), &createInfo, nullptr, &m_pipelineLayout
-	   ) != VK_SUCCESS)
+	if(vkCreatePipelineLayout(device->device(), &createInfo, nullptr, &m_pipelineLayout) != VK_SUCCESS)
 		throw std::runtime_error("failed to create pipeline layout");
 }
 
@@ -101,10 +93,7 @@ void BasicRenderSystem::createPipelineLayout(
 void BasicRenderSystem::createPipeline(VkRenderPass renderPass)
 {
 #if defined(VV_ENABLE_ASSERTS)
-	assert(
-		m_pipelineLayout != VK_NULL_HANDLE &&
-		"Cannot create pipeline without pipeline layout"
-	);
+	assert(m_pipelineLayout != VK_NULL_HANDLE && "Cannot create pipeline without pipeline layout");
 #endif
 
 	PipelineConfigInfo pipelineConfig{};
@@ -112,9 +101,7 @@ void BasicRenderSystem::createPipeline(VkRenderPass renderPass)
 	pipelineConfig.renderPass = renderPass;
 	pipelineConfig.pipelineLayout = m_pipelineLayout;
 
-	m_pipeline = std::make_unique<Pipeline>(
-		device, VERTEX_SHADER_PATH, FRAGMENT_SHADER_PATH, pipelineConfig
-	);
+	m_pipeline = std::make_unique<Pipeline>(device, VERTEX_SHADER_PATH, FRAGMENT_SHADER_PATH, pipelineConfig);
 }
 
 } // namespace vv

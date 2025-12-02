@@ -19,10 +19,7 @@
 namespace vv
 {
 
-Renderer::Renderer(
-	std::shared_ptr<Window> window,
-	std::shared_ptr<Device> device
-)
+Renderer::Renderer(std::shared_ptr<Window> window, std::shared_ptr<Device> device)
 	: window{ std::move(window) }
 	, device{ std::move(device) }
 {
@@ -38,10 +35,7 @@ Renderer::~Renderer()
 VkCommandBuffer Renderer::getCurrentCommandBuffer() const
 {
 #if defined(VV_ENABLE_ASSERTS)
-	assert(
-		m_isFrameStarted &&
-		"Cannot get command buffer when no frame is in progress"
-	);
+	assert(m_isFrameStarted && "Cannot get command buffer when no frame is in progress");
 #endif
 
 	return m_commandBuffers[m_currentFrameIndex];
@@ -50,10 +44,7 @@ VkCommandBuffer Renderer::getCurrentCommandBuffer() const
 std::size_t Renderer::getFrameIndex() const
 {
 #if defined(VV_ENABLE_ASSERTS)
-	assert(
-		m_isFrameStarted &&
-		"Cannot get frame index when no frame is in progress"
-	);
+	assert(m_isFrameStarted && "Cannot get frame index when no frame is in progress");
 #endif
 
 	return m_currentFrameIndex;
@@ -62,10 +53,7 @@ std::size_t Renderer::getFrameIndex() const
 VkCommandBuffer Renderer::beginFrame()
 {
 #if defined(VV_ENABLE_ASSERTS)
-	assert(
-		!m_isFrameStarted &&
-		"Cannot call beginFrame() while a frame is already in progress"
-	);
+	assert(!m_isFrameStarted && "Cannot call beginFrame() while a frame is already in progress");
 #endif
 
 	VkResult result{ m_swapchain->acquireNextImage(&m_currentImageIndex) };
@@ -86,9 +74,7 @@ VkCommandBuffer Renderer::beginFrame()
 
 	result = vkBeginCommandBuffer(commandBuffer, &beginInfo);
 	if(result != VK_SUCCESS)
-		throw VulkanException(
-			"Failed to begin recording command buffer", result
-		);
+		throw VulkanException("Failed to begin recording command buffer", result);
 
 	return commandBuffer;
 }
@@ -96,10 +82,7 @@ VkCommandBuffer Renderer::beginFrame()
 void Renderer::endFrame()
 {
 #if defined(VV_ENABLE_ASSERTS)
-	assert(
-		m_isFrameStarted &&
-		"Cannot call endFrame() while there is no frame in progress"
-	);
+	assert(m_isFrameStarted && "Cannot call endFrame() while there is no frame in progress");
 #endif
 
 	auto* const commandBuffer{ getCurrentCommandBuffer() };
@@ -110,10 +93,8 @@ void Renderer::endFrame()
 		throw VulkanException("Failed to record command buffer", result);
 	}
 
-	result =
-		m_swapchain->submitCommandBuffer(&commandBuffer, &m_currentImageIndex);
-	if(result == VK_ERROR_OUT_OF_DATE_KHR || result == VK_SUBOPTIMAL_KHR ||
-	   window->wasWindowResized())
+	result = m_swapchain->submitCommandBuffer(&commandBuffer, &m_currentImageIndex);
+	if(result == VK_ERROR_OUT_OF_DATE_KHR || result == VK_SUBOPTIMAL_KHR || window->wasWindowResized())
 	{
 		window->resetWindowResizeFlag();
 		recreateSwapchain();
@@ -122,17 +103,13 @@ void Renderer::endFrame()
 		throw VulkanException("Failed to present swapchain image", result);
 
 	m_isFrameStarted = false;
-	m_currentFrameIndex =
-		(m_currentFrameIndex + 1) % Swapchain::MAX_FRAMES_IN_FLIGHT;
+	m_currentFrameIndex = (m_currentFrameIndex + 1) % Swapchain::MAX_FRAMES_IN_FLIGHT;
 }
 
 void Renderer::beginRenderPass(VkCommandBuffer commandBuffer) const
 {
 #if defined(VV_ENABLE_ASSERTS)
-	assert(
-		m_isFrameStarted &&
-		"Cannot call beginRenderPass() while there is no frame in progress"
-	);
+	assert(m_isFrameStarted && "Cannot call beginRenderPass() while there is no frame in progress");
 	assert(
 		commandBuffer == getCurrentCommandBuffer() &&
 		"Cannot begin render pass on command buffer from a different frame"
@@ -146,29 +123,21 @@ void Renderer::beginRenderPass(VkCommandBuffer commandBuffer) const
 	VkRenderPassBeginInfo renderPassBeginInfo{};
 	renderPassBeginInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
 	renderPassBeginInfo.renderPass = m_swapchain->getRenderPass();
-	renderPassBeginInfo.framebuffer =
-		m_swapchain->getFramebuffer(m_currentImageIndex);
-	renderPassBeginInfo.renderArea = { .offset = { .x = 0, .y = 0 },
-		                               .extent = m_swapchain->getExtent() };
-	renderPassBeginInfo.clearValueCount =
-		static_cast<std::uint32_t>(clearValues.size());
+	renderPassBeginInfo.framebuffer = m_swapchain->getFramebuffer(m_currentImageIndex);
+	renderPassBeginInfo.renderArea = { .offset = { .x = 0, .y = 0 }, .extent = m_swapchain->getExtent() };
+	renderPassBeginInfo.clearValueCount = static_cast<std::uint32_t>(clearValues.size());
 	renderPassBeginInfo.pClearValues = clearValues.data();
 
-	vkCmdBeginRenderPass(
-		commandBuffer, &renderPassBeginInfo, VK_SUBPASS_CONTENTS_INLINE
-	);
+	vkCmdBeginRenderPass(commandBuffer, &renderPassBeginInfo, VK_SUBPASS_CONTENTS_INLINE);
 
-	const VkViewport viewport{
-		.x = 0.f,
-		.y = 0.f,
-		.width = static_cast<float>(m_swapchain->getExtent().width),
-		.height = static_cast<float>(m_swapchain->getExtent().height),
-		.minDepth = 0.f,
-		.maxDepth = 1.f
-	};
+	const VkViewport viewport{ .x = 0.f,
+		                       .y = 0.f,
+		                       .width = static_cast<float>(m_swapchain->getExtent().width),
+		                       .height = static_cast<float>(m_swapchain->getExtent().height),
+		                       .minDepth = 0.f,
+		                       .maxDepth = 1.f };
 
-	const VkRect2D scissor{ .offset = { .x = 0, .y = 0 },
-		                    .extent = m_swapchain->getExtent() };
+	const VkRect2D scissor{ .offset = { .x = 0, .y = 0 }, .extent = m_swapchain->getExtent() };
 
 	vkCmdSetViewport(commandBuffer, 0, 1, &viewport);
 	vkCmdSetScissor(commandBuffer, 0, 1, &scissor);
@@ -177,13 +146,9 @@ void Renderer::beginRenderPass(VkCommandBuffer commandBuffer) const
 void Renderer::endRenderPass(VkCommandBuffer commandBuffer) const
 {
 #if defined(VV_ENABLE_ASSERTS)
+	assert(m_isFrameStarted && "Cannot call endRenderPass() while there is no frame in progress");
 	assert(
-		m_isFrameStarted &&
-		"Cannot call endRenderPass() while there is no frame in progress"
-	);
-	assert(
-		commandBuffer == getCurrentCommandBuffer() &&
-		"cannot end render pass on command buffer from a different frame"
+		commandBuffer == getCurrentCommandBuffer() && "cannot end render pass on command buffer from a different frame"
 	);
 #endif
 
@@ -199,12 +164,9 @@ void Renderer::createCommandBuffers()
 	allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
 	allocInfo.commandPool = device->commandPool();
 	allocInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
-	allocInfo.commandBufferCount =
-		static_cast<std::uint32_t>(m_commandBuffers.size());
+	allocInfo.commandBufferCount = static_cast<std::uint32_t>(m_commandBuffers.size());
 
-	const VkResult result{ vkAllocateCommandBuffers(
-		device->device(), &allocInfo, m_commandBuffers.data()
-	) };
+	const VkResult result{ vkAllocateCommandBuffers(device->device(), &allocInfo, m_commandBuffers.data()) };
 	if(result != VK_SUCCESS)
 		throw VulkanException("Failed to allocate command buffers", result);
 }
@@ -243,10 +205,7 @@ void Renderer::recreateSwapchain()
 		m_swapchain = std::make_unique<Swapchain>(device, extent, oldSwapchain);
 
 		if(!oldSwapchain->compareSwapFormats(*m_swapchain))
-			throw VulkanException(
-				"Swapchain image or depth format has changed",
-				VK_ERROR_OUT_OF_DATE_KHR
-			);
+			throw VulkanException("Swapchain image or depth format has changed", VK_ERROR_OUT_OF_DATE_KHR);
 	}
 }
 

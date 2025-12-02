@@ -20,29 +20,17 @@ public:
 	///
 	/// \param message the exception message
 	/// \param location (optional) where the exception is thrown
-	explicit Exception(
-		std::string message,
-		std::source_location location = std::source_location::current()
-	);
+	explicit Exception(std::string message, std::source_location location = std::source_location::current());
 
 	/// \brief Why the exception was thrown
 	///
 	/// \returns const char* with the reason why this exception was thrown
-	[[nodiscard]] const char* what() const noexcept override
-	{
-		return m_message.c_str();
-	}
+	[[nodiscard]] const char* what() const noexcept override { return m_message.c_str(); }
 	/// \brief Why the exception was thrown in short form
 	///
 	/// \returns std::string_view with the reason why the exception was thrown
-	[[nodiscard]] std::string_view message() const noexcept
-	{
-		return m_message;
-	}
-	[[nodiscard]] const std::source_location& location() const noexcept
-	{
-		return m_location;
-	}
+	[[nodiscard]] std::string_view message() const noexcept { return m_message; }
+	[[nodiscard]] const std::source_location& location() const noexcept { return m_location; }
 	/// \brief An extended version of the message() function that provides more details
 	///
 	/// \returns std::string with a more detailed message

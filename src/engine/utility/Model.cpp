@@ -30,9 +30,7 @@ template <> struct hash<vv::Model::Vertex>
 	std::size_t operator()(const vv::Model::Vertex& vertex) const
 	{
 		std::size_t seed{ 0 };
-		vv::hashCombine(
-			seed, vertex.position, vertex.color, vertex.normal, vertex.uv
-		);
+		vv::hashCombine(seed, vertex.position, vertex.color, vertex.normal, vertex.uv);
 
 		return seed;
 	}
@@ -42,8 +40,7 @@ template <> struct hash<vv::Model::Vertex>
 
 namespace vv
 {
-std::vector<VkVertexInputBindingDescription> Model::Vertex::
-	getBindingDescriptions()
+std::vector<VkVertexInputBindingDescription> Model::Vertex::getBindingDescriptions()
 {
 	std::vector<VkVertexInputBindingDescription> bindingDescriptions(1);
 	bindingDescriptions[0].binding = 0;
@@ -53,24 +50,15 @@ std::vector<VkVertexInputBindingDescription> Model::Vertex::
 	return bindingDescriptions;
 }
 
-std::vector<VkVertexInputAttributeDescription> Model::Vertex::
-	getAttributeDescriptions()
+std::vector<VkVertexInputAttributeDescription> Model::Vertex::getAttributeDescriptions()
 {
 	// NOTE: Per member variable of the Vertex a entry in the attribute description is needed
 	// Order: location, binding, format, offset
 	std::vector<VkVertexInputAttributeDescription> attributeDescriptions{};
-	attributeDescriptions.emplace_back(
-		0, 0, VK_FORMAT_R32G32B32_SFLOAT, offsetof(Vertex, position)
-	);
-	attributeDescriptions.emplace_back(
-		1, 0, VK_FORMAT_R32G32B32_SFLOAT, offsetof(Vertex, color)
-	);
-	attributeDescriptions.emplace_back(
-		2, 0, VK_FORMAT_R32G32B32_SFLOAT, offsetof(Vertex, normal)
-	);
-	attributeDescriptions.emplace_back(
-		3, 0, VK_FORMAT_R32G32_SFLOAT, offsetof(Vertex, uv)
-	);
+	attributeDescriptions.emplace_back(0, 0, VK_FORMAT_R32G32B32_SFLOAT, offsetof(Vertex, position));
+	attributeDescriptions.emplace_back(1, 0, VK_FORMAT_R32G32B32_SFLOAT, offsetof(Vertex, color));
+	attributeDescriptions.emplace_back(2, 0, VK_FORMAT_R32G32B32_SFLOAT, offsetof(Vertex, normal));
+	attributeDescriptions.emplace_back(3, 0, VK_FORMAT_R32G32_SFLOAT, offsetof(Vertex, uv));
 
 	return attributeDescriptions;
 }
@@ -83,9 +71,7 @@ void Model::Builder::loadModel(const std::filesystem::path& filepath)
 	std::string warning;
 	std::string error;
 
-	if(!tinyobj::LoadObj(
-		   &attrib, &shapes, &materials, &warning, &error, filepath.c_str()
-	   ))
+	if(!tinyobj::LoadObj(&attrib, &shapes, &materials, &warning, &error, filepath.c_str()))
 		throw std::runtime_error(warning + error);
 
 	vertices.clear();
@@ -100,44 +86,27 @@ void Model::Builder::loadModel(const std::filesystem::path& filepath)
 
 			if(i.vertex_index >= 0)
 			{
-				v.position = {
-					attrib.vertices
-						[(3 * static_cast<std::size_t>(i.vertex_index)) + 0],
-					attrib.vertices
-						[(3 * static_cast<std::size_t>(i.vertex_index)) + 1],
-					attrib.vertices
-						[(3 * static_cast<std::size_t>(i.vertex_index)) + 2]
-				};
+				v.position = { attrib.vertices[(3 * static_cast<std::size_t>(i.vertex_index)) + 0],
+					           attrib.vertices[(3 * static_cast<std::size_t>(i.vertex_index)) + 1],
+					           attrib.vertices[(3 * static_cast<std::size_t>(i.vertex_index)) + 2] };
 
-				v.color = {
-					attrib.colors
-						[(3 * static_cast<std::size_t>(i.vertex_index)) + 0],
-					attrib.colors
-						[(3 * static_cast<std::size_t>(i.vertex_index)) + 1],
-					attrib.colors
-						[(3 * static_cast<std::size_t>(i.vertex_index)) + 2]
-				};
+				v.color = { attrib.colors[(3 * static_cast<std::size_t>(i.vertex_index)) + 0],
+					        attrib.colors[(3 * static_cast<std::size_t>(i.vertex_index)) + 1],
+					        attrib.colors[(3 * static_cast<std::size_t>(i.vertex_index)) + 2] };
 			}
 
 			if(i.normal_index >= 0)
 			{
-				v.normal = {
-					attrib.normals
-						[(3 * static_cast<std::size_t>(i.normal_index)) + 0],
-					attrib.normals
-						[(3 * static_cast<std::size_t>(i.normal_index)) + 1],
-					attrib.normals
-						[(3 * static_cast<std::size_t>(i.normal_index)) + 2]
-				};
+				v.normal = { attrib.normals[(3 * static_cast<std::size_t>(i.normal_index)) + 0],
+					         attrib.normals[(3 * static_cast<std::size_t>(i.normal_index)) + 1],
+					         attrib.normals[(3 * static_cast<std::size_t>(i.normal_index)) + 2] };
 			}
 
 			if(i.texcoord_index >= 0)
 			{
 				v.uv = {
-					attrib.texcoords
-						[(2 * static_cast<std::size_t>(i.texcoord_index)) + 0],
-					attrib.texcoords
-						[(2 * static_cast<std::size_t>(i.texcoord_index)) + 1],
+					attrib.texcoords[(2 * static_cast<std::size_t>(i.texcoord_index)) + 0],
+					attrib.texcoords[(2 * static_cast<std::size_t>(i.texcoord_index)) + 1],
 				};
 			}
 
@@ -158,10 +127,7 @@ Model::Model(std::shared_ptr<Device> device, const Builder& builder)
 	createIndexBuffer(builder.indices);
 }
 
-std::unique_ptr<Model> Model::loadFromFile(
-	std::shared_ptr<Device> device,
-	const std::filesystem::path& filepath
-)
+std::unique_ptr<Model> Model::loadFromFile(std::shared_ptr<Device> device, const std::filesystem::path& filepath)
 {
 	Builder builder{};
 	builder.loadModel(filepath);
@@ -176,9 +142,7 @@ void Model::bind(VkCommandBuffer commandBuffer) const
 	vkCmdBindVertexBuffers(commandBuffer, 0, 1, buffers.data(), offsets.data());
 
 	if(m_hasIndexBuffer)
-		vkCmdBindIndexBuffer(
-			commandBuffer, m_indexBuffer->getBuffer(), 0, VK_INDEX_TYPE_UINT32
-		);
+		vkCmdBindIndexBuffer(commandBuffer, m_indexBuffer->getBuffer(), 0, VK_INDEX_TYPE_UINT32);
 }
 
 void Model::draw(VkCommandBuffer commandBuffer) const
@@ -198,9 +162,7 @@ void Model::createVertexBuffer(const std::vector<Vertex>& vertices)
 {
 	m_vertexCount = static_cast<std::uint32_t>(vertices.size());
 	constexpr std::uint32_t vertexSize{ sizeof(vertices[0]) };
-	const VkDeviceSize bufferSize{
-		static_cast<VkDeviceSize>(vertexSize * m_vertexCount)
-	};
+	const VkDeviceSize bufferSize{ static_cast<VkDeviceSize>(vertexSize * m_vertexCount) };
 #if defined(VV_ENABLE_ASSERTS)
 	assert(m_vertexCount > 3 && "The Model must at least contain 3 vertices");
 #endif
@@ -209,8 +171,7 @@ void Model::createVertexBuffer(const std::vector<Vertex>& vertices)
 		                  vertexSize,
 		                  m_vertexCount,
 		                  VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
-		                  VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT |
-		                      VK_MEMORY_PROPERTY_HOST_COHERENT_BIT };
+		                  VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT };
 
 	stagingBuffer.map();
 	stagingBuffer.writeToBuffer(vertices);
@@ -223,9 +184,7 @@ void Model::createVertexBuffer(const std::vector<Vertex>& vertices)
 		VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT
 	);
 
-	device->copyBuffer(
-		stagingBuffer.getBuffer(), m_vertexBuffer->getBuffer(), bufferSize
-	);
+	device->copyBuffer(stagingBuffer.getBuffer(), m_vertexBuffer->getBuffer(), bufferSize);
 }
 
 /// \brief Create a new Index Buffer using the data specified by the indices
@@ -242,16 +201,13 @@ void Model::createIndexBuffer(const std::vector<std::uint32_t>& indices)
 		return;
 
 	constexpr std::uint32_t indexSize{ sizeof(indices[0]) };
-	const VkDeviceSize bufferSize{
-		static_cast<VkDeviceSize>(indexSize * m_indexCount)
-	};
+	const VkDeviceSize bufferSize{ static_cast<VkDeviceSize>(indexSize * m_indexCount) };
 
 	Buffer stagingBuffer{ device,
 		                  indexSize,
 		                  m_indexCount,
 		                  VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
-		                  VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT |
-		                      VK_MEMORY_PROPERTY_HOST_COHERENT_BIT };
+		                  VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT };
 
 	stagingBuffer.map();
 	stagingBuffer.writeToBuffer(indices);
@@ -264,9 +220,7 @@ void Model::createIndexBuffer(const std::vector<std::uint32_t>& indices)
 		VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT
 	);
 
-	device->copyBuffer(
-		stagingBuffer.getBuffer(), m_indexBuffer->getBuffer(), bufferSize
-	);
+	device->copyBuffer(stagingBuffer.getBuffer(), m_indexBuffer->getBuffer(), bufferSize);
 }
 
 

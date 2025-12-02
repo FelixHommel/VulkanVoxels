@@ -63,8 +63,7 @@ public:
 	/// \param data the data that is being written to the buffer
 	/// \param offset (optional) offset into the buffer from where to begin writing memory (in byte)
 	template <typename T>
-		requires std::is_trivially_copyable_v<T> &&
-	             std::is_standard_layout_v<T> && (!std::is_pointer_v<T>)
+		requires std::is_trivially_copyable_v<T> && std::is_standard_layout_v<T> && (!std::is_pointer_v<T>)
 	void writeToBuffer(const T& data, VkDeviceSize offset = 0)
 	{
 		writeToBufferRaw(&data, sizeof(data), offset);
@@ -75,8 +74,7 @@ public:
 	/// \param data the data container that contains the data itself
 	/// \param offset (optional) offset into the buffer from where to begin writing memory (in byte)
 	template <typename C>
-		requires std::contiguous_iterator<typename C::pointer> &&
-	             std::is_trivially_copyable_v<typename C::value_type>
+		requires std::contiguous_iterator<typename C::pointer> && std::is_trivially_copyable_v<typename C::value_type>
 	void writeToBuffer(const C& data, VkDeviceSize offset = 0)
 	{
 		using T = typename C::value_type;
@@ -93,29 +91,21 @@ public:
 	///
 	/// \param size (optional) size of the memory range of the descriptor (in byte)
 	/// \param offset (optional) offset into the buffer (in byte)
-	VkDescriptorBufferInfo descriptorInfo(
-		VkDeviceSize size = VK_WHOLE_SIZE,
-		VkDeviceSize offset = 0
-	);
+	VkDescriptorBufferInfo descriptorInfo(VkDeviceSize size = VK_WHOLE_SIZE, VkDeviceSize offset = 0);
 	/// \brief Invalidate a range of memory to make it available to the CPU
 	///
 	/// \note Only required for non-coherent memory
 	///
 	/// \param size (optional) size of the memory range (in byte)
 	/// \param offset (optional) offset into the buffer (in byte)
-	VkResult invalidate(
-		VkDeviceSize size = VK_WHOLE_SIZE,
-		VkDeviceSize offset = 0
-	);
+	VkResult invalidate(VkDeviceSize size = VK_WHOLE_SIZE, VkDeviceSize offset = 0);
 
 private:
 	std::shared_ptr<Device> device;
 
-	std::uint32_t
-		m_elementCount; ///< How many elements of data are at maximum in the buffer
-	VkDeviceSize m_elementSize; ///< How big a single element is (in byte)
-	VkDeviceSize
-		m_alignmentSize; ///< How much space a single element needs with added alignment requirements (in byte)
+	std::uint32_t m_elementCount; ///< How many elements of data are at maximum in the buffer
+	VkDeviceSize m_elementSize;   ///< How big a single element is (in byte)
+	VkDeviceSize m_alignmentSize; ///< How much space a single element needs with added alignment requirements (in byte)
 	VkBufferUsageFlags m_usageFlags;
 	VkMemoryPropertyFlags m_memoryPropertyFlags;
 
@@ -124,16 +114,9 @@ private:
 	VkBuffer m_buffer{ VK_NULL_HANDLE };
 	VkDeviceMemory m_bufferMemory{ VK_NULL_HANDLE };
 
-	static VkDeviceSize getAlignment(
-		VkDeviceSize elementSize,
-		VkDeviceSize minOffsetAlignment
-	);
+	static VkDeviceSize getAlignment(VkDeviceSize elementSize, VkDeviceSize minOffsetAlignment);
 
-	void writeToBufferRaw(
-		const void* pData,
-		VkDeviceSize size,
-		VkDeviceSize offset = 0
-	);
+	void writeToBufferRaw(const void* pData, VkDeviceSize size, VkDeviceSize offset = 0);
 };
 
 } // namespace vv

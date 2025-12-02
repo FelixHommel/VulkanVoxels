@@ -37,18 +37,9 @@ public:
 	Renderer& operator=(const Renderer&) = delete;
 	Renderer& operator=(Renderer&&) = delete;
 
-	[[nodiscard]] VkRenderPass getRenderPass() const noexcept
-	{
-		return m_swapchain->getRenderPass();
-	}
-	[[nodiscard]] float getAspectRatio() const noexcept
-	{
-		return m_swapchain->extentAspectRatio();
-	}
-	[[nodiscard]] bool isFrameStarted() const noexcept
-	{
-		return m_isFrameStarted;
-	}
+	[[nodiscard]] VkRenderPass getRenderPass() const noexcept { return m_swapchain->getRenderPass(); }
+	[[nodiscard]] float getAspectRatio() const noexcept { return m_swapchain->extentAspectRatio(); }
+	[[nodiscard]] bool isFrameStarted() const noexcept { return m_isFrameStarted; }
 	[[nodiscard]] VkCommandBuffer getCurrentCommandBuffer() const;
 	[[nodiscard]] std::size_t getFrameIndex() const;
 

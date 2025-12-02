@@ -58,18 +58,16 @@ DescriptorSetLayout::DescriptorSetLayout(
 	createInfo.bindingCount = static_cast<std::uint32_t>(layoutBindings.size());
 	createInfo.pBindings = layoutBindings.data();
 
-	const VkResult result{ vkCreateDescriptorSetLayout(
-		m_device->device(), &createInfo, nullptr, &m_descriptorSetLayout
-	) };
+	const VkResult result{
+		vkCreateDescriptorSetLayout(m_device->device(), &createInfo, nullptr, &m_descriptorSetLayout)
+	};
 	if(result != VK_SUCCESS)
 		throw VulkanException("failed to create descriptor set layout", result);
 }
 
 DescriptorSetLayout::~DescriptorSetLayout()
 {
-	vkDestroyDescriptorSetLayout(
-		m_device->device(), m_descriptorSetLayout, nullptr
-	);
+	vkDestroyDescriptorSetLayout(m_device->device(), m_descriptorSetLayout, nullptr);
 }
 
 } // namespace vv

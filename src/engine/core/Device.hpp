@@ -61,20 +61,11 @@ public:
 	Device& operator=(const Device&) = delete;
 	Device& operator=(Device&&) = delete;
 
-	[[nodiscard]] VkCommandPool commandPool() const noexcept
-	{
-		return m_commandPool;
-	}
+	[[nodiscard]] VkCommandPool commandPool() const noexcept { return m_commandPool; }
 	[[nodiscard]] VkDevice device() const noexcept { return m_device; }
 	[[nodiscard]] VkSurfaceKHR surface() const noexcept { return m_surface; }
-	[[nodiscard]] VkQueue graphicsQueue() const noexcept
-	{
-		return m_graphicsQueue;
-	}
-	[[nodiscard]] VkQueue presentQueue() const noexcept
-	{
-		return m_presentQueue;
-	}
+	[[nodiscard]] VkQueue graphicsQueue() const noexcept { return m_graphicsQueue; }
+	[[nodiscard]] VkQueue presentQueue() const noexcept { return m_presentQueue; }
 
 	/// \brief Query the physical device for its swapchain support
 	///
@@ -89,17 +80,11 @@ public:
 	/// \param properties properties the memory needs to fulfill
 	///
 	/// \return std::uint32_t
-	[[nodiscard]] std::uint32_t findMemoryType(
-		std::uint32_t filter,
-		VkMemoryPropertyFlags properties
-	) const;
+	[[nodiscard]] std::uint32_t findMemoryType(std::uint32_t filter, VkMemoryPropertyFlags properties) const;
 	/// \brief Find appropriate queues on the physical device
 	///
 	/// \return \ref QueueFamilyIndices the chosen queues
-	[[nodiscard]] QueueFamilyIndices findPhysicalQueueFamilies() const
-	{
-		return findQueueFamilies(m_physicalDevice);
-	}
+	[[nodiscard]] QueueFamilyIndices findPhysicalQueueFamilies() const { return findQueueFamilies(m_physicalDevice); }
 	/// \brief Determine the best fitting format from a selection
 	///
 	/// \param candidates proposed candidates that are available to be the format
@@ -142,11 +127,7 @@ public:
 	/// \param srcBuffer buffer to copy from
 	/// \param dstBuffer buffer to copy to
 	/// \param size how big the copied data is
-	void copyBuffer(
-		VkBuffer srcBuffer,
-		VkBuffer dstBuffer,
-		VkDeviceSize size
-	) const;
+	void copyBuffer(VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize size) const;
 	/// \brief Copy buffer data to an image
 	///
 	/// \param buffer the buffer to copy from
@@ -180,12 +161,8 @@ public:
 	VkPhysicalDeviceProperties properties{};
 
 private:
-	const std::vector<const char*> VALIDATION_LAYERS{
-		"VK_LAYER_KHRONOS_validation"
-	};
-	const std::vector<const char*> DEVICE_EXTENSIONS{
-		VK_KHR_SWAPCHAIN_EXTENSION_NAME
-	};
+	const std::vector<const char*> VALIDATION_LAYERS{ "VK_LAYER_KHRONOS_validation" };
+	const std::vector<const char*> DEVICE_EXTENSIONS{ VK_KHR_SWAPCHAIN_EXTENSION_NAME };
 
 	VkInstance m_instance{ VK_NULL_HANDLE };
 	VkDebugUtilsMessengerEXT m_debugMessenger{ VK_NULL_HANDLE };
@@ -209,14 +186,10 @@ private:
 	static std::vector<const char*> getRequiredExtensions();
 	[[nodiscard]] bool checkValidationLayerSupport() const;
 	QueueFamilyIndices findQueueFamilies(VkPhysicalDevice phDevice) const;
-	static void populateDebugMessengerCreateInfo(
-		VkDebugUtilsMessengerCreateInfoEXT& createInfo
-	);
+	static void populateDebugMessengerCreateInfo(VkDebugUtilsMessengerCreateInfoEXT& createInfo);
 	static void hasGlfwRequiredInstanceExtensions();
 	bool checkDeviceExtensionSupport(VkPhysicalDevice phDevice) const;
-	[[nodiscard]] SwapchainSupportDetails querySwapchainSupport(
-		VkPhysicalDevice phDevice
-	) const;
+	[[nodiscard]] SwapchainSupportDetails querySwapchainSupport(VkPhysicalDevice phDevice) const;
 };
 
 } // namespace vv

@@ -42,20 +42,17 @@ public:
 	static constexpr auto WINDOW_TITLE{ "VulkanVoxels" };
 
 private:
-	static constexpr auto SMOOTH_VASE_PATH{
-		PROJECT_ROOT "resources/models/smooth_vase.obj"
-	};
-	static constexpr auto FLAT_VASE_PATH{ PROJECT_ROOT
-		                                  "resources/models/flat_vase.obj" };
+	static constexpr auto SMOOTH_VASE_PATH{ PROJECT_ROOT "resources/models/smooth_vase.obj" };
+	static constexpr auto FLAT_VASE_PATH{ PROJECT_ROOT "resources/models/flat_vase.obj" };
 	static constexpr auto QUAD_PATH{ PROJECT_ROOT "resources/models/quad.obj" };
 	static constexpr float POINT_LIGHT_INTENSITY{ 0.2f };
-    static constexpr float CAMERA_START_OFFSET_Z{ -2.5f };
+	static constexpr float CAMERA_START_OFFSET_Z{ -2.5f };
 
 	std::shared_ptr<Window> m_window;
 	std::shared_ptr<Device> m_device;
 	std::unique_ptr<DescriptorPool> m_globalPool;
 	std::unique_ptr<Renderer> m_renderer;
-    std::shared_ptr<Object::ObjectMap> m_objects{ std::make_shared<Object::ObjectMap>() };
+	std::shared_ptr<Object::ObjectMap> m_objects{ std::make_shared<Object::ObjectMap>() };
 
 	void loadObjects();
 };

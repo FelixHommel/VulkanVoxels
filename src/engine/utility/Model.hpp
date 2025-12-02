@@ -38,16 +38,13 @@ public:
 		glm::vec2 uv{};
 
 		/// \brief Provide the information about the Binding that the Pipeline needs
-		static std::vector<VkVertexInputBindingDescription>
-		getBindingDescriptions();
+		static std::vector<VkVertexInputBindingDescription> getBindingDescriptions();
 		/// \brief Provide the information about the Attributes that the Pipeline needs
-		static std::vector<VkVertexInputAttributeDescription>
-		getAttributeDescriptions();
+		static std::vector<VkVertexInputAttributeDescription> getAttributeDescriptions();
 
 		bool operator==(const Vertex& other) const
 		{
-			return position == other.position && color == other.color &&
-			       normal == other.normal && uv == other.uv;
+			return position == other.position && color == other.color && normal == other.normal && uv == other.uv;
 		}
 	};
 
@@ -82,10 +79,7 @@ public:
 	///
 	/// \param device \ref Device to create the vertex and index buffers on
 	/// \param filepath path to the obj file
-	static std::unique_ptr<Model> loadFromFile(
-		std::shared_ptr<Device> device,
-		const std::filesystem::path& filepath
-	);
+	static std::unique_ptr<Model> loadFromFile(std::shared_ptr<Device> device, const std::filesystem::path& filepath);
 
 	/// \brief Bind the vertex buffer of the model
 	///

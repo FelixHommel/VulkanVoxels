@@ -12,28 +12,21 @@
 namespace vv
 {
 
-DescriptorPool::Builder& DescriptorPool::Builder::addPoolSize(
-	VkDescriptorType descriptorType,
-	std::uint32_t count
-)
+DescriptorPool::Builder& DescriptorPool::Builder::addPoolSize(VkDescriptorType descriptorType, std::uint32_t count)
 {
 	m_poolSizes.push_back({ .type = descriptorType, .descriptorCount = count });
 
 	return *this;
 }
 
-DescriptorPool::Builder& DescriptorPool::Builder::setPoolFlags(
-	VkDescriptorPoolCreateFlags createFlags
-)
+DescriptorPool::Builder& DescriptorPool::Builder::setPoolFlags(VkDescriptorPoolCreateFlags createFlags)
 {
 	m_createFlags = createFlags;
 
 	return *this;
 }
 
-DescriptorPool::Builder& DescriptorPool::Builder::setMaxSets(
-	std::uint32_t count
-)
+DescriptorPool::Builder& DescriptorPool::Builder::setMaxSets(std::uint32_t count)
 {
 	m_maxSets = count;
 
@@ -42,9 +35,7 @@ DescriptorPool::Builder& DescriptorPool::Builder::setMaxSets(
 
 std::unique_ptr<DescriptorPool> DescriptorPool::Builder::build() const
 {
-	return std::make_unique<DescriptorPool>(
-		m_device, m_maxSets, m_createFlags, m_poolSizes
-	);
+	return std::make_unique<DescriptorPool>(m_device, m_maxSets, m_createFlags, m_poolSizes);
 }
 
 DescriptorPool::DescriptorPool(
@@ -62,9 +53,7 @@ DescriptorPool::DescriptorPool(
 	createInfo.maxSets = maxSets;
 	createInfo.flags = createFlags;
 
-	const VkResult result{ vkCreateDescriptorPool(
-		device->device(), &createInfo, nullptr, &m_descriptorPool
-	) };
+	const VkResult result{ vkCreateDescriptorPool(device->device(), &createInfo, nullptr, &m_descriptorPool) };
 	if(result != VK_SUCCESS)
 		throw VulkanException("Failed to create descriptor pool", result);
 }
@@ -74,10 +63,7 @@ DescriptorPool::~DescriptorPool()
 	vkDestroyDescriptorPool(m_device->device(), m_descriptorPool, nullptr);
 }
 
-bool DescriptorPool::allocateDescriptor(
-	VkDescriptorSetLayout descriptorLayout,
-	VkDescriptorSet& descriptor
-) const
+bool DescriptorPool::allocateDescriptor(VkDescriptorSetLayout descriptorLayout, VkDescriptorSet& descriptor) const
 {
 	VkDescriptorSetAllocateInfo allocInfo = {};
 	allocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
@@ -86,20 +72,13 @@ bool DescriptorPool::allocateDescriptor(
 	allocInfo.pSetLayouts = &descriptorLayout;
 
 	// TODO: Implement a more robust system to handle the case that the pool is full. https://vkguide.dev/docs/new_chapter_4/descriptor_abstractions/
-	return vkAllocateDescriptorSets(
-			   m_device->device(), &allocInfo, &descriptor
-		   ) == VK_SUCCESS;
+	return vkAllocateDescriptorSets(m_device->device(), &allocInfo, &descriptor) == VK_SUCCESS;
 }
 
-void DescriptorPool::freeDescriptors(
-	std::vector<VkDescriptorSet>& descriptors
-) const
+void DescriptorPool::freeDescriptors(std::vector<VkDescriptorSet>& descriptors) const
 {
 	vkFreeDescriptorSets(
-		m_device->device(),
-		m_descriptorPool,
-		static_cast<std::uint32_t>(descriptors.size()),
-		descriptors.data()
+		m_device->device(), m_descriptorPool, static_cast<std::uint32_t>(descriptors.size()), descriptors.data()
 	);
 }
 
