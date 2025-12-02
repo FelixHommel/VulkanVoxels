@@ -19,5 +19,7 @@ include(cmake/CompileShaders.cmake)
 
 find_package(Vulkan REQUIRED)
 
+enable_testing()
 add_subdirectory(deps)
 add_subdirectory(src)
+add_subdirectory(tests)
