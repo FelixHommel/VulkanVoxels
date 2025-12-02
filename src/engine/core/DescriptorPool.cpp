@@ -1,13 +1,13 @@
 #include "DescriptorPool.hpp"
 
-#include "spdlog/spdlog.h"
+#include "core/Device.hpp"
 #include "utility/exceptions/VulkanException.hpp"
 
-#include <iostream>
 #include <vulkan/vulkan_core.h>
 
+#include <cstdint>
 #include <memory>
-#include <stdexcept>
+#include <vector>
 
 namespace vv
 {

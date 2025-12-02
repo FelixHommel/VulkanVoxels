@@ -4,7 +4,6 @@
 #include "core/Device.hpp"
 #include "core/Pipeline.hpp"
 #include "utility/FrameInfo.hpp"
-#include "utility/Object.hpp"
 
 #define GLM_FORCE_RADIANS
 #define GLM_FORCE_DEPTH_ZERO_TO_ONE
@@ -12,7 +11,6 @@
 #include <vulkan/vulkan_core.h>
 
 #include <memory>
-#include <vector>
 
 namespace vv
 {

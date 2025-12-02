@@ -1,10 +1,10 @@
 #include "Swapchain.hpp"
 
-#include "Device.hpp"
-
-#include "spdlog/spdlog.h"
+#include "core/Device.hpp"
+#include "utility/exceptions/Exception.hpp"
 #include "utility/exceptions/VulkanException.hpp"
 
+#include "spdlog/spdlog.h"
 #include <vulkan/vulkan_core.h>
 
 #include <algorithm>
@@ -13,7 +13,7 @@
 #include <cstdint>
 #include <limits>
 #include <memory>
-#include <stdexcept>
+#include <utility>
 #include <vector>
 
 namespace vv
@@ -195,8 +195,7 @@ bool Swapchain::compareSwapFormats(const Swapchain& swapchain) const noexcept
  */
 void Swapchain::createSwapchain()
 {
-	const SwapchainSupportDetails swapchainSupport{ device->getSwapchainSupport(
-	) };
+	const SwapchainSupportDetails swapchainSupport{ device->getSwapchainSupport() };
 	const VkSurfaceFormatKHR surfaceFormat{
 		chooseSwapSurfaceFormat(swapchainSupport.formats)
 	};
@@ -232,6 +231,9 @@ void Swapchain::createSwapchain()
 	                              : m_oldSwapchain->m_swapchain;
 
 	const QueueFamilyIndices indices{ device->findPhysicalQueueFamilies() };
+	if(!indices.graphicsFamily.has_value() || !indices.presentFamily.has_value())
+		throw Exception("Failed to find queues");
+
 	if(indices.graphicsFamily.value() != indices.presentFamily.value())
 	{
 		const std::array<std::uint32_t, 2> queueFamilyIndices{

@@ -3,7 +3,6 @@
 
 #include <exception>
 #include <source_location>
-#include <stacktrace>
 #include <string>
 #include <string_view>
 

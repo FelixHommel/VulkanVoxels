@@ -1,8 +1,9 @@
 #ifndef VULKAN_VOXELS_SRC_ENGINE_CORE_WINDOW_HPP
 #define VULKAN_VOXELS_SRC_ENGINE_CORE_WINDOW_HPP
 
+#define GLFW_INCLUDE_VULKAN
 #include "GLFW/glfw3.h"
-#include "vulkan/vulkan_core.h"
+#include <vulkan/vulkan_core.h>
 
 #include <cstdint>
 #include <string>

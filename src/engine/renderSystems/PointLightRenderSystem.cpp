@@ -2,20 +2,20 @@
 
 #include "core/Device.hpp"
 #include "core/Pipeline.hpp"
-#include "glm/ext/matrix_transform.hpp"
-#include "glm/fwd.hpp"
 #include "utility/FrameInfo.hpp"
 
 #define GLM_FORCE_RADIANS
 #define GLM_FORCE_DEPTH_ZERO_TO_ONE
 #include "glm/glm.hpp"
-// #include "glm/gtc/constants.hpp"
-// #include "glm/gtc/matrix_transform.hpp"
+#include "glm/gtc/matrix_transform.hpp"
 #include <vulkan/vulkan_core.h>
 
 #include <cassert>
+#include <cstddef>
+#include <cstdint>
 #include <memory>
 #include <stdexcept>
+#include <utility>
 #include <vector>
 
 namespace vv
@@ -37,13 +37,14 @@ PointLightRenderSystem::~PointLightRenderSystem()
 	vkDestroyPipelineLayout(device->device(), m_pipelineLayout, nullptr);
 }
 
-void PointLightRenderSystem::update(FrameInfo& frameInfo, GlobalUBO& ubo) const
+void PointLightRenderSystem::update(FrameInfo& frameInfo, GlobalUBO& ubo)
 {
-	auto rotateLight{
-		glm::rotate(glm::mat4(1.f), 0.5f * frameInfo.dt, { 0.f, -1.f, 0.f })
+	constexpr float ROTATE_FACTOR{ 0.5f };
+	const auto rotateLight{
+		glm::rotate(glm::mat4(1.f), ROTATE_FACTOR * frameInfo.dt, { 0.f, -1.f, 0.f })
 	};
-	int lightIndex{ 0 };
-	for(auto& [_, obj] : frameInfo.objects)
+	std::size_t lightIndex{ 0 };
+	for(auto& [_, obj] : *frameInfo.objects)
 	{
 		if(obj.pointLight == nullptr)
 			continue;
@@ -57,14 +58,14 @@ void PointLightRenderSystem::update(FrameInfo& frameInfo, GlobalUBO& ubo) const
 		obj.transform.translation =
 			glm::vec3(rotateLight * glm::vec4(obj.transform.translation, 1.f));
 
-		ubo.pointLights[lightIndex].position =
+		ubo.pointLights.at(lightIndex).position =
 			glm::vec4(obj.transform.translation, 1.f);
-		ubo.pointLights[lightIndex].color =
+		ubo.pointLights.at(lightIndex).color =
 			glm::vec4(obj.color, obj.pointLight->lightIntensity);
 
 		lightIndex += 1;
 	}
-	ubo.numLights = lightIndex;
+	ubo.numLights = static_cast<int>(lightIndex);
 }
 
 void PointLightRenderSystem::render(FrameInfo& frameInfo) const
@@ -84,7 +85,7 @@ void PointLightRenderSystem::render(FrameInfo& frameInfo) const
 
 
 	constexpr std::uint32_t squareVertexCount{ 6 };
-	for(auto& [_, obj] : frameInfo.objects)
+	for(auto& [_, obj] : *frameInfo.objects)
 	{
 		if(obj.pointLight == nullptr)
 			continue;

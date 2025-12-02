@@ -1,14 +1,14 @@
 #ifndef VULKAN_VOXELS_SRC_ENGINE_CORE_DESCRIPTOR_SET_LAYOUT_HPP
 #define VULKAN_VOXELS_SRC_ENGINE_CORE_DESCRIPTOR_SET_LAYOUT_HPP
 
-#include "core/DescriptorPool.hpp"
 #include "core/Device.hpp"
 
-#include <memory>
 #include <vulkan/vulkan_core.h>
 
 #include <cstdint>
+#include <memory>
 #include <unordered_map>
+#include <utility>
 
 namespace vv
 {

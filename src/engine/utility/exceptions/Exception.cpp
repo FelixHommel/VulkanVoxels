@@ -1,6 +1,9 @@
 #include "Exception.hpp"
 
+#include <source_location>
 #include <sstream>
+#include <string>
+#include <utility>
 
 namespace vv
 {

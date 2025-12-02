@@ -85,12 +85,12 @@ public:
 	}
 	/// \brief Find a suitable memory type from the physical device
 	///
-	/// \param typeFilter filter out specific unwanted types
+	/// \param filter filter out specific unwanted types
 	/// \param properties properties the memory needs to fulfill
 	///
 	/// \return std::uint32_t
 	[[nodiscard]] std::uint32_t findMemoryType(
-		std::uint32_t typeFilter,
+		std::uint32_t filter,
 		VkMemoryPropertyFlags properties
 	) const;
 	/// \brief Find appropriate queues on the physical device
@@ -177,7 +177,7 @@ public:
 		VkDeviceMemory& imageMemory
 	) const;
 
-	VkPhysicalDeviceProperties properties{}; // NOLINT
+	VkPhysicalDeviceProperties properties{};
 
 private:
 	const std::vector<const char*> VALIDATION_LAYERS{

@@ -109,7 +109,6 @@ private:
 	std::vector<VkDeviceMemory> m_depthImagesMemory;
 	std::vector<VkImageView> m_depthImageViews;
 	std::size_t m_currentFrame{ 0 };
-	std::uint32_t m_lastImageIndex{};
 
 	/** Sync */
 	std::vector<VkSemaphore> m_imageAvailableSemaphores;

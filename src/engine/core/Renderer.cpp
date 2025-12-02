@@ -3,15 +3,15 @@
 #include "core/Device.hpp"
 #include "core/Swapchain.hpp"
 #include "core/Window.hpp"
-
-#include "GLFW/glfw3.h"
 #include "utility/exceptions/VulkanException.hpp"
 
+#include "GLFW/glfw3.h"
 #include <vulkan/vulkan_core.h>
 
 #include <array>
 #include <cassert>
 #include <cstddef>
+#include <cstdint>
 #include <memory>
 #include <utility>
 #include <vector>

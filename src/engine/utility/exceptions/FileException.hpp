@@ -1,7 +1,10 @@
 #ifndef VULKAN_VOXELS_SRC_ENGINE_UTILITY_EXCEPTIONS_FILE_EXCEPTION_HPP
 #define VULKAN_VOXELS_SRC_ENGINE_UTILITY_EXCEPTIONS_FILE_EXCEPTION_HPP
 
-#include "Exception.hpp"
+#include "utility/exceptions/Exception.hpp"
+
+#include <source_location>
+#include <string>
 
 namespace vv
 {

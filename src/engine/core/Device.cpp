@@ -1,23 +1,24 @@
 #include "Device.hpp"
 
 #include "core/Window.hpp"
+#include "utility/exceptions/Exception.hpp"
+#include "utility/exceptions/VulkanException.hpp"
 
 #include "GLFW/glfw3.h"
 #include "spdlog/common.h"
 #include "spdlog/spdlog.h"
-#include "utility/exceptions/Exception.hpp"
-#include "utility/exceptions/VulkanException.hpp"
-
 #include <vulkan/vk_platform.h>
 #include <vulkan/vulkan_core.h>
 
 #include <cstdint>
 #include <cstring>
+#include <memory>
 #include <set>
 #include <span>
 #include <stdexcept>
 #include <string>
 #include <unordered_set>
+#include <utility>
 #include <vector>
 
 namespace
@@ -110,7 +111,7 @@ Device::~Device()
 }
 
 std::uint32_t Device::findMemoryType(
-	const std::uint32_t typeFilter,
+	const std::uint32_t filter,
 	const VkMemoryPropertyFlags properties
 ) const
 {
@@ -119,9 +120,8 @@ std::uint32_t Device::findMemoryType(
 
 	for(std::uint32_t i{ 0 }; i < memProperties.memoryTypeCount; ++i)
 	{
-		if((typeFilter & (1 << i)) != VK_FALSE &&
-		   (memProperties.memoryTypes[i].propertyFlags & properties) ==
-		       properties) // NOLINT
+		// NOLINTNEXTLINE(*-pro-bounds-constant-array-index): Vulkan API requires accessing C-style arrays by index
+		if((filter & (1 << i)) != VK_FALSE && (memProperties.memoryTypes[i].propertyFlags & properties) == properties)
 			return i;
 	}
 
@@ -405,7 +405,7 @@ void Device::createLogicalDevice()
 {
 	const QueueFamilyIndices indices{ findQueueFamilies(m_physicalDevice) };
 
-	if(!indices.isComplete())
+	if(!indices.graphicsFamily.has_value() || !indices.presentFamily.has_value())
 		throw Exception("Failed to find queues");
 
 	std::vector<VkDeviceQueueCreateInfo> queueCreateInfos;

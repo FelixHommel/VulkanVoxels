@@ -1,4 +1,5 @@
 #include "Application.hpp"
+#include "utility/exceptions/Exception.hpp"
 #include "utility/exceptions/FileException.hpp"
 #include "utility/exceptions/ResourceException.hpp"
 #include "utility/exceptions/VulkanException.hpp"

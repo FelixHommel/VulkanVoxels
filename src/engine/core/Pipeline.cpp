@@ -14,7 +14,7 @@
 #include <filesystem>
 #include <fstream>
 #include <ios>
-#include <stdexcept>
+#include <memory>
 #include <utility>
 #include <vector>
 

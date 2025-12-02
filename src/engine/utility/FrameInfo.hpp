@@ -9,13 +9,9 @@
 #include "glm/glm.hpp"
 #include <vulkan/vulkan_core.h>
 
+#include <array>
 #include <cstddef>
-
-namespace
-{
-constexpr unsigned int UBO_ALIGNMENT{ 16 };
-constexpr float AMBIENT_LIGHT_INTENSITY{ 0.02f };
-} // namespace
+#include <memory>
 
 namespace vv
 {
@@ -30,7 +26,8 @@ struct PointLight
 	glm::vec4 color{};
 };
 
-#define MAX_LIGHTS 10
+static constexpr std::size_t MAX_LIGHTS{ 10 };
+static constexpr float AMBIENT_LIGHT_INTENSITY{ 0.02f };
 
 /// \brief Definition of the Global UBO that contains generally relevant data
 ///
@@ -41,12 +38,12 @@ struct GlobalUBO
 	glm::mat4 projection{ 1.f };
 	glm::mat4 view{ 1.f };
 	glm::mat4 inverseView{ 1.f };
-	glm::vec4 ambientLightColor{ 1.f, 1.f, 1.f, ::AMBIENT_LIGHT_INTENSITY };
-	PointLight pointLights[MAX_LIGHTS];
+	glm::vec4 ambientLightColor{ 1.f, 1.f, 1.f, AMBIENT_LIGHT_INTENSITY };
+	std::array<PointLight, MAX_LIGHTS> pointLights;
 	int numLights;
 };
 
-/// \brief FrameInfo is a collection of relevant data that regards the entire Frme
+/// \brief FrameInfo is a collection of relevant data that regards the entire Frame
 ///
 /// Currently is collecting:
 /// - frameIndex
@@ -63,9 +60,9 @@ struct FrameInfo
 	std::size_t frameIndex;
 	float dt;
 	VkCommandBuffer commandBuffer;
-	Camera& camera; // NOLINT
+    std::shared_ptr<Camera> camera;
 	VkDescriptorSet globalDescriptorSet;
-	Object::ObjectMap& objects; // NOLINT
+    std::shared_ptr<Object::ObjectMap> objects;
 };
 
 } // namespace vv

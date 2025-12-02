@@ -2,9 +2,10 @@
 
 ## TODO
 
-[ ] Add custom exception handling and replace the runtime\_exception with them
-[ ] Replace reference members with std::shared\_ptr
-[ ] investigate all // NOLINT and consider fixing the warning
+[x] Add custom exception handling and replace the runtime\_exception with them
+[x] Replace reference members with std::shared\_ptr
+[x] investigate all // NOLINT and consider fixing the warning
+[ ] Add tests
 
 ## Roadmap
 

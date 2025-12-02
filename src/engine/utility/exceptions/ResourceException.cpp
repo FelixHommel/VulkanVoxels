@@ -1,5 +1,11 @@
 #include "ResourceException.hpp"
 
+#include "utility/exceptions/Exception.hpp"
+
+#include <source_location>
+#include <string>
+#include <utility>
+
 namespace vv
 {
 

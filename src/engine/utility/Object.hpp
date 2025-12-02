@@ -79,11 +79,11 @@ public:
 
 	[[nodiscard]] id_t getId() const noexcept { return m_id; }
 
-	std::shared_ptr<Model> model;                               // NOLINT
-	std::unique_ptr<PointLightComponent> pointLight{ nullptr }; // NOLINT
+	std::shared_ptr<Model> model;
+	std::unique_ptr<PointLightComponent> pointLight{ nullptr };
 
-	glm::vec3 color{};              // NOLINT
-	TransformComponent transform{}; // NOLINT
+	glm::vec3 color{};
+	TransformComponent transform{};
 
 private:
 	id_t m_id;

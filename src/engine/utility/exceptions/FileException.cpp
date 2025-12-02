@@ -1,8 +1,9 @@
 #include "FileException.hpp"
 
+#include "utility/exceptions/Exception.hpp"
+
 #include <source_location>
 #include <sstream>
-#include <stacktrace>
 #include <string>
 #include <utility>
 

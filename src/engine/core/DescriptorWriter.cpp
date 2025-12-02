@@ -1,8 +1,12 @@
 #include "DescriptorWriter.hpp"
 
+#include "core/DescriptorPool.hpp"
+#include "core/DescriptorSetLayout.hpp"
+
 #include <vulkan/vulkan_core.h>
 
 #include <cassert>
+#include <cstdint>
 
 namespace vv
 {

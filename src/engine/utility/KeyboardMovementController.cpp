@@ -40,7 +40,7 @@ void KeyboardMovementController::moveInPlaneXZ(
 
 	// NOTE: Limit pitch values between about +/- ~85 degrees
 	object.transform.rotation.x =
-		glm::clamp(object.transform.rotation.x, -1.5f, 1.5f); // NOLINT
+		glm::clamp(object.transform.rotation.x, ROTATION_CLAMP_MIN, ROTATION_CLAMP_MAX);
 	object.transform.rotation.y =
 		glm::mod(object.transform.rotation.y, glm::two_pi<float>());
 

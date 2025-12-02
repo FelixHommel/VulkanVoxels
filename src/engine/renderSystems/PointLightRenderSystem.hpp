@@ -53,7 +53,7 @@ public:
 	/// \brief Update the point lights
 	///
 	/// \param frameInfo \ref FrameInfo important frame related data
-	void update(FrameInfo& frameInfo, GlobalUBO& ubo) const;
+	static void update(FrameInfo& frameInfo, GlobalUBO& ubo);
 
 	/// \brief Render a point light
 	///

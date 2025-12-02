@@ -1,14 +1,12 @@
 #include "Window.hpp"
 
-#include "GLFW/glfw3.h"
-#include "spdlog/common.h"
-#include "spdlog/spdlog.h"
 #include "utility/exceptions/VulkanException.hpp"
 
+#include "GLFW/glfw3.h"
+#include "spdlog/spdlog.h"
 #include <vulkan/vulkan_core.h>
 
 #include <cstdint>
-#include <stdexcept>
 #include <string>
 #include <utility>
 
@@ -25,7 +23,7 @@ Window::Window(
 	, m_title{ std::move(title) }
 {
 	if(glfwInit() != GLFW_TRUE)
-		spdlog::log(spdlog::level::err, "Failed to create the window");
+		spdlog::error("Failed to create the window");
 
 	glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
 	glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);

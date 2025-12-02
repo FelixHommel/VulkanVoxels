@@ -4,16 +4,13 @@
 #include "core/Pipeline.hpp"
 #include "utility/FrameInfo.hpp"
 
-#define GLM_FORCE_RADIANS
-#define GLM_FORCE_DEPTH_ZERO_TO_ONE
-#include "glm/glm.hpp"
-// #include "glm/gtc/constants.hpp"
-// #include "glm/gtc/matrix_transform.hpp"
 #include <vulkan/vulkan_core.h>
 
 #include <cassert>
+#include <cstdint>
 #include <memory>
 #include <stdexcept>
+#include <utility>
 #include <vector>
 
 namespace vv
@@ -50,7 +47,7 @@ void BasicRenderSystem::renderObjects(FrameInfo& frameInfo) const
 		nullptr
 	);
 
-	for(auto& [_, obj] : frameInfo.objects)
+	for(auto& [_, obj] : *frameInfo.objects)
 	{
 		if(obj.model == nullptr)
 			continue;

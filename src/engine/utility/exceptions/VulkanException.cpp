@@ -1,8 +1,13 @@
 #include "VulkanException.hpp"
 
+#include "utility/exceptions/Exception.hpp"
+
 #include <vulkan/vulkan_core.h>
 
+#include <source_location>
 #include <sstream>
+#include <string>
+#include <utility>
 
 namespace vv
 {
