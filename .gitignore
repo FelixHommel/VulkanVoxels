@@ -1,10 +1,10 @@
 docs
 build
 .cache/
-resources/compiledShaders
-# explicitly allow the shaders directory in src
 *.spv
 .idea
+resources/compiledShaders/*
+!resources/models/*
 
 # Created by https://www.toptal.com/developers/gitignore/api/cmake,c++
 # Edit at https://www.toptal.com/developers/gitignore?templates=cmake,c++
@@ -17,7 +17,6 @@ resources/compiledShaders
 *.slo
 *.lo
 *.o
-*.obj
 
 # Precompiled Headers
 *.gch
@@ -63,4 +62,3 @@ CMakeUserPresets.json
 *-prefix/
 
 # End of https://www.toptal.com/developers/gitignore/api/cmake,c++
-
