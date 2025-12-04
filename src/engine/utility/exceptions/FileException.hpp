@@ -16,25 +16,25 @@ namespace vv
 class FileException final : public Exception
 {
 public:
-	/// \brief Create a new \ref VulkanException
-	///
-	/// \param message the exception message
-	/// \param filepath the path to the file that caused the exception
-	/// \param location (optional) where the exception is thrown
-	explicit FileException(
-		std::string message,
-		std::string filepath,
-		std::source_location location = std::source_location::current()
-	);
+    /// \brief Create a new \ref VulkanException
+    ///
+    /// \param message the exception message
+    /// \param filepath the path to the file that caused the exception
+    /// \param location (optional) where the exception is thrown
+    explicit FileException(
+        std::string message,
+        std::string filepath,
+        std::source_location location = std::source_location::current()
+    );
 
-	[[nodiscard]] const std::string& filepath() const noexcept { return m_filepath; }
+    [[nodiscard]] const std::string& filepath() const noexcept { return m_filepath; }
 
-	[[nodiscard]] std::string detailedMessage() const override;
+    [[nodiscard]] std::string detailedMessage() const override;
 
 private:
-	std::string m_filepath;
+    std::string m_filepath;
 
-	void buildWhatMessage() override;
+    void buildWhatMessage() override;
 };
 
 } // namespace vv

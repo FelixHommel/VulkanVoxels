@@ -19,21 +19,21 @@ namespace vv
 /// \date 11//13/2025
 struct PipelineConfigInfo
 {
-	std::vector<VkVertexInputBindingDescription> bindingDescription;
-	std::vector<VkVertexInputAttributeDescription> attributeDescription;
+    std::vector<VkVertexInputBindingDescription> bindingDescription;
+    std::vector<VkVertexInputAttributeDescription> attributeDescription;
 
-	VkPipelineViewportStateCreateInfo viewportInfo{};
-	VkPipelineInputAssemblyStateCreateInfo inputAssemblyInfo{};
-	VkPipelineRasterizationStateCreateInfo rasterizationInfo{};
-	VkPipelineMultisampleStateCreateInfo multisampleInfo{};
-	VkPipelineColorBlendAttachmentState colorBlendAttachment{};
-	VkPipelineColorBlendStateCreateInfo colorBlendInfo{};
-	VkPipelineDepthStencilStateCreateInfo depthStencilInfo{};
-	std::vector<VkDynamicState> dynamicStateEnables;
-	VkPipelineDynamicStateCreateInfo dynamicStateInfo{};
-	VkPipelineLayout pipelineLayout{ VK_NULL_HANDLE };
-	VkRenderPass renderPass{ VK_NULL_HANDLE };
-	std::uint32_t subpass{ 0 };
+    VkPipelineViewportStateCreateInfo viewportInfo{};
+    VkPipelineInputAssemblyStateCreateInfo inputAssemblyInfo{};
+    VkPipelineRasterizationStateCreateInfo rasterizationInfo{};
+    VkPipelineMultisampleStateCreateInfo multisampleInfo{};
+    VkPipelineColorBlendAttachmentState colorBlendAttachment{};
+    VkPipelineColorBlendStateCreateInfo colorBlendInfo{};
+    VkPipelineDepthStencilStateCreateInfo depthStencilInfo{};
+    std::vector<VkDynamicState> dynamicStateEnables;
+    VkPipelineDynamicStateCreateInfo dynamicStateInfo{};
+    VkPipelineLayout pipelineLayout{ VK_NULL_HANDLE };
+    VkRenderPass renderPass{ VK_NULL_HANDLE };
+    std::uint32_t subpass{ 0 };
 };
 
 /// \brief The Pipeline is a building piece that consists of programmable and non-programmable stages that vertices run through before they are displayed
@@ -43,44 +43,44 @@ struct PipelineConfigInfo
 class Pipeline
 {
 public:
-	/// \brief Create a new \ref Pipeline
-	///
-	/// \param device \ref Device where the pipeline is created on
-	/// \param vertexShaderPath filepath to the vertex shader in spir-v format
-	/// \param fragmentShaderPath filepath to the fragment shader in spir-v format
-	/// \param configInfo \ref PipelineConfigInfo that contains information of how the pipeline should be configured
-	Pipeline(
-		std::shared_ptr<Device> device,
-		const std::filesystem::path& vertexShaderPath,
-		const std::filesystem::path& fragmentShaderPath,
-		const PipelineConfigInfo& configInfo
-	);
-	~Pipeline();
+    /// \brief Create a new \ref Pipeline
+    ///
+    /// \param device \ref Device where the pipeline is created on
+    /// \param vertexShaderPath filepath to the vertex shader in spir-v format
+    /// \param fragmentShaderPath filepath to the fragment shader in spir-v format
+    /// \param configInfo \ref PipelineConfigInfo that contains information of how the pipeline should be configured
+    Pipeline(
+        std::shared_ptr<Device> device,
+        const std::filesystem::path& vertexShaderPath,
+        const std::filesystem::path& fragmentShaderPath,
+        const PipelineConfigInfo& configInfo
+    );
+    ~Pipeline();
 
-	Pipeline(const Pipeline&) = delete;
-	Pipeline(Pipeline&&) = delete;
-	Pipeline& operator=(const Pipeline&) = delete;
-	Pipeline& operator=(Pipeline&&) = delete;
+    Pipeline(const Pipeline&) = delete;
+    Pipeline(Pipeline&&) = delete;
+    Pipeline& operator=(const Pipeline&) = delete;
+    Pipeline& operator=(Pipeline&&) = delete;
 
-	/// \brief Provides a default set of configuration that can be used for configuration
-	///
-	/// \param configInfo \ref PipelineConfigInfo where the configuration is being saved
-	static void defaultPipelineConfigInfo(PipelineConfigInfo& configInfo);
+    /// \brief Provides a default set of configuration that can be used for configuration
+    ///
+    /// \param configInfo \ref PipelineConfigInfo where the configuration is being saved
+    static void defaultPipelineConfigInfo(PipelineConfigInfo& configInfo);
 
-	/// \brief Bind the Pipeline to a command buffer
-	///
-	/// \param commandBuffer the VkCommandBuffer to which the pipeline is being bound
-	void bind(VkCommandBuffer commandBuffer) const;
+    /// \brief Bind the Pipeline to a command buffer
+    ///
+    /// \param commandBuffer the VkCommandBuffer to which the pipeline is being bound
+    void bind(VkCommandBuffer commandBuffer) const;
 
 private:
-	void createShaderModule(const std::vector<char>& code, VkShaderModule* shaderModule) const;
+    void createShaderModule(const std::vector<char>& code, VkShaderModule* shaderModule) const;
 
-	static std::vector<char> readFile(const std::filesystem::path& filepath);
+    static std::vector<char> readFile(const std::filesystem::path& filepath);
 
-	std::shared_ptr<Device> m_device;
-	VkPipeline m_graphicsPipeline{};
-	VkShaderModule m_vertexShaderModule{};
-	VkShaderModule m_fragmentShaderModule{};
+    std::shared_ptr<Device> m_device;
+    VkPipeline m_graphicsPipeline{};
+    VkShaderModule m_vertexShaderModule{};
+    VkShaderModule m_fragmentShaderModule{};
 };
 
 }; // namespace vv

@@ -11,36 +11,36 @@
 
 int main()
 {
-	try
-	{
-		vv::Application app{};
-		app.run();
-	}
-	catch(const vv::VulkanException& e)
-	{
-		spdlog::critical("Vulkan error: {}", e.detailedMessage());
-		return 1;
-	}
-	catch(const vv::FileException& e)
-	{
-		spdlog::critical("File error: {}", e.detailedMessage());
-		return 1;
-	}
-	catch(const vv::ResourceException& e)
-	{
-		spdlog::critical("Resource error: {}", e.detailedMessage());
-		return 1;
-	}
-	catch(const vv::Exception& e)
-	{
-		spdlog::critical("Application error: {}", e.detailedMessage());
-		return 1;
-	}
-	catch(const std::exception& e)
-	{
-		spdlog::critical("Unexpected error: {}", e.what());
-		return 1;
-	}
+    try
+    {
+        vv::Application app{};
+        app.run();
+    }
+    catch(const vv::VulkanException& e)
+    {
+        spdlog::critical("Vulkan error: {}", e.detailedMessage());
+        return 1;
+    }
+    catch(const vv::FileException& e)
+    {
+        spdlog::critical("File error: {}", e.detailedMessage());
+        return 1;
+    }
+    catch(const vv::ResourceException& e)
+    {
+        spdlog::critical("Resource error: {}", e.detailedMessage());
+        return 1;
+    }
+    catch(const vv::Exception& e)
+    {
+        spdlog::critical("Application error: {}", e.detailedMessage());
+        return 1;
+    }
+    catch(const std::exception& e)
+    {
+        spdlog::critical("Unexpected error: {}", e.what());
+        return 1;
+    }
 
-	return 0;
+    return 0;
 }

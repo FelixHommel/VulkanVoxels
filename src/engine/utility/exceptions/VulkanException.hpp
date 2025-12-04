@@ -18,26 +18,26 @@ namespace vv
 class VulkanException final : public Exception
 {
 public:
-	/// \brief Create a new \ref VulkanException
-	///
-	/// \param message the exception message
-	/// \param result the VkResult that lead to the exception
-	/// \param location (optional) where the exception is thrown
-	explicit VulkanException(
-		std::string message,
-		VkResult result,
-		std::source_location location = std::source_location::current()
-	);
+    /// \brief Create a new \ref VulkanException
+    ///
+    /// \param message the exception message
+    /// \param result the VkResult that lead to the exception
+    /// \param location (optional) where the exception is thrown
+    explicit VulkanException(
+        std::string message,
+        VkResult result,
+        std::source_location location = std::source_location::current()
+    );
 
-	[[nodiscard]] VkResult result() const noexcept { return m_result; }
+    [[nodiscard]] VkResult result() const noexcept { return m_result; }
 
-	[[nodiscard]] std::string detailedMessage() const override;
+    [[nodiscard]] std::string detailedMessage() const override;
 
 private:
-	VkResult m_result;
+    VkResult m_result;
 
-	void buildWhatMessage() override;
-	static const char* vkResultToString(VkResult result);
+    void buildWhatMessage() override;
+    static const char* vkResultToString(VkResult result);
 };
 
 } // namespace vv

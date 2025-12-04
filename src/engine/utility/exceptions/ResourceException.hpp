@@ -16,11 +16,11 @@ namespace vv
 class ResourceException : public Exception
 {
 public:
-	/// \brief Create a new \ref VulkanException
-	///
-	/// \param message the exception message
-	/// \param location (optional) where the exception is thrown
-	explicit ResourceException(std::string message, std::source_location location = std::source_location::current());
+    /// \brief Create a new \ref VulkanException
+    ///
+    /// \param message the exception message
+    /// \param location (optional) where the exception is thrown
+    explicit ResourceException(std::string message, std::source_location location = std::source_location::current());
 
 private:
 };

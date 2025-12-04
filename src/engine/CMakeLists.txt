@@ -44,6 +44,8 @@ target_sources(${NAME}
             ./renderSystems/PointLightRenderSystem.hpp
             ./utility/Camera.hpp
             ./utility/FrameInfo.hpp
+            ./utility/GLFWInputHandler.hpp
+            ./utility/IInputHandler.hpp
             ./utility/Model.hpp
             ./utility/Object.hpp
             ./utility/KeyboardMovementController.hpp

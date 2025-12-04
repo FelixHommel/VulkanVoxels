@@ -15,74 +15,74 @@ namespace vv
 {
 
 Buffer::Buffer(
-	std::shared_ptr<Device> device,
-	VkDeviceSize elementSize,
-	std::uint32_t elementCount,
-	VkBufferUsageFlags usageFlags,
-	VkMemoryPropertyFlags memoryPropertyFlags,
-	VkDeviceSize minOffsetAlignment
+    std::shared_ptr<Device> device,
+    VkDeviceSize elementSize,
+    std::uint32_t elementCount,
+    VkBufferUsageFlags usageFlags,
+    VkMemoryPropertyFlags memoryPropertyFlags,
+    VkDeviceSize minOffsetAlignment
 )
-	: device(device)
-	, m_elementCount{ elementCount }
-	, m_elementSize{ elementSize }
-	, m_alignmentSize{ getAlignment(m_elementSize, minOffsetAlignment) }
-	, m_usageFlags{ usageFlags }
-	, m_memoryPropertyFlags{ memoryPropertyFlags }
-	, m_bufferSize{ m_alignmentSize * m_elementCount }
+    : device(device)
+    , m_elementCount{ elementCount }
+    , m_elementSize{ elementSize }
+    , m_alignmentSize{ getAlignment(m_elementSize, minOffsetAlignment) }
+    , m_usageFlags{ usageFlags }
+    , m_memoryPropertyFlags{ memoryPropertyFlags }
+    , m_bufferSize{ m_alignmentSize * m_elementCount }
 {
-	device->createBuffer(m_bufferSize, m_usageFlags, m_memoryPropertyFlags, m_buffer, m_bufferMemory);
+    device->createBuffer(m_bufferSize, m_usageFlags, m_memoryPropertyFlags, m_buffer, m_bufferMemory);
 }
 
 Buffer::~Buffer()
 {
-	unmap();
-	vkDestroyBuffer(device->device(), m_buffer, nullptr);
-	vkFreeMemory(device->device(), m_bufferMemory, nullptr);
+    unmap();
+    vkDestroyBuffer(device->device(), m_buffer, nullptr);
+    vkFreeMemory(device->device(), m_bufferMemory, nullptr);
 }
 
 VkResult Buffer::map(VkDeviceSize size, VkDeviceSize offset)
 {
 #if defined(VV_ENABLE_ASSERTS)
-	assert(m_buffer != VK_NULL_HANDLE && m_bufferMemory != VK_NULL_HANDLE && "map() called before buffer is craeted");
+    assert(m_buffer != VK_NULL_HANDLE && m_bufferMemory != VK_NULL_HANDLE && "map() called before buffer is craeted");
 #endif
 
-	return vkMapMemory(device->device(), m_bufferMemory, offset, size, 0, &m_mapped);
+    return vkMapMemory(device->device(), m_bufferMemory, offset, size, 0, &m_mapped);
 }
 
 void Buffer::unmap()
 {
-	if(m_mapped == nullptr)
-		return;
+    if(m_mapped == nullptr)
+        return;
 
-	vkUnmapMemory(device->device(), m_bufferMemory);
-	m_mapped = nullptr;
+    vkUnmapMemory(device->device(), m_bufferMemory);
+    m_mapped = nullptr;
 }
 
 VkResult Buffer::flush(VkDeviceSize size, VkDeviceSize offset)
 {
-	VkMappedMemoryRange mappedRange{};
-	mappedRange.sType = VK_STRUCTURE_TYPE_MAPPED_MEMORY_RANGE;
-	mappedRange.memory = m_bufferMemory;
-	mappedRange.offset = offset;
-	mappedRange.size = size;
+    VkMappedMemoryRange mappedRange{};
+    mappedRange.sType = VK_STRUCTURE_TYPE_MAPPED_MEMORY_RANGE;
+    mappedRange.memory = m_bufferMemory;
+    mappedRange.offset = offset;
+    mappedRange.size = size;
 
-	return vkFlushMappedMemoryRanges(device->device(), 1, &mappedRange);
+    return vkFlushMappedMemoryRanges(device->device(), 1, &mappedRange);
 }
 
 VkDescriptorBufferInfo Buffer::descriptorInfo(VkDeviceSize size, VkDeviceSize offset)
 {
-	return VkDescriptorBufferInfo{ .buffer = m_buffer, .offset = offset, .range = size };
+    return VkDescriptorBufferInfo{ .buffer = m_buffer, .offset = offset, .range = size };
 }
 
 VkResult Buffer::invalidate(VkDeviceSize size, VkDeviceSize offset)
 {
-	VkMappedMemoryRange mappedRange{};
-	mappedRange.sType = VK_STRUCTURE_TYPE_MAPPED_MEMORY_RANGE;
-	mappedRange.memory = m_bufferMemory;
-	mappedRange.offset = offset;
-	mappedRange.size = size;
+    VkMappedMemoryRange mappedRange{};
+    mappedRange.sType = VK_STRUCTURE_TYPE_MAPPED_MEMORY_RANGE;
+    mappedRange.memory = m_bufferMemory;
+    mappedRange.offset = offset;
+    mappedRange.size = size;
 
-	return vkInvalidateMappedMemoryRanges(device->device(), 1, &mappedRange);
+    return vkInvalidateMappedMemoryRanges(device->device(), 1, &mappedRange);
 }
 
 /// \brief Determine the minimum sice that a element needs to be stored in the buffer
@@ -96,10 +96,10 @@ VkResult Buffer::invalidate(VkDeviceSize size, VkDeviceSize offset)
 /// \returns the determined size of an element in the buffer including alignment
 VkDeviceSize Buffer::getAlignment(VkDeviceSize elementSize, VkDeviceSize minOffsetAlignment)
 {
-	if(minOffsetAlignment > 0)
-		return (elementSize + minOffsetAlignment - 1) & ~(minOffsetAlignment - 1);
+    if(minOffsetAlignment > 0)
+        return (elementSize + minOffsetAlignment - 1) & ~(minOffsetAlignment - 1);
 
-	return elementSize;
+    return elementSize;
 }
 
 /// \brief Write data to the buffer
@@ -110,22 +110,22 @@ VkDeviceSize Buffer::getAlignment(VkDeviceSize elementSize, VkDeviceSize minOffs
 void Buffer::writeToBufferRaw(const void* pData, VkDeviceSize size, VkDeviceSize offset)
 {
 #if defined(VV_ENABLE_ASSERTS)
-	assert(m_mapped != nullptr && "Cannot copy to unmapped buffer");
-	assert(
-		offset + size <= m_bufferSize && "The buffer that is being written to "
-										 "the buffer execeeds the buffer's size"
-	);
+    assert(m_mapped != nullptr && "Cannot copy to unmapped buffer");
+    assert(
+        offset + size <= m_bufferSize && "The buffer that is being written to "
+                                         "the buffer execeeds the buffer's size"
+    );
 #endif
 
-	if(offset == 0)
-		[[likely]] // NOTE: unless in the future more buffers are using offsets this may be a small optimization
-		std::memcpy(m_mapped, pData, size);
-	else
-	{
-		auto* memOffset{ std::next(static_cast<std::byte*>(m_mapped), static_cast<std::ptrdiff_t>(offset)) };
+    if(offset == 0)
+        [[likely]] // NOTE: unless in the future more buffers are using offsets this may be a small optimization
+        std::memcpy(m_mapped, pData, size);
+    else
+    {
+        auto* memOffset{ std::next(static_cast<std::byte*>(m_mapped), static_cast<std::ptrdiff_t>(offset)) };
 
-		std::memcpy(memOffset, pData, size);
-	}
+        std::memcpy(memOffset, pData, size);
+    }
 }
 
 } // namespace vv

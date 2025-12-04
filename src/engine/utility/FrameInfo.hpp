@@ -22,8 +22,8 @@ namespace vv
 /// \date 11/28/2025
 struct PointLight
 {
-	glm::vec4 position{};
-	glm::vec4 color{};
+    glm::vec4 position{};
+    glm::vec4 color{};
 };
 
 static constexpr std::size_t MAX_LIGHTS{ 10 };
@@ -35,12 +35,12 @@ static constexpr float AMBIENT_LIGHT_INTENSITY{ 0.02f };
 /// \date 11/28.2025
 struct GlobalUBO
 {
-	glm::mat4 projection{ 1.f };
-	glm::mat4 view{ 1.f };
-	glm::mat4 inverseView{ 1.f };
-	glm::vec4 ambientLightColor{ 1.f, 1.f, 1.f, AMBIENT_LIGHT_INTENSITY };
-	std::array<PointLight, MAX_LIGHTS> pointLights;
-	int numLights;
+    glm::mat4 projection{ 1.f };
+    glm::mat4 view{ 1.f };
+    glm::mat4 inverseView{ 1.f };
+    glm::vec4 ambientLightColor{ 1.f, 1.f, 1.f, AMBIENT_LIGHT_INTENSITY };
+    std::array<PointLight, MAX_LIGHTS> pointLights;
+    int numLights;
 };
 
 /// \brief FrameInfo is a collection of relevant data that regards the entire Frame
@@ -57,12 +57,12 @@ struct GlobalUBO
 /// \date 11/20/2025
 struct FrameInfo
 {
-	std::size_t frameIndex;
-	float dt;
-	VkCommandBuffer commandBuffer;
-	std::shared_ptr<Camera> camera;
-	VkDescriptorSet globalDescriptorSet;
-	std::shared_ptr<Object::ObjectMap> objects;
+    std::size_t frameIndex;
+    float dt;
+    VkCommandBuffer commandBuffer;
+    std::shared_ptr<Camera> camera;
+    VkDescriptorSet globalDescriptorSet;
+    std::shared_ptr<Object::ObjectMap> objects;
 };
 
 } // namespace vv

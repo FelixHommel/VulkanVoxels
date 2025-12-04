@@ -26,35 +26,35 @@ namespace vv
 class Application
 {
 public:
-	Application();
-	~Application() = default;
+    Application();
+    ~Application() = default;
 
-	Application(const Application&) = delete;
-	Application(Application&&) = delete;
-	Application& operator=(const Application&) = delete;
-	Application& operator=(Application&&) = delete;
+    Application(const Application&) = delete;
+    Application(Application&&) = delete;
+    Application& operator=(const Application&) = delete;
+    Application& operator=(Application&&) = delete;
 
-	/// \brief start the Application
-	void run();
+    /// \brief start the Application
+    void run();
 
-	static constexpr std::uint32_t WINDOW_WIDTH{ 800 };
-	static constexpr std::uint32_t WINDOW_HEIGHT{ 600 };
-	static constexpr auto WINDOW_TITLE{ "VulkanVoxels" };
+    static constexpr std::uint32_t WINDOW_WIDTH{ 800 };
+    static constexpr std::uint32_t WINDOW_HEIGHT{ 600 };
+    static constexpr auto WINDOW_TITLE{ "VulkanVoxels" };
 
 private:
-	static constexpr auto SMOOTH_VASE_PATH{ PROJECT_ROOT "resources/models/smooth_vase.obj" };
-	static constexpr auto FLAT_VASE_PATH{ PROJECT_ROOT "resources/models/flat_vase.obj" };
-	static constexpr auto QUAD_PATH{ PROJECT_ROOT "resources/models/quad.obj" };
-	static constexpr float POINT_LIGHT_INTENSITY{ 0.2f };
-	static constexpr float CAMERA_START_OFFSET_Z{ -2.5f };
+    static constexpr auto SMOOTH_VASE_PATH{ PROJECT_ROOT "resources/models/smooth_vase.obj" };
+    static constexpr auto FLAT_VASE_PATH{ PROJECT_ROOT "resources/models/flat_vase.obj" };
+    static constexpr auto QUAD_PATH{ PROJECT_ROOT "resources/models/quad.obj" };
+    static constexpr float POINT_LIGHT_INTENSITY{ 0.2f };
+    static constexpr float CAMERA_START_OFFSET_Z{ -2.5f };
 
-	std::shared_ptr<Window> m_window;
-	std::shared_ptr<Device> m_device;
-	std::unique_ptr<DescriptorPool> m_globalPool;
-	std::unique_ptr<Renderer> m_renderer;
-	std::shared_ptr<Object::ObjectMap> m_objects{ std::make_shared<Object::ObjectMap>() };
+    std::shared_ptr<Window> m_window;
+    std::shared_ptr<Device> m_device;
+    std::unique_ptr<DescriptorPool> m_globalPool;
+    std::unique_ptr<Renderer> m_renderer;
+    std::shared_ptr<Object::ObjectMap> m_objects{ std::make_shared<Object::ObjectMap>() };
 
-	void loadObjects();
+    void loadObjects();
 };
 
 } // namespace vv

@@ -21,9 +21,9 @@ namespace vv
 /// \date 11/28/2025
 struct PointLightPushConstants
 {
-	glm::vec4 position{};
-	glm::vec4 color{};
-	float radius;
+    glm::vec4 position{};
+    glm::vec4 color{};
+    float radius;
 };
 
 /// \brief Render System to render point lights in a billboard style
@@ -33,44 +33,44 @@ struct PointLightPushConstants
 class PointLightRenderSystem
 {
 public:
-	/// \brief Create a new \ref PointLightRenderSystem
-	///
-	/// \param device \ref Device to create the \ref Pipeline on
-	/// \param renderPass Which RenderPass to use in the pipeline
-	/// \param globalSetLayout the layout of globally used descriptor sets
-	PointLightRenderSystem(
-		std::shared_ptr<Device> device,
-		VkRenderPass renderPass,
-		VkDescriptorSetLayout globalSetLayout
-	);
-	~PointLightRenderSystem();
+    /// \brief Create a new \ref PointLightRenderSystem
+    ///
+    /// \param device \ref Device to create the \ref Pipeline on
+    /// \param renderPass Which RenderPass to use in the pipeline
+    /// \param globalSetLayout the layout of globally used descriptor sets
+    PointLightRenderSystem(
+        std::shared_ptr<Device> device,
+        VkRenderPass renderPass,
+        VkDescriptorSetLayout globalSetLayout
+    );
+    ~PointLightRenderSystem();
 
-	PointLightRenderSystem(const PointLightRenderSystem&) = delete;
-	PointLightRenderSystem(PointLightRenderSystem&&) = delete;
-	PointLightRenderSystem& operator=(const PointLightRenderSystem&) = delete;
-	PointLightRenderSystem& operator=(PointLightRenderSystem&&) = delete;
+    PointLightRenderSystem(const PointLightRenderSystem&) = delete;
+    PointLightRenderSystem(PointLightRenderSystem&&) = delete;
+    PointLightRenderSystem& operator=(const PointLightRenderSystem&) = delete;
+    PointLightRenderSystem& operator=(PointLightRenderSystem&&) = delete;
 
-	/// \brief Update the point lights
-	///
-	/// \param frameInfo \ref FrameInfo important frame related data
-	static void update(FrameInfo& frameInfo, GlobalUBO& ubo);
+    /// \brief Update the point lights
+    ///
+    /// \param frameInfo \ref FrameInfo important frame related data
+    static void update(FrameInfo& frameInfo, GlobalUBO& ubo);
 
-	/// \brief Render a point light
-	///
-	/// \param frameInfo \ref FrameInfo with data about the current frame
-	void render(FrameInfo& frameInfo) const;
+    /// \brief Render a point light
+    ///
+    /// \param frameInfo \ref FrameInfo with data about the current frame
+    void render(FrameInfo& frameInfo) const;
 
 private:
-	static constexpr auto VERTEX_SHADER_PATH{ PROJECT_ROOT "resources/compiledShaders/pointLightVert.spv" };
-	static constexpr auto FRAGMENT_SHADER_PATH{ PROJECT_ROOT "resources/compiledShaders/pointLightFrag.spv" };
+    static constexpr auto VERTEX_SHADER_PATH{ PROJECT_ROOT "resources/compiledShaders/pointLightVert.spv" };
+    static constexpr auto FRAGMENT_SHADER_PATH{ PROJECT_ROOT "resources/compiledShaders/pointLightFrag.spv" };
 
-	std::shared_ptr<Device> device;
+    std::shared_ptr<Device> device;
 
-	std::unique_ptr<Pipeline> m_pipeline;
-	VkPipelineLayout m_pipelineLayout{ VK_NULL_HANDLE };
+    std::unique_ptr<Pipeline> m_pipeline;
+    VkPipelineLayout m_pipelineLayout{ VK_NULL_HANDLE };
 
-	void createPipelineLayout(VkDescriptorSetLayout globalSetLayout);
-	void createPipeline(VkRenderPass renderPass);
+    void createPipelineLayout(VkDescriptorSetLayout globalSetLayout);
+    void createPipeline(VkRenderPass renderPass);
 };
 
 } // namespace vv
