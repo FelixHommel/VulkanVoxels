@@ -42,7 +42,7 @@ TEST(ObjectTest, ObjectMapOperations)
 
     map.erase(map.find(id2));
 
-    EXPECT_EQ(map.size(), 2);
+    EXPECT_EQ(map.size(), 1);
     EXPECT_TRUE(map.contains(id1));
     EXPECT_FALSE(map.contains(id2));
 }

@@ -32,7 +32,7 @@ void Exception::buildWhatMessage()
     std::ostringstream oss;
     oss << m_message << "[" << m_location.file_name() << ":" << m_location.line() << "]";
 
-    m_message = oss.str();
+    m_whatMessage = oss.str();
 }
 
 } // namespace vv

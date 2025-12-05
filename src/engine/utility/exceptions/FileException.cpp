@@ -21,8 +21,7 @@ std::string FileException::detailedMessage() const
 {
     std::ostringstream oss;
     oss << "File IO Error(" << m_filepath << "): " << m_message << "\n"
-        << " at " << m_location.file_name() << ":" << m_location.line() << " in " << m_location.function_name() << "\n"
-        << "Stack trace:\n";
+        << " at " << m_location.file_name() << ":" << m_location.line() << " in " << m_location.function_name() << "\n";
 
     return oss.str();
 }

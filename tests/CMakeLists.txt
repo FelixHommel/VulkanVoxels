@@ -14,6 +14,7 @@ add_executable(${TEST_NAME}
     ./utility/TransformTest.cpp
     ./utility/UtilsTest.cpp
     ./utility/VertexTest.cpp
+    ./utility/exceptions/ExceptionTest.cpp
 )
 
 target_sources(${TEST_NAME}
@@ -32,6 +33,7 @@ target_link_libraries(${TEST_NAME}
     PRIVATE
         glm::glm
         GTest::gtest
+        gmock
         project_warnings
         spdlog::spdlog
         VulkanVoxelsEngine

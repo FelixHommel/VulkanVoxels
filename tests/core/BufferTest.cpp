@@ -44,6 +44,23 @@ TEST_F(BufferTest, AllocateBuffer)
     EXPECT_NE(buffer.getBuffer(), VK_NULL_HANDLE);
 }
 
+TEST_F(BufferTest, MemoryMappingOperations)
+{
+    Buffer buffer(
+        ctx->device(),
+        ELEMENT_SIZE,
+        ALLOCATIONS,
+        BUFFER_USAGE,
+        BUFFER_PROPERTIES
+    );
+
+    EXPECT_EQ(buffer.map(), VK_SUCCESS);
+    EXPECT_NE(BufferTestHelper::getMappedMemory(buffer), nullptr);
+
+    buffer.unmap();
+    EXPECT_EQ(BufferTestHelper::getMappedMemory(buffer), nullptr);
+}
+
 TEST_F(BufferTest, WriteToBuffer)
 {
     Buffer buffer(
@@ -57,7 +74,7 @@ TEST_F(BufferTest, WriteToBuffer)
     buffer.map();
     const std::vector<float> writeData{ 1.f, 2.f, 3.f, 4.f, 5.f };
     buffer.writeToBuffer(writeData);
-    buffer.flush();
+    EXPECT_EQ(buffer.flush(), VK_SUCCESS);
     buffer.unmap();
 
     buffer.map();

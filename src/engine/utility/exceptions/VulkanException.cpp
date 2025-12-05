@@ -23,9 +23,8 @@ std::string VulkanException::detailedMessage() const
 {
     std::ostringstream oss;
     oss << "Vulkan Error: " << m_message << "\n"
-        << " Result code: " << vkResultToString(m_result) << "(" << m_result << ")\n"
-        << " at " << m_location.file_name() << ":" << m_location.line() << " in " << m_location.function_name() << "\n"
-        << "Stack trace:\n";
+        << " Result code: " << vkResultToString(m_result) << "\n"
+        << " at " << m_location.file_name() << ":" << m_location.line() << " in " << m_location.function_name() << "\n";
 
     return oss.str();
 }
