@@ -60,7 +60,7 @@ target_sources(${NAME}
 target_include_directories(${NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 target_compile_features(${NAME} PRIVATE cxx_std_23)
 target_link_libraries(${NAME}
-    PRIVATE
+    INTERFACE
         project_warnings
     PUBLIC
         Vulkan::Vulkan

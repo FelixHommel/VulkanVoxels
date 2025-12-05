@@ -27,9 +27,9 @@
             "binaryDir": "build/code-coverage",
             "cacheVariables": {
                 "CMAKE_BUILD_TYPE": "Debug",
-                "VV_CODE_COVERAGE": "ON",
                 "CMAKE_C_COMPILER": "gcc",
-                "CMAKE_CXX_COMPILER": "g++"
+                "CMAKE_CXX_COMPILER": "g++",
+                "VV_CODE_COVERAGE": "ON"
             }
         },
         {
@@ -40,7 +40,8 @@
             "cacheVariables": {
                 "CMAKE_BUILD_TYPE": "Debug",
                 "CMAKE_C_COMPILER": "clang",
-                "CMAKE_CXX_COMPILER": "clang++"
+                "CMAKE_CXX_COMPILER": "clang++",
+                "VV_WARNINGS_AS_ERRORS": "ON"
             }
         },
         {
@@ -62,7 +63,8 @@
             "cacheVariables": {
                 "CMAKE_BUILD_TYPE": "Debug",
                 "CMAKE_C_COMPILER": "gcc",
-                "CMAKE_CXX_COMPILER": "g++"
+                "CMAKE_CXX_COMPILER": "g++",
+                "VV_WARNINGS_AS_ERRORS": "ON"
             }
         },
         {

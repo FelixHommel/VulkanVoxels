@@ -1,5 +1,5 @@
 function(set_project_warnings project_name)
-    option(VV_WARNINGS_AS_ERRORS "Treat compiler warnings as errors" ON)
+    option(VV_WARNINGS_AS_ERRORS "Treat compiler warnings as errors" OFF)
 
     set(MSVC_WARNINGS
         /W4
@@ -42,6 +42,7 @@ function(set_project_warnings project_name)
     )
 
     if(VV_WARNINGS_AS_ERRORS AND NOT VV_CODE_COVERAGE)
+        message(STATUS "Compiling with warnings as error")
         set(MSVC_WARNINGS ${MSVC_WARNINGS} /WX)
         set(CLANG_WARNINGS ${CLANG_WARNINGS} -Werror)
     endif()
