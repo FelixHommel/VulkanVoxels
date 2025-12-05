@@ -41,7 +41,7 @@ function(set_project_warnings project_name)
         -Wformat=2
     )
 
-    if(VV_WARNINGS_AS_ERRORS)
+    if(VV_WARNINGS_AS_ERRORS AND NOT VV_CODE_COVERAGE)
         set(MSVC_WARNINGS ${MSVC_WARNINGS} /WX)
         set(CLANG_WARNINGS ${CLANG_WARNINGS} -Werror)
     endif()

@@ -10,6 +10,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 add_compile_definitions(PROJECT_ROOT="${CMAKE_SOURCE_DIR}/")
 
 include(cmake/DefaultProjectSettings.cmake)
+include(cmake/CodeCoverage.cmake)
 
 add_library(project_warnings INTERFACE)
 include(cmake/CompilerWarnings.cmake)

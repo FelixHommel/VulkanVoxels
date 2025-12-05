@@ -27,7 +27,7 @@
             "binaryDir": "build/code-coverage",
             "cacheVariables": {
                 "CMAKE_BUILD_TYPE": "Debug",
-                "CODE_COVERAGE": "ON",
+                "VV_CODE_COVERAGE": "ON",
                 "CMAKE_C_COMPILER": "gcc",
                 "CMAKE_CXX_COMPILER": "g++"
             }
