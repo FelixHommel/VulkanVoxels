@@ -24,6 +24,7 @@ add_library(${NAME}
     ./utility/exceptions/FileException.cpp
     ./utility/exceptions/ResourceException.cpp
     ./external/tiny_obj_loader_impl.cpp
+    ./external/vma_impl.cpp
 )
 
 target_sources(${NAME}
@@ -67,4 +68,5 @@ target_link_libraries(${NAME}
         spdlog::spdlog
         glm
         glfw
+        GPUOpen::VulkanMemoryAllocator
 )
