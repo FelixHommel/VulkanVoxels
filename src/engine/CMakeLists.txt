@@ -58,6 +58,10 @@ target_sources(${NAME}
             ./external/tiny_obj_loader.h
 )
 
+# NOTE: Add VMA as Interface to exclude from compiler warnings that the project has
+add_library(VMA INTERFACE)
+target_include_directories(VMA INTERFACE ${vma_SOURCE_DIR}/include)
+
 target_include_directories(${NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 target_compile_features(${NAME} PRIVATE cxx_std_23)
 target_link_libraries(${NAME}
@@ -68,5 +72,5 @@ target_link_libraries(${NAME}
         spdlog::spdlog
         glm
         glfw
-        GPUOpen::VulkanMemoryAllocator
+        VMA
 )
