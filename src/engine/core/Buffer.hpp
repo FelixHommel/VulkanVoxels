@@ -3,6 +3,7 @@
 
 #include "Device.hpp"
 
+#include "vk_mem_alloc.h"
 #include <vulkan/vulkan_core.h>
 
 #include <cstdint>
@@ -15,7 +16,9 @@ namespace vv
 
 namespace test
 {
+
 class BufferTestHelper;
+
 }
 
 /// \brief Abstraction over VkBuffer
@@ -56,11 +59,8 @@ public:
 
     /// \brief Map the memory of the buffer so that it can be accessed by the CPU
     ///
-    /// \param size (optional) size of the range that is getting mapped
-    /// \param offset (optional) offset into the buffer for the region that is getting mapped (in byte)
-    ///
     /// \return the result of the vulkan mapping operation
-    VkResult map(VkDeviceSize size = VK_WHOLE_SIZE, VkDeviceSize offset = 0);
+    VkResult map();
     /// \brief Unmap the currently mapped memory range
     void unmap();
 
@@ -77,7 +77,7 @@ public:
     }
     /// \brief Write data to the buffer
     ///
-    /// \param C can be any container that supports contignuous iterators and whose data elements can be trivially copied
+    /// \param C can be any container that supports continuous iterators and whose data elements can be trivially copied
     /// \param data the data container that contains the data itself
     /// \param offset (optional) offset into the buffer from where to begin writing memory (in byte)
     template <typename C>
@@ -93,19 +93,19 @@ public:
     ///
     /// \param size (optional) size of the memory range to flush (in byte)
     /// \param offset (optional) offset from the beginning (in byte)
-    VkResult flush(VkDeviceSize size = VK_WHOLE_SIZE, VkDeviceSize offset = 0);
+    [[nodiscard]] VkResult flush(VkDeviceSize size = VK_WHOLE_SIZE, VkDeviceSize offset = 0) const;
     /// \brief Create a buffer info descriptor
     ///
     /// \param size (optional) size of the memory range of the descriptor (in byte)
     /// \param offset (optional) offset into the buffer (in byte)
-    VkDescriptorBufferInfo descriptorInfo(VkDeviceSize size = VK_WHOLE_SIZE, VkDeviceSize offset = 0);
+    [[nodiscard]] VkDescriptorBufferInfo descriptorInfo(VkDeviceSize size = VK_WHOLE_SIZE, VkDeviceSize offset = 0) const;
     /// \brief Invalidate a range of memory to make it available to the CPU
     ///
     /// \note Only required for non-coherent memory
     ///
     /// \param size (optional) size of the memory range (in byte)
     /// \param offset (optional) offset into the buffer (in byte)
-    VkResult invalidate(VkDeviceSize size = VK_WHOLE_SIZE, VkDeviceSize offset = 0);
+    [[nodiscard]] VkResult invalidate(VkDeviceSize size = VK_WHOLE_SIZE, VkDeviceSize offset = 0) const;
 
 private:
     std::shared_ptr<Device> device;
@@ -119,11 +119,11 @@ private:
     VkDeviceSize m_bufferSize;
     void* m_mapped{ nullptr };
     VkBuffer m_buffer{ VK_NULL_HANDLE };
-    VkDeviceMemory m_bufferMemory{ VK_NULL_HANDLE };
+    VmaAllocation m_allocation{ VK_NULL_HANDLE };
 
     static VkDeviceSize getAlignment(VkDeviceSize elementSize, VkDeviceSize minOffsetAlignment);
 
-    void writeToBufferRaw(const void* pData, VkDeviceSize size, VkDeviceSize offset = 0);
+    void writeToBufferRaw(const void* pData, VkDeviceSize size, VkDeviceSize offset = 0) const;
 };
 
 } // namespace vv

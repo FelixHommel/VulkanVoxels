@@ -7,10 +7,11 @@
 #include "GLFW/glfw3.h"
 #include "spdlog/common.h"
 #include "spdlog/spdlog.h"
-#include <cassert>
+#include "vk_mem_alloc.h"
 #include <vulkan/vk_platform.h>
 #include <vulkan/vulkan_core.h>
 
+#include <cassert>
 #include <cstdint>
 #include <cstring>
 #include <memory>
@@ -96,6 +97,7 @@ Device::Device(std::shared_ptr<Window> window)
     createSurface();
     pickPhysicalDevice();
     createLogicalDevice();
+    createAllocator();
     createCommandPool();
 }
 
@@ -110,12 +112,14 @@ Device::Device(bool headless)
     createInstance();
     pickPhysicalDevice();
     createLogicalDevice();
+    createAllocator();
     createCommandPool();
 }
 
 Device::~Device()
 {
     vkDestroyCommandPool(m_device, m_commandPool, nullptr);
+    vmaDestroyAllocator(m_allocator);
     vkDestroyDevice(m_device, nullptr);
 
     if constexpr(ENABLE_VALIDATION_LAYERS)
@@ -168,7 +172,7 @@ void Device::createBuffer(
     const VkBufferUsageFlags usage,
     const VkMemoryPropertyFlags properties,
     VkBuffer& buffer,
-    VkDeviceMemory& bufferMemory
+    VmaAllocation& allocation
 ) const
 {
     VkBufferCreateInfo createInfo{};
@@ -177,23 +181,24 @@ void Device::createBuffer(
     createInfo.usage = usage;
     createInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
 
-    VkResult result{ vkCreateBuffer(m_device, &createInfo, nullptr, &buffer) };
+    const bool deviceLocal{ (properties & VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT) != 0u };
+    const bool hostVisible{ (properties & VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT) != 0u };
+
+    VmaAllocationCreateInfo allocInfo{};
+
+    if(deviceLocal && !hostVisible)
+        allocInfo.usage = VMA_MEMORY_USAGE_AUTO_PREFER_DEVICE;
+    else if(hostVisible)
+    {
+        allocInfo.usage = VMA_MEMORY_USAGE_AUTO_PREFER_HOST;
+        allocInfo.flags = VMA_ALLOCATION_CREATE_HOST_ACCESS_SEQUENTIAL_WRITE_BIT | VMA_ALLOCATION_CREATE_MAPPED_BIT;
+    }
+    else
+        allocInfo.usage = VMA_MEMORY_USAGE_AUTO;
+
+    const VkResult result{ vmaCreateBuffer(m_allocator, &createInfo, &allocInfo, &buffer, &allocation, nullptr) };
     if(result != VK_SUCCESS)
-        throw VulkanException("Failed to create vertex buffer", result);
-
-    VkMemoryRequirements memRequirements{};
-    vkGetBufferMemoryRequirements(m_device, buffer, &memRequirements);
-
-    VkMemoryAllocateInfo allocInfo{};
-    allocInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
-    allocInfo.allocationSize = memRequirements.size;
-    allocInfo.memoryTypeIndex = findMemoryType(memRequirements.memoryTypeBits, properties);
-
-    result = vkAllocateMemory(m_device, &allocInfo, nullptr, &bufferMemory);
-    if(result != VK_SUCCESS)
-        throw VulkanException("Failed to allocate vertex buffer memory", result);
-
-    vkBindBufferMemory(m_device, buffer, bufferMemory, 0);
+        throw VulkanException("Failed to allocate buffer", result);
 }
 
 VkCommandBuffer Device::beginSingleTimeCommand() const
@@ -308,7 +313,7 @@ void Device::createInstance()
     appInfo.applicationVersion = VK_MAKE_VERSION(0, 0, 1);
     appInfo.pEngineName = "No Engine";
     appInfo.engineVersion = VK_MAKE_VERSION(0, 0, 1);
-    appInfo.apiVersion = VK_API_VERSION_1_4;
+    appInfo.apiVersion = VULKAN_VERSION;
 
     const auto extensions{ getRequiredExtensions() };
 
@@ -446,6 +451,19 @@ void Device::createLogicalDevice()
         m_presentQueue = m_graphicsQueue;
 }
 
+void Device::createAllocator()
+{
+    VmaAllocatorCreateInfo createInfo = {};
+    createInfo.instance = m_instance;
+    createInfo.physicalDevice = m_physicalDevice;
+    createInfo.device = m_device;
+    createInfo.vulkanApiVersion = VULKAN_VERSION;
+
+    const VkResult result{ vmaCreateAllocator(&createInfo, &m_allocator) };
+    if(result != VK_SUCCESS)
+        throw VulkanException("Failed to create allocator", result);
+}
+
 void Device::createCommandPool()
 {
     const QueueFamilyIndices indices{ findPhysicalQueueFamilies() };
@@ -460,7 +478,7 @@ void Device::createCommandPool()
 
     const VkResult result{ vkCreateCommandPool(m_device, &createInfo, nullptr, &m_commandPool) };
     if(result != VK_SUCCESS)
-        throw VulkanException("failed to create command pool", result);
+        throw VulkanException("Failed to create command pool", result);
 }
 
 bool Device::isDeviceSuitable(VkPhysicalDevice phDevice) const

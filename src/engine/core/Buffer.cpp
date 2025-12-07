@@ -2,6 +2,7 @@
 
 #include "core/Device.hpp"
 
+#include "vk_mem_alloc.h"
 #include <vulkan/vulkan_core.h>
 
 #include <cassert>
@@ -30,23 +31,22 @@ Buffer::Buffer(
     , m_memoryPropertyFlags{ memoryPropertyFlags }
     , m_bufferSize{ m_alignmentSize * m_elementCount }
 {
-    device->createBuffer(m_bufferSize, m_usageFlags, m_memoryPropertyFlags, m_buffer, m_bufferMemory);
+    device->createBuffer(m_bufferSize, m_usageFlags, m_memoryPropertyFlags, m_buffer, m_allocation);
 }
 
 Buffer::~Buffer()
 {
     unmap();
-    vkDestroyBuffer(device->device(), m_buffer, nullptr);
-    vkFreeMemory(device->device(), m_bufferMemory, nullptr);
+    vmaDestroyBuffer(device->allocator(), m_buffer, m_allocation);
 }
 
-VkResult Buffer::map(VkDeviceSize size, VkDeviceSize offset)
+VkResult Buffer::map()
 {
 #if defined(VV_ENABLE_ASSERTS)
-    assert(m_buffer != VK_NULL_HANDLE && m_bufferMemory != VK_NULL_HANDLE && "map() called before buffer is craeted");
+    assert(m_buffer != VK_NULL_HANDLE && m_allocation != VK_NULL_HANDLE && "map() called before buffer is craeted");
 #endif
 
-    return vkMapMemory(device->device(), m_bufferMemory, offset, size, 0, &m_mapped);
+    return vmaMapMemory(device->allocator(), m_allocation, &m_mapped);
 }
 
 void Buffer::unmap()
@@ -54,35 +54,23 @@ void Buffer::unmap()
     if(m_mapped == nullptr)
         return;
 
-    vkUnmapMemory(device->device(), m_bufferMemory);
+    vmaUnmapMemory(device->allocator(), m_allocation);
     m_mapped = nullptr;
 }
 
-VkResult Buffer::flush(VkDeviceSize size, VkDeviceSize offset)
+VkResult Buffer::flush(VkDeviceSize size, VkDeviceSize offset) const
 {
-    VkMappedMemoryRange mappedRange{};
-    mappedRange.sType = VK_STRUCTURE_TYPE_MAPPED_MEMORY_RANGE;
-    mappedRange.memory = m_bufferMemory;
-    mappedRange.offset = offset;
-    mappedRange.size = size;
-
-    return vkFlushMappedMemoryRanges(device->device(), 1, &mappedRange);
+    return vmaFlushAllocation(device->allocator(), m_allocation, offset, size);
 }
 
-VkDescriptorBufferInfo Buffer::descriptorInfo(VkDeviceSize size, VkDeviceSize offset)
+VkDescriptorBufferInfo Buffer::descriptorInfo(VkDeviceSize size, VkDeviceSize offset) const
 {
     return VkDescriptorBufferInfo{ .buffer = m_buffer, .offset = offset, .range = size };
 }
 
-VkResult Buffer::invalidate(VkDeviceSize size, VkDeviceSize offset)
+VkResult Buffer::invalidate(VkDeviceSize size, VkDeviceSize offset) const
 {
-    VkMappedMemoryRange mappedRange{};
-    mappedRange.sType = VK_STRUCTURE_TYPE_MAPPED_MEMORY_RANGE;
-    mappedRange.memory = m_bufferMemory;
-    mappedRange.offset = offset;
-    mappedRange.size = size;
-
-    return vkInvalidateMappedMemoryRanges(device->device(), 1, &mappedRange);
+    return vmaInvalidateAllocation(device->allocator(), m_allocation, offset, size);
 }
 
 /// \brief Determine the minimum sice that a element needs to be stored in the buffer
@@ -90,7 +78,7 @@ VkResult Buffer::invalidate(VkDeviceSize size, VkDeviceSize offset)
 /// To fulfill alignment requirements the raw size of the element might not be suitable and therefore an extra
 /// amount of padding needs to be added
 ///
-/// \param elementSize the size of an raw element (in byte)
+/// \param elementSize the size of a raw element (in byte)
 /// \param minOffsetAlignment the minimum required alignment for the offset member (in bytes)
 ///
 /// \returns the determined size of an element in the buffer including alignment
@@ -107,13 +95,13 @@ VkDeviceSize Buffer::getAlignment(VkDeviceSize elementSize, VkDeviceSize minOffs
 /// \param pData pointer to the data in CPU accessible memory
 /// \param size of the data pointed to by pData (in bytes)
 /// \param offset (optional) offset in to the buffer from where to start writing (in bytes)
-void Buffer::writeToBufferRaw(const void* pData, VkDeviceSize size, VkDeviceSize offset)
+void Buffer::writeToBufferRaw(const void* pData, VkDeviceSize size, VkDeviceSize offset) const
 {
 #if defined(VV_ENABLE_ASSERTS)
     assert(m_mapped != nullptr && "Cannot copy to unmapped buffer");
     assert(
-        offset + size <= m_bufferSize && "The buffer that is being written to "
-                                         "the buffer execeeds the buffer's size"
+        offset + size <= m_bufferSize && "The data that is being written to "
+                                         "the buffer exceeds the buffer's size"
     );
 #endif
 

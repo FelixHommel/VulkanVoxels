@@ -3,6 +3,7 @@
 
 #include "Window.hpp"
 
+#include "vk_mem_alloc.h"
 #include <vulkan/vulkan_core.h>
 
 #include <cstdint>
@@ -46,6 +47,7 @@ struct QueueFamilyIndices
 class Device
 {
 public:
+    static constexpr auto VULKAN_VERSION{ VK_API_VERSION_1_4 };
     static constexpr bool ENABLE_VALIDATION_LAYERS =
 #if defined(VV_DEBUG)
         true;
@@ -64,6 +66,7 @@ public:
 
     [[nodiscard]] VkCommandPool commandPool() const noexcept { return m_commandPool; }
     [[nodiscard]] VkDevice device() const noexcept { return m_device; }
+    [[nodiscard]] VmaAllocator allocator() const noexcept { return m_allocator; }
     [[nodiscard]] VkSurfaceKHR surface() const noexcept { return m_surface; }
     [[nodiscard]] VkQueue graphicsQueue() const noexcept { return m_graphicsQueue; }
     [[nodiscard]] VkQueue presentQueue() const noexcept { return m_presentQueue; }
@@ -107,13 +110,13 @@ public:
     /// \param usage how the buffer is going to be used
     /// \param properties memory properties for the buffer memory
     /// \param buffer where to store the handle to the new buffer
-    /// \param bufferMemory handle to the memory region
+    /// \param allocation handle to the memory region
     void createBuffer(
         VkDeviceSize size,
         VkBufferUsageFlags usage,
         VkMemoryPropertyFlags properties,
         VkBuffer& buffer,
-        VkDeviceMemory& bufferMemory
+        VmaAllocation& allocation
     ) const;
     /// \brief Start recording a command
     ///
@@ -171,6 +174,7 @@ private:
     VkCommandPool m_commandPool{ VK_NULL_HANDLE };
     VkDevice m_device{ VK_NULL_HANDLE };
     VkSurfaceKHR m_surface{ VK_NULL_HANDLE };
+    VmaAllocator m_allocator{ VK_NULL_HANDLE };
     VkQueue m_graphicsQueue{ VK_NULL_HANDLE };
     VkQueue m_presentQueue{ VK_NULL_HANDLE };
 
@@ -182,6 +186,7 @@ private:
     void createSurface();
     void pickPhysicalDevice();
     void createLogicalDevice();
+    void createAllocator();
     void createCommandPool();
 
     bool isDeviceSuitable(VkPhysicalDevice phDevice) const;
