@@ -5,9 +5,10 @@
 #include "core/Pipeline.hpp"
 #include "utility/FrameInfo.hpp"
 
-#include <vulkan/vulkan.h>
+#include <vulkan/vulkan_core.h>
 
 #include <memory>
+#include <string>
 #include <utility>
 
 namespace vv

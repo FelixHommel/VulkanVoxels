@@ -1,9 +1,11 @@
 #include "IRenderSystem.hpp"
 
+#include "core/Pipeline.hpp"
 #include "utility/exceptions/VulkanException.hpp"
 
-#include <vulkan/vulkan.h>
+#include <vulkan/vulkan_core.h>
 
+#include <memory>
 #include <vector>
 
 namespace vv

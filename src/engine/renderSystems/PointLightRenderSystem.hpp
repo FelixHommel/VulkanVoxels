@@ -2,18 +2,17 @@
 #define VULKAN_VOXELS_SRC_ENGINE_RENDER_SYSTEMS_POINT_LIGHT_RENDER_SYSTEM_HPP
 
 #include "core/Device.hpp"
-#include "core/Pipeline.hpp"
-#include "utility/FrameInfo.hpp"
 #include "renderSystems/IRenderSystem.hpp"
+#include "utility/FrameInfo.hpp"
 
 #define GLM_FORCE_RADIANS
 #define GLM_FORCE_DEPTH_ZERO_TO_ONE
 #include "glm/glm.hpp"
 #include <vulkan/vulkan_core.h>
 
-
 #include <cstdint>
 #include <memory>
+#include <string>
 
 namespace vv
 {

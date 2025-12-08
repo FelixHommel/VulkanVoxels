@@ -2,6 +2,7 @@
 
 #include "core/Device.hpp"
 #include "core/Pipeline.hpp"
+#include "renderSystems/IRenderSystem.hpp"
 #include "utility/FrameInfo.hpp"
 #include "utility/object/components/PointLightComponent.hpp"
 #include "utility/object/components/TransformComponent.hpp"
@@ -10,8 +11,6 @@
 #define GLM_FORCE_DEPTH_ZERO_TO_ONE
 #include "glm/glm.hpp"
 #include "glm/gtc/matrix_transform.hpp"
-#include "spdlog/spdlog.h"
-
 #include <vulkan/vulkan_core.h>
 
 #include <cassert>

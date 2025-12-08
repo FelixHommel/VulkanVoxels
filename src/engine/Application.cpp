@@ -37,14 +37,14 @@ namespace vv
 {
 
 Application::Application()
-{
-    m_window = std::make_shared<Window>(WINDOW_WIDTH, WINDOW_HEIGHT, WINDOW_TITLE);
-    m_device = std::make_shared<Device>(m_window);
-    m_renderer = std::make_unique<Renderer>(m_window, m_device);
-    m_globalPool = DescriptorPool::Builder(m_device)
+    : m_window{ std::make_shared<Window>(WINDOW_WIDTH, WINDOW_HEIGHT, WINDOW_TITLE) }
+    , m_device{ std::make_shared<Device>(m_window) }
+    , m_renderer{ std::make_unique<Renderer>(m_window, m_device) }
+    , m_globalPool{ DescriptorPool::Builder(m_device)
                        .setMaxSets(Swapchain::MAX_FRAMES_IN_FLIGHT)
                        .addPoolSize(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, Swapchain::MAX_FRAMES_IN_FLIGHT)
-                       .build();
+                       .build() }
+{
     loadObjects();
 }
 
