@@ -5,16 +5,11 @@
 #include "core/Device.hpp"
 #include "core/Renderer.hpp"
 #include "core/Window.hpp"
-#include "glm/geometric.hpp"
-#include "utility/Object.hpp"
+#include "utility/object/Object.hpp"
 
 #include <cstdint>
 #include <memory>
 
-namespace
-{
-constexpr glm::vec3 DEFAULT_LIGHT_DIRECTION{ glm::vec3{ 1.f, -3.f, -1.f } };
-}
 
 namespace vv
 {
@@ -54,7 +49,7 @@ private:
     std::unique_ptr<Renderer> m_renderer;
     std::shared_ptr<Object::ObjectMap> m_objects{ std::make_shared<Object::ObjectMap>() };
 
-    void loadObjects();
+    void loadObjects() const;
 };
 
 } // namespace vv

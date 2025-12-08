@@ -14,7 +14,8 @@
 #include "utility/FrameInfo.hpp"
 #include "utility/KeyboardMovementController.hpp"
 #include "utility/Model.hpp"
-#include "utility/Object.hpp"
+#include "utility/object/Object.hpp"
+#include "utility/object/ObjectBuilder.hpp"
 
 #define GLM_FORCE_RADIANS
 #define GLM_FORCE_DEPTH_ZERO_TO_ONE
@@ -22,6 +23,8 @@
 #include "glm/ext/matrix_transform.hpp"
 #include "glm/glm.hpp"
 #include "glm/gtc/constants.hpp"
+#include "spdlog/spdlog.h"
+
 #include <vulkan/vulkan_core.h>
 
 #include <chrono>
@@ -82,8 +85,8 @@ void Application::run()
                                                    m_renderer->getRenderPass(),
                                                    globalSetLayout->getDescriptorLayout() };
     std::shared_ptr<Camera> camera{ std::make_shared<Camera>() };
-    Object viewer{};
-    viewer.transform.translation.z = CAMERA_START_OFFSET_Z;
+    std::unique_ptr<Object> viewer{ ObjectBuilder().withTransform().buildUnique() };
+    viewer->getComponent<TransformComponent>()->translation.z = CAMERA_START_OFFSET_Z;
 
     auto currentTime{ std::chrono::high_resolution_clock::now() };
 
@@ -95,8 +98,8 @@ void Application::run()
         float dt{ std::chrono::duration<float, std::chrono::seconds::period>(newTime - currentTime).count() };
         currentTime = newTime;
 
-        KeyboardMovementController::moveInPlaneXZ(m_window->getHandle(), dt, viewer);
-        camera->setViewXYZ(viewer.transform.translation, viewer.transform.rotation);
+        KeyboardMovementController::moveInPlaneXZ(m_window->getHandle(), dt, *viewer);
+        camera->setViewXYZ(viewer->getComponent<TransformComponent>()->translation, viewer->getComponent<TransformComponent>()->rotation);
 
         const float aspectRatio{ m_renderer->getAspectRatio() };
         constexpr float fov{ 50.f };
@@ -137,34 +140,25 @@ void Application::run()
 }
 
 /// \brief Load all objects that are being used
-void Application::loadObjects()
+void Application::loadObjects() const
 {
     constexpr glm::vec3 vaseScale{ glm::vec3{ 3.f, 1.5f, 3.f } };
     constexpr glm::vec3 flatVasePos{ glm::vec3{ -0.5f, 0.5f, 0.f } };
     constexpr glm::vec3 smoothVasePos{ glm::vec3{ 0.5f, 0.5f, 0.f } };
 
     std::shared_ptr<Model> model{ Model::loadFromFile(m_device, FLAT_VASE_PATH) };
-    Object flatVase{};
-    flatVase.model = model;
-    flatVase.transform.translation = flatVasePos;
-    flatVase.transform.scale = vaseScale;
+    Object flatVase{ ObjectBuilder().withModel(model).withTransform(flatVasePos, vaseScale).buildRaw() };
     m_objects->emplace(flatVase.getId(), std::move(flatVase));
 
     model = Model::loadFromFile(m_device, SMOOTH_VASE_PATH);
-    Object smoothVase{};
-    smoothVase.model = model;
-    smoothVase.transform.translation = smoothVasePos;
-    smoothVase.transform.scale = vaseScale;
+    Object smoothVase{ ObjectBuilder().withModel(model).withTransform(smoothVasePos, vaseScale).buildRaw() };
     m_objects->emplace(smoothVase.getId(), std::move(smoothVase));
 
     constexpr glm::vec3 floorPos{ glm::vec3{ 0.f, 0.5f, 0.f } };
     constexpr glm::vec3 floorScale{ glm::vec3{ 3.f, 1.f, 3.f } };
 
     model = Model::loadFromFile(m_device, QUAD_PATH);
-    Object floor{};
-    floor.model = model;
-    floor.transform.translation = floorPos;
-    floor.transform.scale = floorScale;
+    Object floor{ ObjectBuilder().withModel(model).withTransform(floorPos, floorScale).buildRaw() };
     m_objects->emplace(floor.getId(), std::move(floor));
 
     const std::vector<glm::vec3> lightColors{ { 1.f, .1f, .1f }, { .1f, .1f, 1.f }, { .1f, 1.f, .1f },
@@ -172,16 +166,15 @@ void Application::loadObjects()
 
     for(std::size_t i{ 0 }; i < lightColors.size(); ++i)
     {
-        Object pointLight{ Object::makePointLight(POINT_LIGHT_INTENSITY) };
-        pointLight.color = lightColors[i];
-        auto rotateLight{ glm::rotate(
+        const auto rotateLight{ glm::rotate(
             glm::mat4(1.f),
             static_cast<float>(i) * glm::two_pi<float>() / static_cast<float>(lightColors.size()),
             { 0.f, -1.f, 0.f }
         ) };
+        const auto translateLight{ glm::vec3(rotateLight * glm::vec4(-1.f, -1.f, -1.f, 1.f)) };
 
-        pointLight.transform.translation = glm::vec3(rotateLight * glm::vec4(-1.f, -1.f, -1.f, 1.f));
-
+        Object pointLight{ ObjectBuilder().withPointLight(POINT_LIGHT_INTENSITY, lightColors[i]).withTransform(translateLight).buildRaw() };
+        spdlog::info("point light id: {}", pointLight.getId());
         m_objects->emplace(pointLight.getId(), std::move(pointLight));
     }
 }

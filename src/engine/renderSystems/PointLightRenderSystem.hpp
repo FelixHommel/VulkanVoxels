@@ -10,6 +10,8 @@
 #include "glm/glm.hpp"
 #include <vulkan/vulkan_core.h>
 
+
+#include <cstdint>
 #include <memory>
 
 namespace vv
@@ -53,7 +55,7 @@ public:
     /// \brief Update the point lights
     ///
     /// \param frameInfo \ref FrameInfo important frame related data
-    static void update(FrameInfo& frameInfo, GlobalUBO& ubo);
+    static void update(const FrameInfo& frameInfo, GlobalUBO& ubo);
 
     /// \brief Render a point light
     ///
@@ -63,6 +65,7 @@ public:
 private:
     static constexpr auto VERTEX_SHADER_PATH{ PROJECT_ROOT "resources/compiledShaders/pointLightVert.spv" };
     static constexpr auto FRAGMENT_SHADER_PATH{ PROJECT_ROOT "resources/compiledShaders/pointLightFrag.spv" };
+    static constexpr std::uint32_t squareVertexCount{ 6 };
 
     std::shared_ptr<Device> device;
 

@@ -66,8 +66,9 @@ public:
     /// \brief Create a new \ref Model
     ///
     /// \param device \ref Device that is used to allocate the vertex buffer memory
-    /// \param vertices vector containing the vertices that make up the Model Mesh
+    /// \param builder \ref Model::Builder to create the model from
     Model(std::shared_ptr<Device> device, const Builder& builder);
+    Model() = default;
     ~Model() = default;
 
     Model(const Model&) = delete;

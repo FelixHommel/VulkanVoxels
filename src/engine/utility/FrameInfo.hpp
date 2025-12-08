@@ -2,7 +2,7 @@
 #define VULKAN_VOXELS_SRC_ENGINE_UTILITY_FRAME_INFO_HPP
 
 #include "utility/Camera.hpp"
-#include "utility/Object.hpp"
+#include "object/Object.hpp"
 
 #define GLM_FORCE_RADIANS
 #define GLM_FORCE_DEPTH_ZERO_TO_ONE

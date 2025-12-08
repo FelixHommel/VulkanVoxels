@@ -1,8 +1,8 @@
-#include "glm/ext/matrix_transform.hpp"
-#include "utility/Object.hpp"
+#include "utility/object/components/TransformComponent.hpp"
 
 #define GLM_FORCE_RADIANS
 #define GLM_FORCE_DEPTH_ZERO_TO_ONE
+#include "glm/ext/matrix_transform.hpp"
 #include "glm/glm.hpp"
 #include "gtest/gtest.h"
 

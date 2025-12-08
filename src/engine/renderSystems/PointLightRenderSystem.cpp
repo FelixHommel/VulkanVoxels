@@ -3,6 +3,8 @@
 #include "core/Device.hpp"
 #include "core/Pipeline.hpp"
 #include "utility/FrameInfo.hpp"
+#include "utility/object/components/PointLightComponent.hpp"
+#include "utility/object/components/TransformComponent.hpp"
 
 #define GLM_FORCE_RADIANS
 #define GLM_FORCE_DEPTH_ZERO_TO_ONE
@@ -14,6 +16,7 @@
 #include <cstddef>
 #include <cstdint>
 #include <memory>
+#include <ranges>
 #include <stdexcept>
 #include <utility>
 #include <vector>
@@ -37,24 +40,24 @@ PointLightRenderSystem::~PointLightRenderSystem()
     vkDestroyPipelineLayout(device->device(), m_pipelineLayout, nullptr);
 }
 
-void PointLightRenderSystem::update(FrameInfo& frameInfo, GlobalUBO& ubo)
+void PointLightRenderSystem::update(const FrameInfo& frameInfo, GlobalUBO& ubo)
 {
     constexpr float ROTATE_FACTOR{ 0.5f };
     const auto rotateLight{ glm::rotate(glm::mat4(1.f), ROTATE_FACTOR * frameInfo.dt, { 0.f, -1.f, 0.f }) };
     std::size_t lightIndex{ 0 };
-    for(auto& [_, obj] : *frameInfo.objects)
+    for(auto& obj : *frameInfo.objects | std::views::values)
     {
-        if(obj.pointLight == nullptr)
+        if(!obj.hasComponent<PointLightComponent>() || !obj.hasComponent<TransformComponent>())
             continue;
 
 #if defined(VV_ENABLE_ASSERTS)
         assert(lightIndex < MAX_LIGHTS && "Point lights exceed the allowed maximum");
 #endif
 
-        obj.transform.translation = glm::vec3(rotateLight * glm::vec4(obj.transform.translation, 1.f));
+        obj.getComponent<TransformComponent>()->translation = glm::vec3(rotateLight * glm::vec4(obj.getComponent<TransformComponent>()->translation, 1.f));
 
-        ubo.pointLights.at(lightIndex).position = glm::vec4(obj.transform.translation, 1.f);
-        ubo.pointLights.at(lightIndex).color = glm::vec4(obj.color, obj.pointLight->lightIntensity);
+        ubo.pointLights.at(lightIndex).position = glm::vec4(obj.getComponent<TransformComponent>()->translation, 1.f);
+        ubo.pointLights.at(lightIndex).color = glm::vec4(obj.getComponent<PointLightComponent>()->color, obj.getComponent<PointLightComponent>()->intensity);
 
         lightIndex += 1;
     }
@@ -76,16 +79,14 @@ void PointLightRenderSystem::render(FrameInfo& frameInfo) const
         nullptr
     );
 
-
-    constexpr std::uint32_t squareVertexCount{ 6 };
-    for(auto& [_, obj] : *frameInfo.objects)
+    for(auto& obj : *frameInfo.objects | std::views::values)
     {
-        if(obj.pointLight == nullptr)
+        if(!obj.hasComponent<PointLightComponent>() || !obj.hasComponent<TransformComponent>())
             continue;
 
-        PointLightPushConstants push{ .position = glm::vec4(obj.transform.translation, 1.f),
-                                      .color = glm::vec4(obj.color, obj.pointLight->lightIntensity),
-                                      .radius = obj.transform.scale.x };
+        PointLightPushConstants push{ .position = glm::vec4(obj.getComponent<TransformComponent>()->translation, 1.f),
+                                      .color = glm::vec4(obj.getComponent<PointLightComponent>()->color, obj.getComponent<PointLightComponent>()->intensity),
+                                      .radius = obj.getComponent<PointLightComponent>()->radius };
 
         vkCmdPushConstants(
             frameInfo.commandBuffer,

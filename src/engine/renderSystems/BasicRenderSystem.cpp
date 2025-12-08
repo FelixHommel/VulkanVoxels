@@ -3,12 +3,15 @@
 #include "core/Device.hpp"
 #include "core/Pipeline.hpp"
 #include "utility/FrameInfo.hpp"
+#include "utility/object/components/ModelComponent.hpp"
+#include "utility/object/components/TransformComponent.hpp"
 
 #include <vulkan/vulkan_core.h>
 
 #include <cassert>
 #include <cstdint>
 #include <memory>
+#include <ranges>
 #include <stdexcept>
 #include <utility>
 #include <vector>
@@ -47,13 +50,13 @@ void BasicRenderSystem::renderObjects(FrameInfo& frameInfo) const
         nullptr
     );
 
-    for(auto& [_, obj] : *frameInfo.objects)
+    for(auto& obj : *frameInfo.objects | std::views::values)
     {
-        if(obj.model == nullptr)
+        if(!obj.hasComponent<ModelComponent>())
             continue;
 
-        const SimplePushConstantData pushData{ .modelMatrix = obj.transform.mat4(),
-                                               .normalMatrix = obj.transform.normalMatrix() };
+        const SimplePushConstantData pushData{ .modelMatrix = obj.getComponent<TransformComponent>()->mat4(),
+                                               .normalMatrix = obj.getComponent<TransformComponent>()->normalMatrix() };
 
         vkCmdPushConstants(
             frameInfo.commandBuffer,
@@ -64,8 +67,8 @@ void BasicRenderSystem::renderObjects(FrameInfo& frameInfo) const
             &pushData
         );
 
-        obj.model->bind(frameInfo.commandBuffer);
-        obj.model->draw(frameInfo.commandBuffer);
+        obj.getComponent<ModelComponent>()->model->bind(frameInfo.commandBuffer);
+        obj.getComponent<ModelComponent>()->model->draw(frameInfo.commandBuffer);
     }
 }
 

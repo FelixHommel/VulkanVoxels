@@ -17,12 +17,13 @@ add_library(${NAME}
     ./renderSystems/PointLightRenderSystem.cpp
     ./utility/Camera.cpp
     ./utility/Model.cpp
-    ./utility/Object.cpp
     ./utility/KeyboardMovementController.cpp
     ./utility/exceptions/Exception.cpp
     ./utility/exceptions/VulkanException.cpp
     ./utility/exceptions/FileException.cpp
     ./utility/exceptions/ResourceException.cpp
+    ./utility/object/Object.cpp
+    ./utility/object/ObjectBuilder.cpp
     ./external/tiny_obj_loader_impl.cpp
     ./external/vma_impl.cpp
 )
@@ -48,9 +49,16 @@ target_sources(${NAME}
             ./utility/GLFWInputHandler.hpp
             ./utility/IInputHandler.hpp
             ./utility/Model.hpp
-            ./utility/Object.hpp
             ./utility/KeyboardMovementController.hpp
             ./utility/Utils.hpp
+            ./utility/object/Object.hpp
+            ./utility/object/ObjectBuilder.hpp
+            ./utility/object/IdPool.hpp
+            ./utility/object/components/Component.hpp
+            ./utility/object/components/ColorComponent.hpp
+            ./utility/object/components/ModelComponent.hpp
+            ./utility/object/components/PointLightComponent.hpp
+            ./utility/object/components/TransformComponent.hpp
             ./utility/exceptions/Exception.hpp
             ./utility/exceptions/VulkanException.hpp
             ./utility/exceptions/FileException.hpp

@@ -66,7 +66,7 @@ public:
 
     /// \brief Write data to the buffer
     ///
-    /// \param T can be any single data type (struct, built-in, ...) as long as it is trivially copyable and is no pointer
+    /// \tparam T can be any single data type (struct, built-in, ...) as long as it is trivially copyable and is no pointer
     /// \param data the data that is being written to the buffer
     /// \param offset (optional) offset into the buffer from where to begin writing memory (in byte)
     template <typename T>
@@ -77,7 +77,7 @@ public:
     }
     /// \brief Write data to the buffer
     ///
-    /// \param C can be any container that supports continuous iterators and whose data elements can be trivially copied
+    /// \tparam C can be any container that supports continuous iterators and whose data elements can be trivially copied
     /// \param data the data container that contains the data itself
     /// \param offset (optional) offset into the buffer from where to begin writing memory (in byte)
     template <typename C>

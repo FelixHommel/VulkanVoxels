@@ -1,14 +1,16 @@
 #include "KeyboardMovementController.hpp"
 
+#include "object/Object.hpp"
 #include "utility/GLFWInputHandler.hpp"
 #include "utility/IInputHandler.hpp"
-#include "utility/Object.hpp"
+#include "utility/object/components/TransformComponent.hpp"
 
 #define GLM_FORCE_RADIANS
 #define GLM_FORCE_DEPTH_ZERO_TO_ONE
 #include "GLFW/glfw3.h"
 #include "glm/common.hpp"
 #include "glm/geometric.hpp"
+#include "glm/glm.hpp"
 #include "glm/gtc/constants.hpp"
 
 #include <cmath>
@@ -22,7 +24,7 @@ void KeyboardMovementController::moveInPlaneXZ(IInputHandler& input, float dt, O
     if(input.isKeyPressed(KEYS.quit))
         input.setShouldClose(true);
 
-    glm::vec3 rotate{ 0.f };
+    glm::vec3 rotate(0.f);
     if(input.isKeyPressed(KEYS.lookRight))
         rotate.y += 1.f;
     if(input.isKeyPressed(KEYS.lookLeft))
@@ -34,16 +36,16 @@ void KeyboardMovementController::moveInPlaneXZ(IInputHandler& input, float dt, O
 
     // NOTE: Ensure that rotate is not 0
     if(glm::dot(rotate, rotate) > std::numeric_limits<float>::epsilon())
-        object.transform.rotation += LOOK_SPEED * dt * glm::normalize(rotate);
+        object.getComponent<TransformComponent>()->rotation += LOOK_SPEED * dt * glm::normalize(rotate);
 
     // NOTE: Limit pitch values between about +/- ~85 degrees
-    object.transform.rotation.x = glm::clamp(object.transform.rotation.x, ROTATION_CLAMP_MIN, ROTATION_CLAMP_MAX);
-    object.transform.rotation.y = glm::mod(object.transform.rotation.y, glm::two_pi<float>());
+    object.getComponent<TransformComponent>()->rotation.x = glm::clamp(object.getComponent<TransformComponent>()->rotation.x, ROTATION_CLAMP_MIN, ROTATION_CLAMP_MAX);
+    object.getComponent<TransformComponent>()->rotation.y = glm::mod(object.getComponent<TransformComponent>()->rotation.y, glm::two_pi<float>());
 
-    const float yaw{ object.transform.rotation.y };
+    const float yaw{ object.getComponent<TransformComponent>()->rotation.y };
     const glm::vec3 forward{ std::sin(yaw), 0.f, std::cos(yaw) };
     const glm::vec3 right{ forward.z, 0.f, -forward.x };
-    const glm::vec3 up{ 0.f, -1.f, 0.f };
+    constexpr glm::vec3 up{ 0.f, -1.f, 0.f };
 
     glm::vec3 move{ 0.f };
     if(input.isKeyPressed(KEYS.moveForward))
@@ -61,7 +63,7 @@ void KeyboardMovementController::moveInPlaneXZ(IInputHandler& input, float dt, O
 
     // NOTE: Ensure that move is not 0
     if(glm::dot(move, move) > std::numeric_limits<float>::epsilon())
-        object.transform.translation += MOVE_SPEED * dt * glm::normalize(move);
+        object.getComponent<TransformComponent>()->translation += MOVE_SPEED * dt * glm::normalize(move);
 }
 
 void KeyboardMovementController::moveInPlaneXZ(GLFWwindow* window, float dt, Object& object)

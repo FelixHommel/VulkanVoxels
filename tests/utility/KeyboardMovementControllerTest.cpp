@@ -8,6 +8,9 @@
 #include "GLFW/glfw3.h"
 #include "glm/glm.hpp"
 #include "glm/gtc/constants.hpp"
+#include "utility/object/ObjectBuilder.hpp"
+#include "utility/object/components/TransformComponent.hpp"
+
 #include "gtest/gtest.h"
 
 #include <cmath>
@@ -34,7 +37,12 @@ protected:
     void SetUp() override
     {
         mockInput = std::make_unique<MockInputHandler>();
-        obj = Object();
+        obj = ObjectBuilder().withTransform().buildRaw();
+    }
+
+    void TearDown() override
+    {
+        Object::resetIdPool();
     }
 
     std::unique_ptr<MockInputHandler> mockInput;
@@ -43,66 +51,66 @@ protected:
 
 TEST_F(KeyboardMovementControllerTest, MoveForward)
 {
-    const float yaw{ obj.transform.rotation.y };
+    const float yaw{ obj.getComponent<TransformComponent>()->rotation.y };
     const glm::vec3 forward{ std::sin(yaw), 0.f, std::cos(yaw) };
 
-    auto oldPos{ obj.transform.translation };
+    const auto oldPos{ obj.getComponent<TransformComponent>()->translation };
 
     mockInput->setKeyPressed(GLFW_KEY_W, true);
     KeyboardMovementController::moveInPlaneXZ(*mockInput, dt, obj);
 
-    auto newPos{ obj.transform.translation };
-    auto delta{ newPos - oldPos };
+    const auto newPos{ obj.getComponent<TransformComponent>()->translation };
+    const auto delta{ newPos - oldPos };
 
     EXPECT_GT(glm::dot(delta, forward), 0.f);
 }
 
 TEST_F(KeyboardMovementControllerTest, MoveBackward)
 {
-    const float yaw{ obj.transform.rotation.y };
+    const float yaw{ obj.getComponent<TransformComponent>()->rotation.y };
     const glm::vec3 forward{ std::sin(yaw), 0.f, std::cos(yaw) };
 
-    auto oldPos{ obj.transform.translation };
+    const auto oldPos{ obj.getComponent<TransformComponent>()->translation };
 
     mockInput->setKeyPressed(GLFW_KEY_S, true);
     KeyboardMovementController::moveInPlaneXZ(*mockInput, dt, obj);
 
-    auto newPos{ obj.transform.translation };
-    auto delta{ newPos - oldPos };
+    const auto newPos{ obj.getComponent<TransformComponent>()->translation };
+    const auto delta{ newPos - oldPos };
 
     EXPECT_LT(glm::dot(delta, forward), 0.f);
 }
 
 TEST_F(KeyboardMovementControllerTest, MoveRight)
 {
-    const float yaw{ obj.transform.rotation.y };
+    const float yaw{ obj.getComponent<TransformComponent>()->rotation.y };
     const glm::vec3 forward{ std::sin(yaw), 0.f, std::cos(yaw) };
     const glm::vec3 right{ forward.z, 0.f, -forward.x };
 
-    auto oldPos{ obj.transform.translation };
+    const auto oldPos{ obj.getComponent<TransformComponent>()->translation };
 
     mockInput->setKeyPressed(GLFW_KEY_D, true);
     KeyboardMovementController::moveInPlaneXZ(*mockInput, dt, obj);
 
-    auto newPos{ obj.transform.translation };
-    auto delta{ newPos - oldPos };
+    const auto newPos{ obj.getComponent<TransformComponent>()->translation };
+    const auto delta{ newPos - oldPos };
 
     EXPECT_GT(glm::dot(delta, right), 0.f);
 }
 
 TEST_F(KeyboardMovementControllerTest, MoveLeft)
 {
-    const float yaw{ obj.transform.rotation.y };
+    const float yaw{ obj.getComponent<TransformComponent>()->rotation.y };
     const glm::vec3 forward{ std::sin(yaw), 0.f, std::cos(yaw) };
     const glm::vec3 right{ forward.z, 0.f, -forward.x };
 
-    auto oldPos{ obj.transform.translation };
+    const auto oldPos{ obj.getComponent<TransformComponent>()->translation };
 
     mockInput->setKeyPressed(GLFW_KEY_A, true);
     KeyboardMovementController::moveInPlaneXZ(*mockInput, dt, obj);
 
-    auto newPos{ obj.transform.translation };
-    auto delta{ newPos - oldPos };
+    const auto newPos{ obj.getComponent<TransformComponent>()->translation };
+    const auto delta{ newPos - oldPos };
 
     EXPECT_LT(glm::dot(delta, right), 0.f);
 }
@@ -110,13 +118,13 @@ TEST_F(KeyboardMovementControllerTest, MoveLeft)
 TEST_F(KeyboardMovementControllerTest, MoveUp)
 {
     const glm::vec3 up{ 0.f, -1.f, 0.f };
-    auto oldPos{ obj.transform.translation };
+    const auto oldPos{ obj.getComponent<TransformComponent>()->translation };
 
     mockInput->setKeyPressed(GLFW_KEY_E, true);
     KeyboardMovementController::moveInPlaneXZ(*mockInput, dt, obj);
 
-    auto newPos{ obj.transform.translation };
-    auto delta{ newPos - oldPos };
+    const auto newPos{ obj.getComponent<TransformComponent>()->translation };
+    const auto delta{ newPos - oldPos };
 
     EXPECT_GT(glm::dot(delta, up), 0.f);
 }
@@ -124,25 +132,25 @@ TEST_F(KeyboardMovementControllerTest, MoveUp)
 TEST_F(KeyboardMovementControllerTest, MoveDown)
 {
     const glm::vec3 up{ 0.f, -1.f, 0.f };
-    auto oldPos{ obj.transform.translation };
+    const auto oldPos{ obj.getComponent<TransformComponent>()->translation };
 
     mockInput->setKeyPressed(GLFW_KEY_Q, true);
     KeyboardMovementController::moveInPlaneXZ(*mockInput, dt, obj);
 
-    auto newPos{ obj.transform.translation };
-    auto delta{ newPos - oldPos };
+    const auto newPos{ obj.getComponent<TransformComponent>()->translation };
+    const auto delta{ newPos - oldPos };
 
     EXPECT_LT(glm::dot(delta, up), 0.f);
 }
 
 TEST_F(KeyboardMovementControllerTest, LookRight)
 {
-    const float oldYaw{ obj.transform.rotation.y };
+    const float oldYaw{ obj.getComponent<TransformComponent>()->rotation.y };
 
     mockInput->setKeyPressed(GLFW_KEY_RIGHT, true);
     KeyboardMovementController::moveInPlaneXZ(*mockInput, dt, obj);
 
-    const float newYaw{ obj.transform.rotation.y };
+    const float newYaw{ obj.getComponent<TransformComponent>()->rotation.y };
     const float delta{ ::angularDifference(oldYaw, newYaw) };
 
     EXPECT_GT(delta, 0.f);
@@ -150,12 +158,12 @@ TEST_F(KeyboardMovementControllerTest, LookRight)
 
 TEST_F(KeyboardMovementControllerTest, LookLeft)
 {
-    const float oldYaw{ obj.transform.rotation.y };
+    const float oldYaw{ obj.getComponent<TransformComponent>()->rotation.y };
 
     mockInput->setKeyPressed(GLFW_KEY_LEFT, true);
     KeyboardMovementController::moveInPlaneXZ(*mockInput, dt, obj);
 
-    const float newYaw{ obj.transform.rotation.y };
+    const float newYaw{ obj.getComponent<TransformComponent>()->rotation.y };
     const float delta{ ::angularDifference(oldYaw, newYaw) };
 
     EXPECT_LT(delta, 0.f);
@@ -163,12 +171,12 @@ TEST_F(KeyboardMovementControllerTest, LookLeft)
 
 TEST_F(KeyboardMovementControllerTest, LookUp)
 {
-    const float oldYaw{ obj.transform.rotation.x };
+    const float oldYaw{ obj.getComponent<TransformComponent>()->rotation.x };
 
     mockInput->setKeyPressed(GLFW_KEY_UP, true);
     KeyboardMovementController::moveInPlaneXZ(*mockInput, dt, obj);
 
-    const float newYaw{ obj.transform.rotation.x };
+    const float newYaw{ obj.getComponent<TransformComponent>()->rotation.x };
     const float delta{ ::angularDifference(oldYaw, newYaw) };
 
     EXPECT_GT(delta, 0.f);
@@ -176,12 +184,12 @@ TEST_F(KeyboardMovementControllerTest, LookUp)
 
 TEST_F(KeyboardMovementControllerTest, LookDown)
 {
-    const float oldYaw{ obj.transform.rotation.x };
+    const float oldYaw{ obj.getComponent<TransformComponent>()->rotation.x };
     
     mockInput->setKeyPressed(GLFW_KEY_DOWN, true);
     KeyboardMovementController::moveInPlaneXZ(*mockInput, dt, obj);
 
-    const float newYaw{ obj.transform.rotation.x };
+    const float newYaw{ obj.getComponent<TransformComponent>()->rotation.x };
     const float delta{ ::angularDifference(oldYaw, newYaw) };
 
     EXPECT_LT(delta, 0.f);
@@ -192,20 +200,20 @@ TEST_F(KeyboardMovementControllerTest, DiagonalMovementForwardRight)
     mockInput->setKeyPressed(GLFW_KEY_W, true);
     mockInput->setKeyPressed(GLFW_KEY_D, true);
 
-    const float yaw{ obj.transform.rotation.y };
+    const float yaw{ obj.getComponent<TransformComponent>()->rotation.y };
     const glm::vec3 forward{ std::sin(yaw), 0.f, std::cos(yaw) };
     const glm::vec3 right{ forward.z, 0.f, -forward.x };
 
-    auto oldPosForward{ obj.transform.translation };
-    auto oldPosRight{ obj.transform.translation };
+    const auto oldPosForward{ obj.getComponent<TransformComponent>()->translation };
+    const auto oldPosRight{ obj.getComponent<TransformComponent>()->translation };
 
     KeyboardMovementController::moveInPlaneXZ(*mockInput, dt, obj);
 
-    auto newPosForward{ obj.transform.translation };
-    auto deltaForward{ newPosForward - oldPosForward };
+    const auto newPosForward{ obj.getComponent<TransformComponent>()->translation };
+    const auto deltaForward{ newPosForward - oldPosForward };
 
-    auto newPosRight{ obj.transform.translation };
-    auto deltaRight{ newPosRight - oldPosRight };
+    const auto newPosRight{ obj.getComponent<TransformComponent>()->translation };
+    const auto deltaRight{ newPosRight - oldPosRight };
 
     EXPECT_GT(glm::dot(deltaForward, forward), 0.f);
     EXPECT_GT(glm::dot(deltaRight, right), 0.f);
@@ -214,12 +222,12 @@ TEST_F(KeyboardMovementControllerTest, DiagonalMovementForwardRight)
 TEST_F(KeyboardMovementControllerTest, RotationAffectsMovementDirection)
 {
     mockInput->setKeyPressed(GLFW_KEY_W, true);
-    obj.transform.rotation.y = glm::half_pi<float>(); // NOTE: rotate object 90 degrees to the right
+    obj.getComponent<TransformComponent>()->rotation.y = glm::half_pi<float>(); // NOTE: rotate object 90 degrees to the right
 
     KeyboardMovementController::moveInPlaneXZ(*mockInput, dt, obj);
 
-    EXPECT_GT(obj.transform.translation.x, 0.f);
-    EXPECT_NEAR(obj.transform.translation.z, 0.f, 0.01f);
+    EXPECT_GT(obj.getComponent<TransformComponent>()->translation.x, 0.f);
+    EXPECT_NEAR(obj.getComponent<TransformComponent>()->translation.z, 0.f, 0.01f);
 }
 
 TEST_F(KeyboardMovementControllerTest, PitchClampingUp)
@@ -234,8 +242,8 @@ TEST_F(KeyboardMovementControllerTest, PitchClampingUp)
     {
         KeyboardMovementController::moveInPlaneXZ(*mockInput, dt, obj);
 
-        EXPECT_LE(obj.transform.rotation.x, MAX_CLAMP_DEGREES);
-        EXPECT_GE(obj.transform.rotation.x, MIN_CLAMP_DEGREES);
+        EXPECT_LE(obj.getComponent<TransformComponent>()->rotation.x, MAX_CLAMP_DEGREES);
+        EXPECT_GE(obj.getComponent<TransformComponent>()->rotation.x, MIN_CLAMP_DEGREES);
     }
 }
 
@@ -251,8 +259,8 @@ TEST_F(KeyboardMovementControllerTest, PitchClampingDown)
     {
         KeyboardMovementController::moveInPlaneXZ(*mockInput, dt, obj);
 
-        EXPECT_LE(obj.transform.rotation.x, MAX_CLAMP_DEGREES);
-        EXPECT_GE(obj.transform.rotation.x, MIN_CLAMP_DEGREES);
+        EXPECT_LE(obj.getComponent<TransformComponent>()->rotation.x, MAX_CLAMP_DEGREES);
+        EXPECT_GE(obj.getComponent<TransformComponent>()->rotation.x, MIN_CLAMP_DEGREES);
     }
 }
 
@@ -265,8 +273,8 @@ TEST_F(KeyboardMovementControllerTest, YawWrapping)
     {
         KeyboardMovementController::moveInPlaneXZ(*mockInput, dt, obj);
 
-        EXPECT_GE(obj.transform.rotation.y, 0);
-        EXPECT_LT(obj.transform.rotation.x, glm::two_pi<float>());
+        EXPECT_GE(obj.getComponent<TransformComponent>()->rotation.y, 0);
+        EXPECT_LT(obj.getComponent<TransformComponent>()->rotation.x, glm::two_pi<float>());
     }
 }
 
