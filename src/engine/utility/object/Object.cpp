@@ -2,8 +2,6 @@
 
 #include "utility/object/IdPool.hpp"
 
-#include "spdlog/spdlog.h"
-
 #include <utility>
 
 namespace vv
@@ -12,7 +10,6 @@ namespace vv
 Object::Object()
     : m_id{ s_idPool.acquire() }
 {
-    spdlog::info("new object(id: {}) created", m_id);
 }
 
 Object::Object(Object&& other) noexcept

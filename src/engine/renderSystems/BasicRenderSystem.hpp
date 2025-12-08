@@ -2,7 +2,7 @@
 #define VULKAN_VOXELS_SRC_ENGINE_RENDER_SYSTEMS_BASIC_RENDER_SYSTEM_HPP
 
 #include "core/Device.hpp"
-#include "core/Pipeline.hpp"
+#include "renderSystems/IRenderSystem.hpp"
 #include "utility/FrameInfo.hpp"
 
 #define GLM_FORCE_RADIANS
@@ -15,18 +15,6 @@
 namespace vv
 {
 
-/// \brief Structure containing the information about push constants
-///
-/// Representation of which data is sent to the GPU via push constant
-///
-/// \author Felix Hommel
-/// \date 11/19/2025
-struct SimplePushConstantData
-{
-    glm::mat4 modelMatrix{ 1.f };
-    glm::mat4 normalMatrix{ 1.f };
-};
-
 /// \brief Render System to render standard \ref Object
 ///
 /// Used to render simple \ref Object by first pushing the push constants and then
@@ -34,7 +22,7 @@ struct SimplePushConstantData
 ///
 /// \author Felix Hommel
 /// \date 11/19/2025
-class BasicRenderSystem
+class BasicRenderSystem final : public IRenderSystem
 {
 public:
     /// \brief Create a new \ref BasicRenderSystem
@@ -43,7 +31,7 @@ public:
     /// \param renderPass Which RenderPass to use in the pipeline
     /// \param globalSetLayout the layout of globally used descriptor sets
     BasicRenderSystem(std::shared_ptr<Device> device, VkRenderPass renderPass, VkDescriptorSetLayout globalSetLayout);
-    ~BasicRenderSystem();
+    ~BasicRenderSystem() override;
 
     BasicRenderSystem(const BasicRenderSystem&) = delete;
     BasicRenderSystem(BasicRenderSystem&&) = delete;
@@ -53,19 +41,11 @@ public:
     /// \brief Render a list of \ref Object
     ///
     /// \param frameInfo \ref FrameInfo with data about the current frame
-    void renderObjects(FrameInfo& frameInfo) const;
+    void render(const FrameInfo& frameInfo) const override;
 
 private:
     static constexpr auto VERTEX_SHADER_PATH{ PROJECT_ROOT "resources/compiledShaders/simpleVert.spv" };
     static constexpr auto FRAGMENT_SHADER_PATH{ PROJECT_ROOT "resources/compiledShaders/simpleFrag.spv" };
-
-    std::shared_ptr<Device> device;
-
-    std::unique_ptr<Pipeline> m_pipeline;
-    VkPipelineLayout m_pipelineLayout{ VK_NULL_HANDLE };
-
-    void createPipelineLayout(VkDescriptorSetLayout globalSetLayout);
-    void createPipeline(VkRenderPass renderPass);
 };
 
 } // namespace vv

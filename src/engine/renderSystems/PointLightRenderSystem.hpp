@@ -4,6 +4,7 @@
 #include "core/Device.hpp"
 #include "core/Pipeline.hpp"
 #include "utility/FrameInfo.hpp"
+#include "renderSystems/IRenderSystem.hpp"
 
 #define GLM_FORCE_RADIANS
 #define GLM_FORCE_DEPTH_ZERO_TO_ONE
@@ -32,7 +33,7 @@ struct PointLightPushConstants
 ///
 /// \author Felix Hommel
 /// \date 11/27/2025
-class PointLightRenderSystem
+class PointLightRenderSystem final : public IRenderSystem
 {
 public:
     /// \brief Create a new \ref PointLightRenderSystem
@@ -45,7 +46,7 @@ public:
         VkRenderPass renderPass,
         VkDescriptorSetLayout globalSetLayout
     );
-    ~PointLightRenderSystem();
+    ~PointLightRenderSystem() override;
 
     PointLightRenderSystem(const PointLightRenderSystem&) = delete;
     PointLightRenderSystem(PointLightRenderSystem&&) = delete;
@@ -55,25 +56,20 @@ public:
     /// \brief Update the point lights
     ///
     /// \param frameInfo \ref FrameInfo important frame related data
-    static void update(const FrameInfo& frameInfo, GlobalUBO& ubo);
+    void update(FrameInfo& frameInfo, GlobalUBO& ubo) override;
 
     /// \brief Render a point light
     ///
     /// \param frameInfo \ref FrameInfo with data about the current frame
-    void render(FrameInfo& frameInfo) const;
+    void render(const FrameInfo& frameInfo) const override;
 
 private:
     static constexpr auto VERTEX_SHADER_PATH{ PROJECT_ROOT "resources/compiledShaders/pointLightVert.spv" };
     static constexpr auto FRAGMENT_SHADER_PATH{ PROJECT_ROOT "resources/compiledShaders/pointLightFrag.spv" };
     static constexpr std::uint32_t squareVertexCount{ 6 };
 
-    std::shared_ptr<Device> device;
-
-    std::unique_ptr<Pipeline> m_pipeline;
-    VkPipelineLayout m_pipelineLayout{ VK_NULL_HANDLE };
-
-    void createPipelineLayout(VkDescriptorSetLayout globalSetLayout);
-    void createPipeline(VkRenderPass renderPass);
+    void createPipelineLayout(VkDescriptorSetLayout globalSetLayout) override;
+    void createPipeline(VkRenderPass renderPass, const std::string& vertexShaderPath, const std::string& fragmentShaderPath) override;
 };
 
 } // namespace vv

@@ -10,6 +10,8 @@
 #define GLM_FORCE_DEPTH_ZERO_TO_ONE
 #include "glm/glm.hpp"
 #include "glm/gtc/matrix_transform.hpp"
+#include "spdlog/spdlog.h"
+
 #include <vulkan/vulkan_core.h>
 
 #include <cassert>
@@ -29,10 +31,10 @@ PointLightRenderSystem::PointLightRenderSystem(
     VkRenderPass renderPass,
     VkDescriptorSetLayout globalSetLayout
 )
-    : device{ std::move(device) }
+    : IRenderSystem(std::move(device))
 {
     createPipelineLayout(globalSetLayout);
-    createPipeline(renderPass);
+    createPipeline(renderPass, VERTEX_SHADER_PATH, FRAGMENT_SHADER_PATH);
 }
 
 PointLightRenderSystem::~PointLightRenderSystem()
@@ -40,7 +42,7 @@ PointLightRenderSystem::~PointLightRenderSystem()
     vkDestroyPipelineLayout(device->device(), m_pipelineLayout, nullptr);
 }
 
-void PointLightRenderSystem::update(const FrameInfo& frameInfo, GlobalUBO& ubo)
+void PointLightRenderSystem::update(FrameInfo& frameInfo, GlobalUBO& ubo)
 {
     constexpr float ROTATE_FACTOR{ 0.5f };
     const auto rotateLight{ glm::rotate(glm::mat4(1.f), ROTATE_FACTOR * frameInfo.dt, { 0.f, -1.f, 0.f }) };
@@ -64,7 +66,7 @@ void PointLightRenderSystem::update(const FrameInfo& frameInfo, GlobalUBO& ubo)
     ubo.numLights = static_cast<int>(lightIndex);
 }
 
-void PointLightRenderSystem::render(FrameInfo& frameInfo) const
+void PointLightRenderSystem::render(const FrameInfo& frameInfo) const
 {
     m_pipeline->bind(frameInfo.commandBuffer);
 
@@ -121,7 +123,7 @@ void PointLightRenderSystem::createPipelineLayout(VkDescriptorSetLayout globalSe
 }
 
 /// \brief Create a Pipeline for Rendering
-void PointLightRenderSystem::createPipeline(VkRenderPass renderPass)
+void PointLightRenderSystem::createPipeline(VkRenderPass renderPass, const std::string& vertexShaderPath, const std::string& fragmentShaderPath)
 {
 #if defined(VV_ENABLE_ASSERTS)
     assert(m_pipelineLayout != VK_NULL_HANDLE && "Cannot create pipeline without pipeline layout");
@@ -134,7 +136,7 @@ void PointLightRenderSystem::createPipeline(VkRenderPass renderPass)
     pipelineConfig.renderPass = renderPass;
     pipelineConfig.pipelineLayout = m_pipelineLayout;
 
-    m_pipeline = std::make_unique<Pipeline>(device, VERTEX_SHADER_PATH, FRAGMENT_SHADER_PATH, pipelineConfig);
+    m_pipeline = std::make_unique<Pipeline>(device, vertexShaderPath, fragmentShaderPath, pipelineConfig);
 }
 
 } // namespace vv

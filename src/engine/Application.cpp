@@ -121,14 +121,14 @@ void Application::run()
             ubo.view = camera->getView();
             ubo.inverseView = camera->getInverseView();
 
-            PointLightRenderSystem::update(frameInfo, ubo);
+            pointLightRenderSystem.update(frameInfo, ubo);
 
             uboBuffers[frameIndex]->writeToBuffer(ubo);
             uboBuffers[frameIndex]->flush();
 
             m_renderer->beginRenderPass(commandBuffer);
 
-            basicRenderSystem.renderObjects(frameInfo);
+            basicRenderSystem.render(frameInfo);
             pointLightRenderSystem.render(frameInfo);
 
             m_renderer->endRenderPass(commandBuffer);

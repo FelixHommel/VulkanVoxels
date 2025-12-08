@@ -15,6 +15,7 @@ add_library(${NAME}
     ./core/Window.cpp
     ./renderSystems/BasicRenderSystem.cpp
     ./renderSystems/PointLightRenderSystem.cpp
+    ./renderSystems/IRenderSystem.cpp
     ./utility/Camera.cpp
     ./utility/Model.cpp
     ./utility/KeyboardMovementController.cpp
@@ -44,6 +45,7 @@ target_sources(${NAME}
             ./core/Window.hpp
             ./renderSystems/BasicRenderSystem.hpp
             ./renderSystems/PointLightRenderSystem.hpp
+            ./renderSystems/IRenderSystem.hpp
             ./utility/Camera.hpp
             ./utility/FrameInfo.hpp
             ./utility/GLFWInputHandler.hpp
