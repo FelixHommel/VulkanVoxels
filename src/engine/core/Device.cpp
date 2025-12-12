@@ -168,9 +168,9 @@ VkFormat Device::findSupportedFormat(
 }
 
 void Device::createBuffer(
-    const VkDeviceSize size,
-    const VkBufferUsageFlags usage,
-    const VkMemoryPropertyFlags properties,
+    VkDeviceSize size,
+    VkBufferUsageFlags usage,
+    const VmaAllocationCreateInfo& allocInfo,
     VkBuffer& buffer,
     VmaAllocation& allocation
 ) const
@@ -180,21 +180,6 @@ void Device::createBuffer(
     createInfo.size = size;
     createInfo.usage = usage;
     createInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
-
-    const bool deviceLocal{ (properties & VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT) != 0u };
-    const bool hostVisible{ (properties & VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT) != 0u };
-
-    VmaAllocationCreateInfo allocInfo{};
-
-    if(deviceLocal && !hostVisible)
-        allocInfo.usage = VMA_MEMORY_USAGE_AUTO_PREFER_DEVICE;
-    else if(hostVisible)
-    {
-        allocInfo.usage = VMA_MEMORY_USAGE_AUTO_PREFER_HOST;
-        allocInfo.flags = VMA_ALLOCATION_CREATE_HOST_ACCESS_SEQUENTIAL_WRITE_BIT | VMA_ALLOCATION_CREATE_MAPPED_BIT;
-    }
-    else
-        allocInfo.usage = VMA_MEMORY_USAGE_AUTO;
 
     const VkResult result{ vmaCreateBuffer(m_allocator, &createInfo, &allocInfo, &buffer, &allocation, nullptr) };
     if(result != VK_SUCCESS)
@@ -390,6 +375,8 @@ void Device::pickPhysicalDevice()
         throw Exception("Failed to find a suitable GPU");
 
     vkGetPhysicalDeviceProperties(m_physicalDevice, &properties);
+    vkGetPhysicalDeviceMemoryProperties(m_physicalDevice, &memoryProperties);
+
     spdlog::info("Chosen physical device: {}", properties.deviceName);
 }
 

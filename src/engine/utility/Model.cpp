@@ -167,22 +167,11 @@ void Model::createVertexBuffer(const std::vector<Vertex>& vertices)
     assert(m_vertexCount > 3 && "The Model must at least contain 3 vertices");
 #endif
 
-    Buffer stagingBuffer{ device,
-                          vertexSize,
-                          m_vertexCount,
-                          VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
-                          VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT };
-
-    stagingBuffer.map();
+    Buffer stagingBuffer{ Buffer::createStagingBuffer(device, vertexSize, m_vertexCount) };
     stagingBuffer.writeToBuffer(vertices);
+    stagingBuffer.flush();
 
-    m_vertexBuffer = std::make_unique<Buffer>(
-        device,
-        vertexSize,
-        m_vertexCount,
-        VK_BUFFER_USAGE_VERTEX_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT,
-        VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT
-    );
+    m_vertexBuffer = std::make_unique<Buffer>(Buffer::createVertexBuffer(device, vertexSize, m_vertexCount));
 
     device->copyBuffer(stagingBuffer.getBuffer(), m_vertexBuffer->getBuffer(), bufferSize);
 }
@@ -203,22 +192,11 @@ void Model::createIndexBuffer(const std::vector<std::uint32_t>& indices)
     constexpr std::uint32_t indexSize{ sizeof(indices[0]) };
     const VkDeviceSize bufferSize{ static_cast<VkDeviceSize>(indexSize * m_indexCount) };
 
-    Buffer stagingBuffer{ device,
-                          indexSize,
-                          m_indexCount,
-                          VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
-                          VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT };
-
-    stagingBuffer.map();
+    Buffer stagingBuffer{ Buffer::createStagingBuffer(device, indexSize, m_indexCount) };
     stagingBuffer.writeToBuffer(indices);
+    stagingBuffer.flush();
 
-    m_indexBuffer = std::make_unique<Buffer>(
-        device,
-        indexSize,
-        m_indexCount,
-        VK_BUFFER_USAGE_INDEX_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT,
-        VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT
-    );
+    m_indexBuffer = std::make_unique<Buffer>(Buffer::createIndexBuffer(device, indexSize, m_indexCount));
 
     device->copyBuffer(stagingBuffer.getBuffer(), m_indexBuffer->getBuffer(), bufferSize);
 }

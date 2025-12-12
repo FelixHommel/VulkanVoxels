@@ -23,8 +23,6 @@
 #include "glm/ext/matrix_transform.hpp"
 #include "glm/glm.hpp"
 #include "glm/gtc/constants.hpp"
-#include "spdlog/spdlog.h"
-
 #include <vulkan/vulkan_core.h>
 
 #include <chrono>
@@ -52,17 +50,7 @@ void Application::run()
 {
     std::vector<std::unique_ptr<Buffer>> uboBuffers(Swapchain::MAX_FRAMES_IN_FLIGHT);
     for(std::size_t i{ 0 }; i < uboBuffers.size(); ++i)
-    {
-        uboBuffers[i] = std::make_unique<Buffer>(
-            m_device,
-            sizeof(GlobalUBO),
-            1,
-            VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
-            VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT,
-            m_device->properties.limits.minUniformBufferOffsetAlignment
-        );
-        uboBuffers[i]->map();
-    }
+        uboBuffers[i] = std::make_unique<Buffer>(Buffer::createUniformBuffer(m_device, sizeof(GlobalUBO), 1));
 
     auto globalSetLayout{ DescriptorSetLayout::Builder(m_device)
                               .addBinding(0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_ALL_GRAPHICS)
@@ -124,7 +112,6 @@ void Application::run()
             pointLightRenderSystem.update(frameInfo, ubo);
 
             uboBuffers[frameIndex]->writeToBuffer(ubo);
-            uboBuffers[frameIndex]->flush();
 
             m_renderer->beginRenderPass(commandBuffer);
 
@@ -174,7 +161,6 @@ void Application::loadObjects() const
         const auto translateLight{ glm::vec3(rotateLight * glm::vec4(-1.f, -1.f, -1.f, 1.f)) };
 
         Object pointLight{ ObjectBuilder().withPointLight(POINT_LIGHT_INTENSITY, lightColors[i]).withTransform(translateLight).buildRaw() };
-        spdlog::info("point light id: {}", pointLight.getId());
         m_objects->emplace(pointLight.getId(), std::move(pointLight));
     }
 }

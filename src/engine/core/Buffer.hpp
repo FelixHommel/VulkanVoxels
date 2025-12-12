@@ -32,34 +32,80 @@ class Buffer
     friend class test::BufferTestHelper;
 
 public:
-    /// \brief Create a new Buffer
+    /// \brief Create a new generic Buffer
     ///
     /// \param device the \ref Device where the buffer is created on
     /// \param elementSize how big a single element of data is (in byte)
     /// \param elementCount how many elements of data can fit in the buffer maximally
     /// \param usageFlags how the buffer is going to be used
-    /// \param memoryPropertyFlags which properties the memory needs to fulfill
+    /// \param allocInfo help for vma to allocate the best possible memory type
     /// \param minOffsetAlignment (optional) the minimum required alignment for the offset member (in bytes)
     Buffer(
         std::shared_ptr<Device> device,
         VkDeviceSize elementSize,
         std::uint32_t elementCount,
         VkBufferUsageFlags usageFlags,
-        VkMemoryPropertyFlags memoryPropertyFlags,
+        const VmaAllocationCreateInfo& allocInfo,
         VkDeviceSize minOffsetAlignment = 1
     );
     ~Buffer();
 
+    /// \brief Create a vertex buffer
+    ///
+    /// \param device the \ref Device where the buffer is created on
+    /// \param elementSize how big a single element of data is (in byte)
+    /// \param elementCount how many elements of data can fit in the buffer maximally
+    ///
+    /// \returns newly allocated \ref Buffer
+    static Buffer createVertexBuffer(std::shared_ptr<Device> device, VkDeviceSize elementSize, std::uint32_t elementCount);
+    /// \brief Create an index buffer
+    ///
+    /// \param device the \ref Device where the buffer is created on
+    /// \param elementSize how big a single element of data is (in byte)
+    /// \param elementCount how many elements of data can fit in the buffer maximally
+    ///
+    /// \returns newly allocated \ref Buffer
+    static Buffer createIndexBuffer(std::shared_ptr<Device> device, VkDeviceSize elementSize, std::uint32_t elementCount);
+    /// \brief Create a uniform buffer
+    ///
+    /// \note Writeable to from Host and automatically mapped on creation
+    ///
+    /// \param device the \ref Device where the buffer is created on
+    /// \param elementSize how big a single element of data is (in byte)
+    /// \param elementCount how many elements of data can fit in the buffer maximally
+    ///
+    /// \returns newly allocated \ref Buffer
+    static Buffer createUniformBuffer(std::shared_ptr<Device> device, VkDeviceSize elementSize, std::uint32_t elementCount);
+    /// \brief Create a storage buffer
+    ///
+    /// \param device the \ref Device where the buffer is created on
+    /// \param elementSize how big a single element of data is (in byte)
+    /// \param elementCount how many elements of data can fit in the buffer maximally
+    ///
+    /// \returns newly allocated \ref Buffer
+    static Buffer createStorageBuffer(std::shared_ptr<Device> device, VkDeviceSize elementSize, std::uint32_t elementCount);
+    /// \brief Create a staging buffer
+    ///
+    /// \note Writeable to from Host and automatically mapped on creation
+    ///
+    /// \param device the \ref Device where the buffer is created on
+    /// \param elementSize how big a single element of data is (in byte)
+    /// \param elementCount how many elements of data can fit in the buffer maximally
+    ///
+    /// \returns newly allocated \ref Buffer
+    static Buffer createStagingBuffer(std::shared_ptr<Device> device, VkDeviceSize elementSize, std::uint32_t elementCount);
+
     Buffer(const Buffer&) = delete;
-    Buffer(Buffer&&) = delete;
+    Buffer(Buffer&& other) noexcept;
     Buffer& operator=(const Buffer&) = delete;
     Buffer& operator=(Buffer&&) = delete;
 
     [[nodiscard]] VkBuffer getBuffer() const noexcept { return m_buffer; }
+    [[nodiscard]] bool isCoherent() const noexcept { return m_isCoherent; }
 
     /// \brief Map the memory of the buffer so that it can be accessed by the CPU
     ///
-    /// \return the result of the vulkan mapping operation
+    /// \returns the result of the vulkan mapping operation
     VkResult map();
     /// \brief Unmap the currently mapped memory range
     void unmap();
@@ -93,7 +139,7 @@ public:
     ///
     /// \param size (optional) size of the memory range to flush (in byte)
     /// \param offset (optional) offset from the beginning (in byte)
-    [[nodiscard]] VkResult flush(VkDeviceSize size = VK_WHOLE_SIZE, VkDeviceSize offset = 0) const;
+    void flush(VkDeviceSize size = VK_WHOLE_SIZE, VkDeviceSize offset = 0) const;
     /// \brief Create a buffer info descriptor
     ///
     /// \param size (optional) size of the memory range of the descriptor (in byte)
@@ -114,9 +160,11 @@ private:
     VkDeviceSize m_elementSize;   ///< How big a single element is (in byte)
     VkDeviceSize m_alignmentSize; ///< How much space a single element needs with added alignment requirements (in byte)
     VkBufferUsageFlags m_usageFlags;
-    VkMemoryPropertyFlags m_memoryPropertyFlags;
+    VmaAllocationCreateInfo m_vmaAllocInfo;
 
     VkDeviceSize m_bufferSize;
+    bool m_isCoherent;
+    bool m_ownsMapping{ true };
     void* m_mapped{ nullptr };
     VkBuffer m_buffer{ VK_NULL_HANDLE };
     VmaAllocation m_allocation{ VK_NULL_HANDLE };

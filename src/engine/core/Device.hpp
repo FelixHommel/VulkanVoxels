@@ -4,6 +4,7 @@
 #include "Window.hpp"
 
 #include "vk_mem_alloc.h"
+#include <numeric>
 #include <vulkan/vulkan_core.h>
 
 #include <cstdint>
@@ -108,13 +109,13 @@ public:
     ///
     /// \param size how bug the buffer is
     /// \param usage how the buffer is going to be used
-    /// \param properties memory properties for the buffer memory
+    /// \param allocInfo vma allocation information for the buffer
     /// \param buffer where to store the handle to the new buffer
     /// \param allocation handle to the memory region
     void createBuffer(
         VkDeviceSize size,
         VkBufferUsageFlags usage,
-        VkMemoryPropertyFlags properties,
+        const VmaAllocationCreateInfo& allocInfo,
         VkBuffer& buffer,
         VmaAllocation& allocation
     ) const;
@@ -163,6 +164,7 @@ public:
     ) const;
 
     VkPhysicalDeviceProperties properties{};
+    VkPhysicalDeviceMemoryProperties memoryProperties{};
 
 private:
     const std::vector<const char*> VALIDATION_LAYERS{ "VK_LAYER_KHRONOS_validation" };
