@@ -37,11 +37,11 @@ namespace vv
 Application::Application()
     : m_window{ std::make_shared<Window>(WINDOW_WIDTH, WINDOW_HEIGHT, WINDOW_TITLE) }
     , m_device{ std::make_shared<Device>(m_window) }
-    , m_renderer{ std::make_unique<Renderer>(m_window, m_device) }
     , m_globalPool{ DescriptorPool::Builder(m_device)
                        .setMaxSets(Swapchain::MAX_FRAMES_IN_FLIGHT)
                        .addPoolSize(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, Swapchain::MAX_FRAMES_IN_FLIGHT)
                        .build() }
+    , m_renderer{ std::make_unique<Renderer>(m_window, m_device) }
 {
     loadObjects();
 }
@@ -73,7 +73,7 @@ void Application::run()
                                                    m_renderer->getRenderPass(),
                                                    globalSetLayout->getDescriptorLayout() };
     std::shared_ptr<Camera> camera{ std::make_shared<Camera>() };
-    std::unique_ptr<Object> viewer{ ObjectBuilder().withTransform().buildUnique() };
+    std::unique_ptr<Object> viewer{ std::make_unique<Object>(ObjectBuilder().withTransform().build()) };
     viewer->getComponent<TransformComponent>()->translation.z = CAMERA_START_OFFSET_Z;
 
     auto currentTime{ std::chrono::high_resolution_clock::now() };
@@ -134,18 +134,18 @@ void Application::loadObjects() const
     constexpr glm::vec3 smoothVasePos{ glm::vec3{ 0.5f, 0.5f, 0.f } };
 
     std::shared_ptr<Model> model{ Model::loadFromFile(m_device, FLAT_VASE_PATH) };
-    Object flatVase{ ObjectBuilder().withModel(model).withTransform(flatVasePos, vaseScale).buildRaw() };
+    Object flatVase{ ObjectBuilder().withModel(model).withTransform(flatVasePos, vaseScale).build() };
     m_objects->emplace(flatVase.getId(), std::move(flatVase));
 
     model = Model::loadFromFile(m_device, SMOOTH_VASE_PATH);
-    Object smoothVase{ ObjectBuilder().withModel(model).withTransform(smoothVasePos, vaseScale).buildRaw() };
+    Object smoothVase{ ObjectBuilder().withModel(model).withTransform(smoothVasePos, vaseScale).build() };
     m_objects->emplace(smoothVase.getId(), std::move(smoothVase));
 
     constexpr glm::vec3 floorPos{ glm::vec3{ 0.f, 0.5f, 0.f } };
     constexpr glm::vec3 floorScale{ glm::vec3{ 3.f, 1.f, 3.f } };
 
     model = Model::loadFromFile(m_device, QUAD_PATH);
-    Object floor{ ObjectBuilder().withModel(model).withTransform(floorPos, floorScale).buildRaw() };
+    Object floor{ ObjectBuilder().withModel(model).withTransform(floorPos, floorScale).build() };
     m_objects->emplace(floor.getId(), std::move(floor));
 
     const std::vector<glm::vec3> lightColors{ { 1.f, .1f, .1f }, { .1f, .1f, 1.f }, { .1f, 1.f, .1f },
@@ -160,7 +160,7 @@ void Application::loadObjects() const
         ) };
         const auto translateLight{ glm::vec3(rotateLight * glm::vec4(-1.f, -1.f, -1.f, 1.f)) };
 
-        Object pointLight{ ObjectBuilder().withPointLight(POINT_LIGHT_INTENSITY, lightColors[i]).withTransform(translateLight).buildRaw() };
+        Object pointLight{ ObjectBuilder().withPointLight(POINT_LIGHT_INTENSITY, lightColors[i]).withTransform(translateLight).build() };
         m_objects->emplace(pointLight.getId(), std::move(pointLight));
     }
 }

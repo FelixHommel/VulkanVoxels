@@ -44,14 +44,10 @@ public:
     /// \param scale (optional) scaling of the \ref Object
     /// \param rotation (optional) rotation of the \ref Object
     ObjectBuilder& withTransform(const glm::vec3& translation = {}, const glm::vec3& scale = glm::vec3(1.f), const glm::vec3& rotation = {});
-    /// \brief Build the \ref Object as unique_ptr
-    ///
-    /// \returns unique_ptr to the \ref Object
-    std::unique_ptr<Object> buildUnique();
-    /// \brief Build the \ref Object as regular object
+    /// \brief Build the \ref Object
     ///
     /// \returns newly created \ref Object
-    Object buildRaw();
+    Object build();
 
 private:
     std::unique_ptr<ColorComponent> m_color;

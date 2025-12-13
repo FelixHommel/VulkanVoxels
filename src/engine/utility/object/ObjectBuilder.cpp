@@ -41,23 +41,7 @@ ObjectBuilder& ObjectBuilder::withTransform(const glm::vec3& translation, const 
     return *this;
 }
 
-std::unique_ptr<Object> ObjectBuilder::buildUnique()
-{
-    auto obj{ std::make_unique<Object>() };
-
-    if(m_color)
-        obj->addComponent<ColorComponent>(std::move(m_color));
-    if(m_model)
-        obj->addComponent<ModelComponent>(std::move(m_model));
-    if(m_pointLight)
-        obj->addComponent<PointLightComponent>(std::move(m_pointLight));
-    if(m_transform)
-        obj->addComponent<TransformComponent>(std::move(m_transform));
-
-    return obj;
-}
-
-Object ObjectBuilder::buildRaw()
+Object ObjectBuilder::build()
 {
     Object obj;
 

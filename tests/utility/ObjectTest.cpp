@@ -32,8 +32,8 @@ TEST_F(ObjectTest, ContinuousIds)
     const Object o2{};
     EXPECT_LT(o1.getId(), o2.getId());
 
-    const Object o3{ ObjectBuilder().buildRaw() };
-    const Object o4{ ObjectBuilder().buildRaw() };
+    const Object o3{ ObjectBuilder().build() };
+    const Object o4{ ObjectBuilder().build() };
     EXPECT_LT(o3.getId(), o4.getId());
 }
 
@@ -108,7 +108,7 @@ TEST_F(ObjectTest, ObjectDoesNotAddSecondComponentOfSameType)
 
 TEST_F(ObjectTest, BuilderNoComponents)
 {
-    const Object o{ ObjectBuilder().buildRaw() };
+    const Object o{ ObjectBuilder().build() };
 
     EXPECT_FALSE(o.hasComponent<ColorComponent>());
     EXPECT_FALSE(o.hasComponent<ModelComponent>());
@@ -119,7 +119,7 @@ TEST_F(ObjectTest, BuilderNoComponents)
 TEST_F(ObjectTest, BuilderWithColor)
 {
     constexpr auto color{ glm::vec3(1.f) };
-    const Object o{ ObjectBuilder().withColor(color).buildRaw() };
+    const Object o{ ObjectBuilder().withColor(color).build() };
 
     EXPECT_TRUE(o.hasComponent<ColorComponent>());
     EXPECT_FALSE(o.hasComponent<ModelComponent>());
@@ -132,7 +132,7 @@ TEST_F(ObjectTest, BuilderWithColor)
 TEST_F(ObjectTest, BuilderWithModel)
 {
     const std::shared_ptr<Model> model{ std::make_shared<ModelMock>() };
-    const Object o{ ObjectBuilder().withModel(model).buildRaw() };
+    const Object o{ ObjectBuilder().withModel(model).build() };
 
     EXPECT_FALSE(o.hasComponent<ColorComponent>());
     EXPECT_TRUE(o.hasComponent<ModelComponent>());
@@ -144,7 +144,7 @@ TEST_F(ObjectTest, BuilderWithModel)
 
 TEST_F(ObjectTest, BuilderWithPointLight)
 {
-    const Object o{ ObjectBuilder().withPointLight().buildRaw() };
+    const Object o{ ObjectBuilder().withPointLight().build() };
 
     EXPECT_FALSE(o.hasComponent<ColorComponent>());
     EXPECT_FALSE(o.hasComponent<ModelComponent>());
@@ -154,7 +154,7 @@ TEST_F(ObjectTest, BuilderWithPointLight)
 
 TEST_F(ObjectTest, BuilderWithTransform)
 {
-    const Object o{ ObjectBuilder().withTransform().buildRaw() };
+    const Object o{ ObjectBuilder().withTransform().build() };
 
     EXPECT_FALSE(o.hasComponent<ColorComponent>());
     EXPECT_FALSE(o.hasComponent<ModelComponent>());
@@ -164,7 +164,7 @@ TEST_F(ObjectTest, BuilderWithTransform)
 
 TEST_F(ObjectTest, BuilderWithMultipleComponents)
 {
-    const Object o{ ObjectBuilder().withTransform().withPointLight().buildRaw() };
+    const Object o{ ObjectBuilder().withTransform().withPointLight().build() };
 
     EXPECT_FALSE(o.hasComponent<ColorComponent>());
     EXPECT_FALSE(o.hasComponent<ModelComponent>());
@@ -172,82 +172,16 @@ TEST_F(ObjectTest, BuilderWithMultipleComponents)
     EXPECT_TRUE(o.hasComponent<TransformComponent>());
 }
 
-TEST_F(ObjectTest, BuilderNoComponentsUnique)
-{
-    const auto o{ ObjectBuilder().buildUnique() };
-
-    EXPECT_FALSE(o->hasComponent<ColorComponent>());
-    EXPECT_FALSE(o->hasComponent<ModelComponent>());
-    EXPECT_FALSE(o->hasComponent<PointLightComponent>());
-    EXPECT_FALSE(o->hasComponent<TransformComponent>());
-    EXPECT_NE(o, nullptr);
-}
-
-TEST_F(ObjectTest, BuilderWithColorUnique)
-{
-    constexpr auto color{ glm::vec3(1.f) };
-    const auto o{ ObjectBuilder().withColor(color).buildUnique() };
-
-    EXPECT_TRUE(o->hasComponent<ColorComponent>());
-    EXPECT_FALSE(o->hasComponent<ModelComponent>());
-    EXPECT_FALSE(o->hasComponent<PointLightComponent>());
-    EXPECT_FALSE(o->hasComponent<TransformComponent>());
-
-    EXPECT_EQ(o->getComponent<ColorComponent>()->color, color);
-}
-
-TEST_F(ObjectTest, BuilderWithModelUnique)
-{
-    const std::shared_ptr<Model> model{ std::make_shared<ModelMock>() };
-    const auto o{ ObjectBuilder().withModel(model).buildUnique() };
-
-    EXPECT_FALSE(o->hasComponent<ColorComponent>());
-    EXPECT_TRUE(o->hasComponent<ModelComponent>());
-    EXPECT_FALSE(o->hasComponent<PointLightComponent>());
-    EXPECT_FALSE(o->hasComponent<TransformComponent>());
-
-    EXPECT_EQ(o->getComponent<ModelComponent>()->model, model);
-}
-
-TEST_F(ObjectTest, BuilderWithPointLightUnique)
-{
-    const auto o{ ObjectBuilder().withPointLight().buildUnique() };
-
-    EXPECT_FALSE(o->hasComponent<ColorComponent>());
-    EXPECT_FALSE(o->hasComponent<ModelComponent>());
-    EXPECT_TRUE(o->hasComponent<PointLightComponent>());
-    EXPECT_FALSE(o->hasComponent<TransformComponent>());
-}
-
-TEST_F(ObjectTest, BuilderWithTransformUnique)
-{
-    const auto o{ ObjectBuilder().withTransform().buildUnique() };
-
-    EXPECT_FALSE(o->hasComponent<ColorComponent>());
-    EXPECT_FALSE(o->hasComponent<ModelComponent>());
-    EXPECT_FALSE(o->hasComponent<PointLightComponent>());
-    EXPECT_TRUE(o->hasComponent<TransformComponent>());
-}
-
-TEST_F(ObjectTest, BuilderWithMultipleComponentsUnique)
-{
-    const auto o{ ObjectBuilder().withTransform().withPointLight().buildUnique() };
-
-    EXPECT_FALSE(o->hasComponent<ColorComponent>());
-    EXPECT_FALSE(o->hasComponent<ModelComponent>());
-    EXPECT_TRUE(o->hasComponent<PointLightComponent>());
-    EXPECT_TRUE(o->hasComponent<TransformComponent>());
-}
 
 TEST_F(ObjectTest, GetNonExistentComponent)
 {
-    const auto o{ ObjectBuilder().buildUnique() };
+    const auto o{ ObjectBuilder().build() };
 
     // NOTE: non-const member function
-    EXPECT_EQ(o->getComponent<ColorComponent>(), nullptr);
+    EXPECT_EQ(o.getComponent<ColorComponent>(), nullptr);
 
     // NOTE: const member function
-    const auto* const constResult{ o->getComponent<ColorComponent>() };
+    const auto* const constResult{ o.getComponent<ColorComponent>() };
     EXPECT_EQ(constResult, nullptr);
 }
 

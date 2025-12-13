@@ -37,7 +37,7 @@ protected:
     void SetUp() override
     {
         mockInput = std::make_unique<MockInputHandler>();
-        obj = ObjectBuilder().withTransform().buildRaw();
+        obj = ObjectBuilder().withTransform().build();
     }
 
     void TearDown() override
