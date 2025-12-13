@@ -10,7 +10,7 @@ add_library(${NAME}
     ./core/DescriptorSetLayout.cpp
     ./core/DescriptorWriter.cpp
     ./core/Device.cpp
-    ./core/Pipeline.cpp
+    ./core/GraphicsPipeline.cpp
     ./core/Renderer.cpp
     ./core/Swapchain.cpp
     ./core/Window.cpp
@@ -42,7 +42,7 @@ target_sources(${NAME}
             ./core/DescriptorWriter.hpp
             ./core/Device.hpp
             ./core/IPipeline.hpp
-            ./core/Pipeline.hpp
+            ./core/GraphicsPipeline.hpp
             ./core/Renderer.hpp
             ./core/Swapchain.hpp
             ./core/Window.hpp

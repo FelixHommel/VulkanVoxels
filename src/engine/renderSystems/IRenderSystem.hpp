@@ -2,7 +2,7 @@
 #define VULKAN_VOXELS_SRC_ENGINE_RENDER_SYSTEMS_RENDER_SYSTEM_BASE_HPP
 
 #include "core/Device.hpp"
-#include "core/Pipeline.hpp"
+#include "core/GraphicsPipeline.hpp"
 #include "utility/FrameInfo.hpp"
 
 #include <vulkan/vulkan_core.h>
@@ -58,7 +58,7 @@ public:
 protected:
     std::shared_ptr<Device> device;
 
-    std::unique_ptr<Pipeline> m_pipeline;
+    std::unique_ptr<GraphicsPipeline> m_pipeline;
     VkPipelineLayout m_pipelineLayout{ VK_NULL_HANDLE };
 
     virtual void createPipelineLayout(VkDescriptorSetLayout globalSetLayout);

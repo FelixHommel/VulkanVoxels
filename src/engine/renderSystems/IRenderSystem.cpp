@@ -1,6 +1,6 @@
 #include "IRenderSystem.hpp"
 
-#include "core/Pipeline.hpp"
+#include "core/GraphicsPipeline.hpp"
 #include "utility/exceptions/VulkanException.hpp"
 
 #include <vulkan/vulkan_core.h>
@@ -41,12 +41,12 @@ void IRenderSystem::createPipeline(VkRenderPass renderPass, const std::string& v
     assert(m_pipelineLayout != VK_NULL_HANDLE && "Cannot create pipeline without pipeline layout");
 #endif
 
-    PipelineConfigInfo pipelineConfig{};
-    Pipeline::defaultPipelineConfigInfo(pipelineConfig);
+    GraphicsPipelineConfigInfo pipelineConfig{};
+    GraphicsPipeline::defaultGraphicsPipelineConfigInfo(pipelineConfig);
     pipelineConfig.renderPass = renderPass;
     pipelineConfig.pipelineLayout = m_pipelineLayout;
 
-    m_pipeline = std::make_unique<Pipeline>(device, vertexShaderPath, fragmentShaderPath, pipelineConfig);
+    m_pipeline = std::make_unique<GraphicsPipeline>(device, vertexShaderPath, fragmentShaderPath, pipelineConfig);
 }
 
 } // namespace vv

@@ -1,7 +1,7 @@
 #include "BasicRenderSystem.hpp"
 
 #include "core/Device.hpp"
-#include "core/Pipeline.hpp"
+#include "core/GraphicsPipeline.hpp"
 #include "renderSystems/IRenderSystem.hpp"
 #include "utility/FrameInfo.hpp"
 #include "utility/object/components/ModelComponent.hpp"

@@ -1,7 +1,7 @@
 #include "PointLightRenderSystem.hpp"
 
 #include "core/Device.hpp"
-#include "core/Pipeline.hpp"
+#include "core/GraphicsPipeline.hpp"
 #include "renderSystems/IRenderSystem.hpp"
 #include "utility/FrameInfo.hpp"
 #include "utility/object/components/PointLightComponent.hpp"
@@ -128,14 +128,14 @@ void PointLightRenderSystem::createPipeline(VkRenderPass renderPass, const std::
     assert(m_pipelineLayout != VK_NULL_HANDLE && "Cannot create pipeline without pipeline layout");
 #endif
 
-    PipelineConfigInfo pipelineConfig{};
-    Pipeline::defaultPipelineConfigInfo(pipelineConfig);
+    GraphicsPipelineConfigInfo pipelineConfig{};
+    GraphicsPipeline::defaultGraphicsPipelineConfigInfo(pipelineConfig);
     pipelineConfig.bindingDescription.clear();
     pipelineConfig.attributeDescription.clear();
     pipelineConfig.renderPass = renderPass;
     pipelineConfig.pipelineLayout = m_pipelineLayout;
 
-    m_pipeline = std::make_unique<Pipeline>(device, vertexShaderPath, fragmentShaderPath, pipelineConfig);
+    m_pipeline = std::make_unique<GraphicsPipeline>(device, vertexShaderPath, fragmentShaderPath, pipelineConfig);
 }
 
 } // namespace vv

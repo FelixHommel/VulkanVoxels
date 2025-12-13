@@ -1,4 +1,4 @@
-#include "Pipeline.hpp"
+#include "GraphicsPipeline.hpp"
 
 #include "core/Device.hpp"
 #include "core/IPipeline.hpp"
@@ -18,11 +18,11 @@
 namespace vv
 {
 
-Pipeline::Pipeline(
+GraphicsPipeline::GraphicsPipeline(
     std::shared_ptr<Device> device,
     const std::filesystem::path& vertexShaderPath,
     const std::filesystem::path& fragmentShaderPath,
-    const PipelineConfigInfo& configInfo
+    const GraphicsPipelineConfigInfo& configInfo
 )
     : IPipeline(std::move(device))
 {
@@ -85,19 +85,19 @@ Pipeline::Pipeline(
         throw VulkanException("Failed to create graphics pipeline", result);
 }
 
-Pipeline::~Pipeline()
+GraphicsPipeline::~GraphicsPipeline()
 {
     vkDestroyShaderModule(m_device->device(), m_vertexShaderModule, nullptr);
     vkDestroyShaderModule(m_device->device(), m_fragmentShaderModule, nullptr);
     vkDestroyPipeline(m_device->device(), m_pipeline, nullptr);
 }
 
-void Pipeline::bind(VkCommandBuffer commandBuffer) const
+void GraphicsPipeline::bind(VkCommandBuffer commandBuffer) const
 {
     vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, m_pipeline);
 }
 
-void Pipeline::defaultPipelineConfigInfo(PipelineConfigInfo& configInfo)
+void GraphicsPipeline::defaultGraphicsPipelineConfigInfo(GraphicsPipelineConfigInfo& configInfo)
 {
     configInfo.bindingDescription = Model::Vertex::getBindingDescriptions();
     configInfo.attributeDescription = Model::Vertex::getAttributeDescriptions();

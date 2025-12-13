@@ -1,5 +1,5 @@
-#ifndef VULKAN_VOXELS_SRC_ENGINE_CORE_PIPELINE_HPP
-#define VULKAN_VOXELS_SRC_ENGINE_CORE_PIPELINE_HPP
+#ifndef VULKAN_VOXELS_SRC_ENGINE_CORE_GRAPHICS_PIPELINE_HPP
+#define VULKAN_VOXELS_SRC_ENGINE_CORE_GRAPHICS_PIPELINE_HPP
 
 #include "core/Device.hpp"
 #include "core/IPipeline.hpp"
@@ -18,7 +18,7 @@ namespace vv
 ///
 /// \author Felix Hommel
 /// \date 11//13/2025
-struct PipelineConfigInfo
+struct GraphicsPipelineConfigInfo
 {
     std::vector<VkVertexInputBindingDescription> bindingDescription;
     std::vector<VkVertexInputAttributeDescription> attributeDescription;
@@ -41,32 +41,32 @@ struct PipelineConfigInfo
 ///
 /// \author Felix Hommel
 /// \date 11/10/2025
-class Pipeline final : public IPipeline
+class GraphicsPipeline final : public IPipeline
 {
 public:
-    /// \brief Create a new \ref Pipeline
+    /// \brief Create a new \ref GraphicsPipeline
     ///
     /// \param device \ref Device where the pipeline is created on
     /// \param vertexShaderPath filepath to the vertex shader in spir-v format
     /// \param fragmentShaderPath filepath to the fragment shader in spir-v format
-    /// \param configInfo \ref PipelineConfigInfo that contains information of how the pipeline should be configured
-    Pipeline(
+    /// \param configInfo \ref GraphicsPipelineConfigInfo that contains information of how the pipeline should be configured
+    GraphicsPipeline(
         std::shared_ptr<Device> device,
         const std::filesystem::path& vertexShaderPath,
         const std::filesystem::path& fragmentShaderPath,
-        const PipelineConfigInfo& configInfo
+        const GraphicsPipelineConfigInfo& configInfo
     );
-    ~Pipeline() override;
+    ~GraphicsPipeline() override;
 
-    Pipeline(const Pipeline&) = delete;
-    Pipeline(Pipeline&&) = delete;
-    Pipeline& operator=(const Pipeline&) = delete;
-    Pipeline& operator=(Pipeline&&) = delete;
+    GraphicsPipeline(const GraphicsPipeline&) = delete;
+    GraphicsPipeline(GraphicsPipeline&&) = delete;
+    GraphicsPipeline& operator=(const GraphicsPipeline&) = delete;
+    GraphicsPipeline& operator=(GraphicsPipeline&&) = delete;
 
     /// \brief Provides a default set of configuration that can be used for configuration
     ///
-    /// \param configInfo \ref PipelineConfigInfo where the configuration is being saved
-    static void defaultPipelineConfigInfo(PipelineConfigInfo& configInfo);
+    /// \param configInfo \ref GraphicsPipelineConfigInfo where the configuration is being saved
+    static void defaultGraphicsPipelineConfigInfo(GraphicsPipelineConfigInfo& configInfo);
 
     void bind(VkCommandBuffer commandBuffer) const override;
 
@@ -77,4 +77,4 @@ private:
 
 } // namespace vv
 
-#endif // !VULKAN_VOXELS_SRC_ENGINE_CORE_PIPELINE_HPP
+#endif // !VULKAN_VOXELS_SRC_ENGINE_CORE_GRAPHICS_PIPELINE_HPP
