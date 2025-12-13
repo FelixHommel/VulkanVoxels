@@ -65,7 +65,7 @@ BreakBeforeBraces: Custom
 BreakBeforeConceptDeclarations: Allowed
 BreakBeforeInlineASMColon: OnlyMultiline
 BreakBeforeTernaryOperators: true
-BreakBinaryOperators: OnePerLine # clang-format 20
+# BreakBinaryOperators: OnePerLine # clang-format 20
 BreakConstructorInitializers: BeforeComma
 BreakFunctionDefinitionParameters: false
 BreakInheritanceList: BeforeComma
