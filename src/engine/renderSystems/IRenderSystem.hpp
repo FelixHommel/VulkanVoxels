@@ -62,7 +62,7 @@ protected:
     VkPipelineLayout m_pipelineLayout{ VK_NULL_HANDLE };
 
     virtual void createPipelineLayout(VkDescriptorSetLayout globalSetLayout);
-    virtual void createPipeline(VkRenderPass renderPass, const std::string& vertexShaderPath, const std::string& fragmentShaderPath);
+    virtual void createPipeline(VkRenderPass renderPass, const std::filesystem::path& vertexShaderPath, const std::filesystem::path& fragmentShaderPath);
 };
 
 } // namespace vv

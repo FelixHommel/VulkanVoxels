@@ -122,7 +122,7 @@ void PointLightRenderSystem::createPipelineLayout(VkDescriptorSetLayout globalSe
 }
 
 /// \brief Create a Pipeline for Rendering
-void PointLightRenderSystem::createPipeline(VkRenderPass renderPass, const std::string& vertexShaderPath, const std::string& fragmentShaderPath)
+void PointLightRenderSystem::createPipeline(VkRenderPass renderPass, const std::filesystem::path& vertexShaderPath, const std::filesystem::path& fragmentShaderPath)
 {
 #if defined(VV_ENABLE_ASSERTS)
     assert(m_pipelineLayout != VK_NULL_HANDLE && "Cannot create pipeline without pipeline layout");
