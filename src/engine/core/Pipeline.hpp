@@ -1,7 +1,8 @@
 #ifndef VULKAN_VOXELS_SRC_ENGINE_CORE_PIPELINE_HPP
 #define VULKAN_VOXELS_SRC_ENGINE_CORE_PIPELINE_HPP
 
-#include "Device.hpp"
+#include "core/Device.hpp"
+#include "core/IPipeline.hpp"
 
 #include <vulkan/vulkan_core.h>
 
@@ -40,7 +41,7 @@ struct PipelineConfigInfo
 ///
 /// \author Felix Hommel
 /// \date 11/10/2025
-class Pipeline
+class Pipeline final : public IPipeline
 {
 public:
     /// \brief Create a new \ref Pipeline
@@ -55,7 +56,7 @@ public:
         const std::filesystem::path& fragmentShaderPath,
         const PipelineConfigInfo& configInfo
     );
-    ~Pipeline();
+    ~Pipeline() override;
 
     Pipeline(const Pipeline&) = delete;
     Pipeline(Pipeline&&) = delete;
@@ -67,22 +68,13 @@ public:
     /// \param configInfo \ref PipelineConfigInfo where the configuration is being saved
     static void defaultPipelineConfigInfo(PipelineConfigInfo& configInfo);
 
-    /// \brief Bind the Pipeline to a command buffer
-    ///
-    /// \param commandBuffer the VkCommandBuffer to which the pipeline is being bound
-    void bind(VkCommandBuffer commandBuffer) const;
+    void bind(VkCommandBuffer commandBuffer) const override;
 
 private:
-    void createShaderModule(const std::vector<char>& code, VkShaderModule* shaderModule) const;
-
-    static std::vector<char> readFile(const std::filesystem::path& filepath);
-
-    std::shared_ptr<Device> m_device;
-    VkPipeline m_graphicsPipeline{};
     VkShaderModule m_vertexShaderModule{};
     VkShaderModule m_fragmentShaderModule{};
 };
 
-}; // namespace vv
+} // namespace vv
 
 #endif // !VULKAN_VOXELS_SRC_ENGINE_CORE_PIPELINE_HPP

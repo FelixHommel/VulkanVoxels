@@ -1,19 +1,16 @@
 #include "Pipeline.hpp"
 
 #include "core/Device.hpp"
+#include "core/IPipeline.hpp"
 #include "utility/Model.hpp"
-#include "utility/exceptions/FileException.hpp"
 #include "utility/exceptions/VulkanException.hpp"
 
 #include <vulkan/vulkan_core.h>
 
 #include <array>
 #include <cassert>
-#include <cstddef>
 #include <cstdint>
 #include <filesystem>
-#include <fstream>
-#include <ios>
 #include <memory>
 #include <utility>
 #include <vector>
@@ -27,7 +24,7 @@ Pipeline::Pipeline(
     const std::filesystem::path& fragmentShaderPath,
     const PipelineConfigInfo& configInfo
 )
-    : m_device{ std::move(device) }
+    : IPipeline(std::move(device))
 {
 #if defined(VV_ENABLE_ASSERTS)
     assert(
@@ -82,7 +79,7 @@ Pipeline::Pipeline(
     pipelineInfo.basePipelineIndex = -1;
 
     const VkResult result{
-        vkCreateGraphicsPipelines(m_device->device(), VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &m_graphicsPipeline)
+        vkCreateGraphicsPipelines(m_device->device(), VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &m_pipeline)
     };
     if(result != VK_SUCCESS)
         throw VulkanException("Failed to create graphics pipeline", result);
@@ -92,12 +89,12 @@ Pipeline::~Pipeline()
 {
     vkDestroyShaderModule(m_device->device(), m_vertexShaderModule, nullptr);
     vkDestroyShaderModule(m_device->device(), m_fragmentShaderModule, nullptr);
-    vkDestroyPipeline(m_device->device(), m_graphicsPipeline, nullptr);
+    vkDestroyPipeline(m_device->device(), m_pipeline, nullptr);
 }
 
 void Pipeline::bind(VkCommandBuffer commandBuffer) const
 {
-    vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, m_graphicsPipeline);
+    vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, m_pipeline);
 }
 
 void Pipeline::defaultPipelineConfigInfo(PipelineConfigInfo& configInfo)
@@ -179,45 +176,6 @@ void Pipeline::defaultPipelineConfigInfo(PipelineConfigInfo& configInfo)
     configInfo.dynamicStateInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_DYNAMIC_STATE_CREATE_INFO;
     configInfo.dynamicStateInfo.dynamicStateCount = static_cast<std::uint32_t>(configInfo.dynamicStateEnables.size());
     configInfo.dynamicStateInfo.pDynamicStates = configInfo.dynamicStateEnables.data();
-}
-
-/// \brief Create a new Shader
-///
-/// \param code the compiled shader byte code
-/// \param shaderModule where the shader module is saved
-void Pipeline::createShaderModule(const std::vector<char>& code, VkShaderModule* shaderModule) const
-{
-    VkShaderModuleCreateInfo createInfo{};
-    createInfo.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
-    createInfo.codeSize = code.size();
-    createInfo.pCode = reinterpret_cast<const std::uint32_t*>(code.data());
-
-    const VkResult result{ vkCreateShaderModule(m_device->device(), &createInfo, nullptr, shaderModule) };
-    if(result != VK_SUCCESS)
-        throw VulkanException("Failed to create shader", result);
-}
-
-/// \brief Read the file and return its content
-///
-/// \param filepath std::filesystem::path to the location of the file
-///
-/// \return std::vector of chars containing the file contents
-std::vector<char> Pipeline::readFile(const std::filesystem::path& filepath)
-{
-    std::ifstream fileHandle{};
-    fileHandle.open(filepath, std::ios::ate | std::ios::binary);
-
-    if(!fileHandle.is_open())
-        throw FileException("Failed to open shader file", filepath);
-
-    const auto fileSize{ fileHandle.tellg() };
-    std::vector<char> buffer(static_cast<std::size_t>(fileSize));
-
-    fileHandle.seekg(0);
-    fileHandle.read(buffer.data(), fileSize);
-
-    fileHandle.close();
-    return buffer;
 }
 
 } // namespace vv

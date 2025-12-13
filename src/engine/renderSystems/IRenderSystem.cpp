@@ -5,6 +5,8 @@
 
 #include <vulkan/vulkan_core.h>
 
+#include <cassert>
+#include <cstdint>
 #include <memory>
 #include <vector>
 
