@@ -1,8 +1,8 @@
 #ifndef VULKAN_VOXELS_SRC_ENGINE_UTILITY_KEYBOARD_MOVEMENT_CONTROLLER_HPP
 #define VULKAN_VOXELS_SRC_ENGINE_UTILITY_KEYBOARD_MOVEMENT_CONTROLLER_HPP
 
-#include "utility/IInputHandler.hpp"
 #include "object/Object.hpp"
+#include "utility/IInputHandler.hpp"
 
 #include "GLFW/glfw3.h"
 

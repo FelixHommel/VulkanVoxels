@@ -57,7 +57,9 @@ public:
     /// \param elementCount how many elements of data can fit in the buffer maximally
     ///
     /// \returns newly allocated \ref Buffer
-    static Buffer createVertexBuffer(std::shared_ptr<Device> device, VkDeviceSize elementSize, std::uint32_t elementCount);
+    static Buffer createVertexBuffer(
+        std::shared_ptr<Device> device, VkDeviceSize elementSize, std::uint32_t elementCount
+    );
     /// \brief Create an index buffer
     ///
     /// \param device the \ref Device where the buffer is created on
@@ -65,7 +67,9 @@ public:
     /// \param elementCount how many elements of data can fit in the buffer maximally
     ///
     /// \returns newly allocated \ref Buffer
-    static Buffer createIndexBuffer(std::shared_ptr<Device> device, VkDeviceSize elementSize, std::uint32_t elementCount);
+    static Buffer createIndexBuffer(
+        std::shared_ptr<Device> device, VkDeviceSize elementSize, std::uint32_t elementCount
+    );
     /// \brief Create a uniform buffer
     ///
     /// \note Writeable to from Host and automatically mapped on creation
@@ -75,7 +79,9 @@ public:
     /// \param elementCount how many elements of data can fit in the buffer maximally
     ///
     /// \returns newly allocated \ref Buffer
-    static Buffer createUniformBuffer(std::shared_ptr<Device> device, VkDeviceSize elementSize, std::uint32_t elementCount);
+    static Buffer createUniformBuffer(
+        std::shared_ptr<Device> device, VkDeviceSize elementSize, std::uint32_t elementCount
+    );
     /// \brief Create a storage buffer
     ///
     /// \param device the \ref Device where the buffer is created on
@@ -83,7 +89,9 @@ public:
     /// \param elementCount how many elements of data can fit in the buffer maximally
     ///
     /// \returns newly allocated \ref Buffer
-    static Buffer createStorageBuffer(std::shared_ptr<Device> device, VkDeviceSize elementSize, std::uint32_t elementCount);
+    static Buffer createStorageBuffer(
+        std::shared_ptr<Device> device, VkDeviceSize elementSize, std::uint32_t elementCount
+    );
     /// \brief Create a staging buffer
     ///
     /// \note Writeable to from Host and automatically mapped on creation
@@ -93,7 +101,9 @@ public:
     /// \param elementCount how many elements of data can fit in the buffer maximally
     ///
     /// \returns newly allocated \ref Buffer
-    static Buffer createStagingBuffer(std::shared_ptr<Device> device, VkDeviceSize elementSize, std::uint32_t elementCount);
+    static Buffer createStagingBuffer(
+        std::shared_ptr<Device> device, VkDeviceSize elementSize, std::uint32_t elementCount
+    );
 
     Buffer(const Buffer&) = delete;
     Buffer(Buffer&& other) noexcept;
@@ -115,7 +125,7 @@ public:
     /// \tparam T can be any single data type (struct, built-in, ...) as long as it is trivially copyable and is no pointer
     /// \param data the data that is being written to the buffer
     /// \param offset (optional) offset into the buffer from where to begin writing memory (in byte)
-    template <typename T>
+    template<typename T>
         requires std::is_trivially_copyable_v<T> && std::is_standard_layout_v<T> && (!std::is_pointer_v<T>)
     void writeToBuffer(const T& data, VkDeviceSize offset = 0)
     {
@@ -126,7 +136,7 @@ public:
     /// \tparam C can be any container that supports continuous iterators and whose data elements can be trivially copied
     /// \param data the data container that contains the data itself
     /// \param offset (optional) offset into the buffer from where to begin writing memory (in byte)
-    template <typename C>
+    template<typename C>
         requires std::contiguous_iterator<typename C::pointer> && std::is_trivially_copyable_v<typename C::value_type>
     void writeToBuffer(const C& data, VkDeviceSize offset = 0)
     {
@@ -144,7 +154,9 @@ public:
     ///
     /// \param size (optional) size of the memory range of the descriptor (in byte)
     /// \param offset (optional) offset into the buffer (in byte)
-    [[nodiscard]] VkDescriptorBufferInfo descriptorInfo(VkDeviceSize size = VK_WHOLE_SIZE, VkDeviceSize offset = 0) const;
+    [[nodiscard]] VkDescriptorBufferInfo descriptorInfo(
+        VkDeviceSize size = VK_WHOLE_SIZE, VkDeviceSize offset = 0
+    ) const;
     /// \brief Invalidate a range of memory to make it available to the CPU
     ///
     /// \note Only required for non-coherent memory

@@ -20,8 +20,7 @@ namespace vv
 {
 
 Renderer::Renderer(std::shared_ptr<Window> window, std::shared_ptr<Device> device)
-    : window{ std::move(window) }
-    , device{ std::move(device) }
+    : window{ std::move(window) }, device{ std::move(device) }
 {
     recreateSwapchain();
     createCommandBuffers();
@@ -111,8 +110,8 @@ void Renderer::beginRenderPass(VkCommandBuffer commandBuffer) const
 #if defined(VV_ENABLE_ASSERTS)
     assert(m_isFrameStarted && "Cannot call beginRenderPass() while there is no frame in progress");
     assert(
-        commandBuffer == getCurrentCommandBuffer() &&
-        "Cannot begin render pass on command buffer from a different frame"
+        commandBuffer == getCurrentCommandBuffer()
+        && "Cannot begin render pass on command buffer from a different frame"
     );
 #endif
 
@@ -124,7 +123,10 @@ void Renderer::beginRenderPass(VkCommandBuffer commandBuffer) const
     renderPassBeginInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
     renderPassBeginInfo.renderPass = m_swapchain->getRenderPass();
     renderPassBeginInfo.framebuffer = m_swapchain->getFramebuffer(m_currentImageIndex);
-    renderPassBeginInfo.renderArea = { .offset = { .x = 0, .y = 0 }, .extent = m_swapchain->getExtent() };
+    renderPassBeginInfo.renderArea = {
+        .offset = { .x = 0, .y = 0 },
+          .extent = m_swapchain->getExtent()
+    };
     renderPassBeginInfo.clearValueCount = static_cast<std::uint32_t>(clearValues.size());
     renderPassBeginInfo.pClearValues = clearValues.data();
 
@@ -137,7 +139,10 @@ void Renderer::beginRenderPass(VkCommandBuffer commandBuffer) const
                                .minDepth = 0.f,
                                .maxDepth = 1.f };
 
-    const VkRect2D scissor{ .offset = { .x = 0, .y = 0 }, .extent = m_swapchain->getExtent() };
+    const VkRect2D scissor{
+        .offset = { .x = 0, .y = 0 },
+          .extent = m_swapchain->getExtent()
+    };
 
     vkCmdSetViewport(commandBuffer, 0, 1, &viewport);
     vkCmdSetScissor(commandBuffer, 0, 1, &scissor);

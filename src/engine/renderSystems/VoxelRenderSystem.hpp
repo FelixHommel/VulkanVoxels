@@ -23,7 +23,11 @@ public:
 
 private:
     void createPipelineLayout(VkDescriptorSetLayout globalSetLayout) override;
-    void createPipeline(VkRenderPass renderPass, const std::filesystem::path& vertexShaderPath, const std::filesystem::path& fragmentShaderPath) override;
+    void createPipeline(
+        VkRenderPass renderPass,
+        const std::filesystem::path& vertexShaderPath,
+        const std::filesystem::path& fragmentShaderPath
+    ) override;
 };
 
 } // namespace vv

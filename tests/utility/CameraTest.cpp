@@ -13,19 +13,19 @@ namespace vv::test
 class CameraTest : public ::testing::Test
 {
 public:
-	CameraTest() = default;
-	~CameraTest() override = default;
+    CameraTest() = default;
+    ~CameraTest() override = default;
 
-	CameraTest(const CameraTest&) = delete;
-	CameraTest(CameraTest&&) = delete;
-	CameraTest& operator=(const CameraTest&) = delete;
-	CameraTest& operator=(CameraTest&&) = delete;
+    CameraTest(const CameraTest&) = delete;
+    CameraTest(CameraTest&&) = delete;
+    CameraTest& operator=(const CameraTest&) = delete;
+    CameraTest& operator=(CameraTest&&) = delete;
 
-	void SetUp() override { m_camera = std::make_unique<Camera>(); }
-	void TearDown() override {}
+    void SetUp() override { m_camera = std::make_unique<Camera>(); }
+    void TearDown() override {}
 
 protected:
-	std::unique_ptr<Camera> m_camera;
+    std::unique_ptr<Camera> m_camera;
 };
 
 TEST_F(CameraTest, PerspectiveProjection)
@@ -35,7 +35,7 @@ TEST_F(CameraTest, PerspectiveProjection)
     static constexpr float NEAR_PLANE{ 0.1f };
     static constexpr float FAR_PLANE{ 100.f };
 
-	m_camera->setPerspectiveProjection(FOV, ASPECT_RATIO, NEAR_PLANE, FAR_PLANE);
+    m_camera->setPerspectiveProjection(FOV, ASPECT_RATIO, NEAR_PLANE, FAR_PLANE);
 
     const glm::mat4 proj{ m_camera->getProjection() };
 

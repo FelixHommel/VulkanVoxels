@@ -9,8 +9,7 @@ namespace vv
 {
 
 Exception::Exception(std::string message, std::source_location location)
-    : m_message{ std::move(message) }
-    , m_location{ location }
+    : m_message{ std::move(message) }, m_location{ location }
 {
     Exception::buildWhatMessage();
 }

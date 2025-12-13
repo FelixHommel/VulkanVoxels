@@ -35,7 +35,9 @@ ObjectBuilder& ObjectBuilder::withPointLight(float intensity, const glm::vec3& c
     return *this;
 }
 
-ObjectBuilder& ObjectBuilder::withTransform(const glm::vec3& translation, const glm::vec3& scale, const glm::vec3& rotation)
+ObjectBuilder& ObjectBuilder::withTransform(
+    const glm::vec3& translation, const glm::vec3& scale, const glm::vec3& rotation
+)
 {
     m_transform = std::make_unique<TransformComponent>(translation, scale, rotation);
     return *this;

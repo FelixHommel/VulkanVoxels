@@ -10,11 +10,10 @@
 
 namespace vv
 {
+
 DescriptorWriter::DescriptorWriter(DescriptorSetLayout* setLayout, DescriptorPool* pool)
-    : setLayout{ setLayout }
-    , pool{ pool }
-{
-}
+    : setLayout{ setLayout }, pool{ pool }
+{}
 
 DescriptorWriter& DescriptorWriter::writeBuffer(std::uint32_t binding, VkDescriptorBufferInfo* bufferInfo)
 {

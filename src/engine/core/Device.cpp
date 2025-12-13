@@ -25,6 +25,7 @@
 
 namespace
 {
+
 VKAPI_ATTR VkBool32 VKAPI_CALL debugCallback(
     const VkDebugUtilsMessageSeverityFlagBitsEXT severity,
     VkDebugUtilsMessageTypeFlagsEXT /*messageType*/,
@@ -72,9 +73,7 @@ VkResult CreateDebugUtilsMessengerEXT(
 }
 
 void DestroyDebugUtilsMessengerEXT(
-    VkInstance instance,
-    VkDebugUtilsMessengerEXT debugMessenger,
-    VkAllocationCallbacks* pAllocator
+    VkInstance instance, VkDebugUtilsMessengerEXT debugMessenger, VkAllocationCallbacks* pAllocator
 )
 {
     const auto func{ reinterpret_cast<PFN_vkDestroyDebugUtilsMessengerEXT>(
@@ -84,13 +83,13 @@ void DestroyDebugUtilsMessengerEXT(
     if(func != nullptr)
         func(instance, debugMessenger, pAllocator);
 }
+
 } // namespace
 
 namespace vv
 {
 
-Device::Device(std::shared_ptr<Window> window)
-    : window{ std::move(window) }
+Device::Device(std::shared_ptr<Window> window) : window{ std::move(window) }
 {
     createInstance();
     setupDebugMessenger();
@@ -101,9 +100,7 @@ Device::Device(std::shared_ptr<Window> window)
     createCommandPool();
 }
 
-Device::Device(bool headless)
-    : window{ nullptr }
-    , m_headless{ headless }
+Device::Device(bool headless) : window{ nullptr }, m_headless{ headless }
 {
 #if defined(VV_ENABLE_ASSERTS)
     assert(headless && "Use the other constructor to use for windowed rednering");
@@ -147,9 +144,7 @@ std::uint32_t Device::findMemoryType(const std::uint32_t filter, const VkMemoryP
 }
 
 VkFormat Device::findSupportedFormat(
-    const std::vector<VkFormat>& candidates,
-    const VkImageTiling tiling,
-    const VkFormatFeatureFlags features
+    const std::vector<VkFormat>& candidates, const VkImageTiling tiling, const VkFormatFeatureFlags features
 ) const
 {
     for(const auto format : candidates)
@@ -233,11 +228,7 @@ void Device::copyBuffer(VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize siz
 }
 
 void Device::copyBufferToImage(
-    VkBuffer buffer,
-    VkImage image,
-    std::uint32_t width,
-    std::uint32_t height,
-    std::uint32_t layerCount
+    VkBuffer buffer, VkImage image, std::uint32_t width, std::uint32_t height, std::uint32_t layerCount
 ) const
 {
     VkCommandBuffer commandBuffer{ beginSingleTimeCommand() };
@@ -246,9 +237,8 @@ void Device::copyBufferToImage(
     region.bufferOffset = 0;
     region.bufferRowLength = 0;
     region.bufferImageHeight = 0;
-    region.imageSubresource = {
-        .aspectMask = VK_IMAGE_ASPECT_COLOR_BIT, .mipLevel = 0, .baseArrayLayer = 0, .layerCount = layerCount
-    };
+    region.imageSubresource
+        = { .aspectMask = VK_IMAGE_ASPECT_COLOR_BIT, .mipLevel = 0, .baseArrayLayer = 0, .layerCount = layerCount };
     region.imageOffset = { .x = 0, .y = 0, .z = 0 };
     region.imageExtent = { .width = width, .height = height, .depth = 1 };
 
@@ -490,8 +480,8 @@ bool Device::isDeviceSuitable(VkPhysicalDevice phDevice) const
     VkPhysicalDeviceFeatures supportedFeatures{};
     vkGetPhysicalDeviceFeatures(phDevice, &supportedFeatures);
 
-    return indices.isComplete() && extensionsSupported && swapchainAdequate &&
-           (supportedFeatures.samplerAnisotropy != VK_FALSE);
+    return indices.isComplete() && extensionsSupported && swapchainAdequate
+        && (supportedFeatures.samplerAnisotropy != VK_FALSE);
 }
 
 std::vector<const char*> Device::getRequiredExtensions()
@@ -582,12 +572,12 @@ void Device::populateDebugMessengerCreateInfo(VkDebugUtilsMessengerCreateInfoEXT
 {
     createInfo = {};
     createInfo.sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT;
-    createInfo.messageSeverity =
-        VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_SEVERITY_INFO_BIT_EXT |
-        VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT;
-    createInfo.messageType = VK_DEBUG_UTILS_MESSAGE_TYPE_GENERAL_BIT_EXT |
-                             VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT |
-                             VK_DEBUG_UTILS_MESSAGE_TYPE_PERFORMANCE_BIT_EXT;
+    createInfo.messageSeverity
+        = VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_SEVERITY_INFO_BIT_EXT
+        | VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT;
+    createInfo.messageType = VK_DEBUG_UTILS_MESSAGE_TYPE_GENERAL_BIT_EXT
+                           | VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT
+                           | VK_DEBUG_UTILS_MESSAGE_TYPE_PERFORMANCE_BIT_EXT;
     createInfo.pfnUserCallback = ::debugCallback;
 }
 

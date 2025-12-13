@@ -31,7 +31,7 @@ std::string excptionDetailedMessageBuilder(std::string_view message, const std::
     return oss.str();
 }
 
-}
+} // namespace
 
 namespace vv::test
 {
@@ -61,4 +61,4 @@ TEST(ExceptionTest, BaseClassCatchesChildClasses)
     EXPECT_THROW({ throw ResourceException("error"); }, Exception);
 }
 
-}
+} // namespace vv::test

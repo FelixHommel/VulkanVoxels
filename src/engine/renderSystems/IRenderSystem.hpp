@@ -33,10 +33,7 @@ struct SimplePushConstantData
 class IRenderSystem
 {
 public:
-    explicit IRenderSystem(std::shared_ptr<Device> device)
-        : device(std::move(device))
-    {
-    }
+    explicit IRenderSystem(std::shared_ptr<Device> device) : device(std::move(device)) {}
 
     virtual ~IRenderSystem() = default;
 
@@ -62,7 +59,11 @@ protected:
     VkPipelineLayout m_pipelineLayout{ VK_NULL_HANDLE };
 
     virtual void createPipelineLayout(VkDescriptorSetLayout globalSetLayout);
-    virtual void createPipeline(VkRenderPass renderPass, const std::filesystem::path& vertexShaderPath, const std::filesystem::path& fragmentShaderPath);
+    virtual void createPipeline(
+        VkRenderPass renderPass,
+        const std::filesystem::path& vertexShaderPath,
+        const std::filesystem::path& fragmentShaderPath
+    );
 };
 
 } // namespace vv

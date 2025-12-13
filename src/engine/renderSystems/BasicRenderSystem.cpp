@@ -17,9 +17,7 @@ namespace vv
 {
 
 BasicRenderSystem::BasicRenderSystem(
-    std::shared_ptr<Device> device,
-    VkRenderPass renderPass,
-    VkDescriptorSetLayout globalSetLayout
+    std::shared_ptr<Device> device, VkRenderPass renderPass, VkDescriptorSetLayout globalSetLayout
 )
     : IRenderSystem(std::move(device))
 {

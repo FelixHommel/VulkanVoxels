@@ -3,8 +3,6 @@
 namespace vv::test
 {
 
-TEST(ModelTest, ModelParsing)
-{
-}
+TEST(ModelTest, ModelParsing) {}
 
 } // namespace vv::test

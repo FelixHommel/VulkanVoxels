@@ -30,10 +30,7 @@ public:
         /// \brief Construct a new Builder
         ///
         /// \param device \ref Device where the Descriptor set layout is created on
-        Builder(std::shared_ptr<Device> device)
-            : device{ std::move(device) }
-        {
-        }
+        Builder(std::shared_ptr<Device> device) : device{ std::move(device) } {}
 
         /// \brief Add a binding to the descriptor set layout
         ///
@@ -62,8 +59,7 @@ public:
     /// \param device \ref Device where the Descriptor set layout is created on
     /// \param bindings a map containing the layout bindings
     DescriptorSetLayout(
-        std::shared_ptr<Device> device,
-        std::unordered_map<std::uint32_t, VkDescriptorSetLayoutBinding> bindings
+        std::shared_ptr<Device> device, std::unordered_map<std::uint32_t, VkDescriptorSetLayoutBinding> bindings
     );
     ~DescriptorSetLayout();
 

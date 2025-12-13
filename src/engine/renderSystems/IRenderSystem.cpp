@@ -16,8 +16,8 @@ namespace vv
 /// \brief Create a PipelineLayout that can be used to create a Pipeline
 void IRenderSystem::createPipelineLayout(VkDescriptorSetLayout globalSetLayout)
 {
-    constexpr VkPushConstantRange pushConstantRange{ .stageFlags =
-                                                         VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT,
+    constexpr VkPushConstantRange pushConstantRange{ .stageFlags
+                                                     = VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT,
                                                      .offset = 0,
                                                      .size = sizeof(SimplePushConstantData) };
     std::vector<VkDescriptorSetLayout> descriptorSetLayouts{ globalSetLayout };
@@ -35,7 +35,11 @@ void IRenderSystem::createPipelineLayout(VkDescriptorSetLayout globalSetLayout)
 }
 
 /// \brief Create a Pipeline for Rendering
-void IRenderSystem::createPipeline(VkRenderPass renderPass, const std::filesystem::path& vertexShaderPath, const std::filesystem::path& fragmentShaderPath)
+void IRenderSystem::createPipeline(
+    VkRenderPass renderPass,
+    const std::filesystem::path& vertexShaderPath,
+    const std::filesystem::path& fragmentShaderPath
+)
 {
 #if defined(VV_ENABLE_ASSERTS)
     assert(m_pipelineLayout != VK_NULL_HANDLE && "Cannot create pipeline without pipeline layout");

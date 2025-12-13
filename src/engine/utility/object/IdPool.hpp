@@ -22,23 +22,17 @@ public:
     /// if there are any previously used ids free, the function prefers to assign them again
     ///
     /// \returns the next best free id
-    ObjectId_t acquire() noexcept
-    {
-        return m_nextFreshId++;
-    }
+    ObjectId_t acquire() noexcept { return m_nextFreshId++; }
 
     /// \brief Add \p id to the list of ids that are free again
     ///
     /// \param id the id that became free
-    //void release(ObjectId_t id) const
+    // void release(ObjectId_t id) const
     //{
     //}
 
     /// \brief Reset the state of the pool
-    void reset() noexcept
-    {
-        m_nextFreshId = 0;
-    }
+    void reset() noexcept { m_nextFreshId = 0; }
 
 private:
     ObjectId_t m_nextFreshId{ std::numeric_limits<ObjectId_t>::min() };

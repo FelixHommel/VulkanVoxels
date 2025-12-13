@@ -14,9 +14,7 @@ namespace vv
 {
 
 Window::Window(const std::uint32_t width, const std::uint32_t height, std::string title)
-    : m_width{ width }
-    , m_height{ height }
-    , m_title{ std::move(title) }
+    : m_width{ width }, m_height{ height }, m_title{ std::move(title) }
 {
     if(glfwInit() != GLFW_TRUE)
         spdlog::error("Failed to create the window");
@@ -24,8 +22,8 @@ Window::Window(const std::uint32_t width, const std::uint32_t height, std::strin
     glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
     glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
 
-    m_window =
-        glfwCreateWindow(static_cast<int>(m_width), static_cast<int>(m_height), m_title.c_str(), nullptr, nullptr);
+    m_window
+        = glfwCreateWindow(static_cast<int>(m_width), static_cast<int>(m_height), m_title.c_str(), nullptr, nullptr);
     glfwSetWindowUserPointer(m_window, this);
 
     glfwSetFramebufferSizeCallback(m_window, framebufferResizeCallback);

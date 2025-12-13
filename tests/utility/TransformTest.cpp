@@ -14,19 +14,19 @@ namespace vv::test
 class TransformComponentTest : public ::testing::Test
 {
 public:
-	TransformComponentTest() = default;
-	~TransformComponentTest() override = default;
+    TransformComponentTest() = default;
+    ~TransformComponentTest() override = default;
 
-	TransformComponentTest(const TransformComponentTest&) = delete;
-	TransformComponentTest(TransformComponentTest&&) = delete;
-	TransformComponentTest& operator=(const TransformComponentTest&) = delete;
-	TransformComponentTest& operator=(TransformComponentTest&&) = delete;
+    TransformComponentTest(const TransformComponentTest&) = delete;
+    TransformComponentTest(TransformComponentTest&&) = delete;
+    TransformComponentTest& operator=(const TransformComponentTest&) = delete;
+    TransformComponentTest& operator=(TransformComponentTest&&) = delete;
 
-	void SetUp() override { m_transform = std::make_unique<TransformComponent>(); }
-	void TearDown() override {}
+    void SetUp() override { m_transform = std::make_unique<TransformComponent>(); }
+    void TearDown() override {}
 
 protected:
-	std::unique_ptr<TransformComponent> m_transform;
+    std::unique_ptr<TransformComponent> m_transform;
 };
 
 TEST_F(TransformComponentTest, CalculateModelMatrix)

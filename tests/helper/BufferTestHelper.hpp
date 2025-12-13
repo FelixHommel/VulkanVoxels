@@ -11,10 +11,7 @@ class BufferTestHelper
 public:
     BufferTestHelper() = delete;
 
-    static const void* getMappedMemory(const Buffer& buffer)
-    {
-        return buffer.m_mapped;
-    }
+    static const void* getMappedMemory(const Buffer& buffer) { return buffer.m_mapped; }
 };
 
 }

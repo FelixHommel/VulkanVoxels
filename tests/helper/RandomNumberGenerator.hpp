@@ -17,8 +17,8 @@ namespace vv::test
 template<typename T>
 const std::unordered_set<T>& emptySetProvider()
 {
-	static const std::unordered_set<T> empty{};
-	return empty;
+    static const std::unordered_set<T> empty{};
+    return empty;
 }
 
 /// \brief Generate a random number in [min, max], can generate for integer and floating point types.
@@ -32,13 +32,15 @@ const std::unordered_set<T>& emptySetProvider()
 /// \author Felix Hommel
 /// \date 12/2/2025
 template<typename T>
-    requires (std::is_integral_v<T> || std::is_floating_point_v<T>)
-T generateRandom(T min = std::numeric_limits<T>::min(), T max = std::numeric_limits<T>::max(), const std::unordered_set<T>& exclusions = emptySetProvider<T>())
+    requires(std::is_integral_v<T> || std::is_floating_point_v<T>)
+T generateRandom(
+    T min = std::numeric_limits<T>::min(),
+    T max = std::numeric_limits<T>::max(),
+    const std::unordered_set<T>& exclusions = emptySetProvider<T>()
+)
 {
     thread_local std::mt19937 mt{
-        static_cast<std::seed_seq::result_type>(
-            std::chrono::steady_clock::now().time_since_epoch().count()
-        )
+        static_cast<std::seed_seq::result_type>(std::chrono::steady_clock::now().time_since_epoch().count())
     };
 
     if constexpr(std::is_integral_v<T>)
@@ -46,20 +48,20 @@ T generateRandom(T min = std::numeric_limits<T>::min(), T max = std::numeric_lim
         std::uniform_int_distribution<T> dist(min, max);
         while(true)
         {
-			if(T val{ dist(mt) }; !exclusions.contains(val))
-				return val;
+            if(T val{ dist(mt) }; !exclusions.contains(val))
+                return val;
         }
     }
     else
     {
-		std::uniform_real_distribution<T> dist(min, max);
-		while(true)
-		{
-			// NOTE: For floating point values this is only limited useful since the exact value needs to be excluded
-			if(T val{ dist(mt) }; !exclusions.contains(val))
-				return val;
-		}
-	}
+        std::uniform_real_distribution<T> dist(min, max);
+        while(true)
+        {
+            // NOTE: For floating point values this is only limited useful since the exact value needs to be excluded
+            if(T val{ dist(mt) }; !exclusions.contains(val))
+                return val;
+        }
+    }
 }
 
 } // namespace vv::test

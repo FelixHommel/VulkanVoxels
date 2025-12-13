@@ -26,9 +26,7 @@ namespace vv
 {
 
 PointLightRenderSystem::PointLightRenderSystem(
-    std::shared_ptr<Device> device,
-    VkRenderPass renderPass,
-    VkDescriptorSetLayout globalSetLayout
+    std::shared_ptr<Device> device, VkRenderPass renderPass, VkDescriptorSetLayout globalSetLayout
 )
     : IRenderSystem(std::move(device))
 {
@@ -55,10 +53,13 @@ void PointLightRenderSystem::update(FrameInfo& frameInfo, GlobalUBO& ubo)
         assert(lightIndex < MAX_LIGHTS && "Point lights exceed the allowed maximum");
 #endif
 
-        obj.getComponent<TransformComponent>()->translation = glm::vec3(rotateLight * glm::vec4(obj.getComponent<TransformComponent>()->translation, 1.f));
+        obj.getComponent<TransformComponent>()->translation
+            = glm::vec3(rotateLight * glm::vec4(obj.getComponent<TransformComponent>()->translation, 1.f));
 
         ubo.pointLights.at(lightIndex).position = glm::vec4(obj.getComponent<TransformComponent>()->translation, 1.f);
-        ubo.pointLights.at(lightIndex).color = glm::vec4(obj.getComponent<PointLightComponent>()->color, obj.getComponent<PointLightComponent>()->intensity);
+        ubo.pointLights.at(lightIndex).color = glm::vec4(
+            obj.getComponent<PointLightComponent>()->color, obj.getComponent<PointLightComponent>()->intensity
+        );
 
         lightIndex += 1;
     }
@@ -86,7 +87,10 @@ void PointLightRenderSystem::render(const FrameInfo& frameInfo) const
             continue;
 
         PointLightPushConstants push{ .position = glm::vec4(obj.getComponent<TransformComponent>()->translation, 1.f),
-                                      .color = glm::vec4(obj.getComponent<PointLightComponent>()->color, obj.getComponent<PointLightComponent>()->intensity),
+                                      .color = glm::vec4(
+                                          obj.getComponent<PointLightComponent>()->color,
+                                          obj.getComponent<PointLightComponent>()->intensity
+                                      ),
                                       .radius = obj.getComponent<PointLightComponent>()->radius };
 
         vkCmdPushConstants(
@@ -122,7 +126,11 @@ void PointLightRenderSystem::createPipelineLayout(VkDescriptorSetLayout globalSe
 }
 
 /// \brief Create a Pipeline for Rendering
-void PointLightRenderSystem::createPipeline(VkRenderPass renderPass, const std::filesystem::path& vertexShaderPath, const std::filesystem::path& fragmentShaderPath)
+void PointLightRenderSystem::createPipeline(
+    VkRenderPass renderPass,
+    const std::filesystem::path& vertexShaderPath,
+    const std::filesystem::path& fragmentShaderPath
+)
 {
 #if defined(VV_ENABLE_ASSERTS)
     assert(m_pipelineLayout != VK_NULL_HANDLE && "Cannot create pipeline without pipeline layout");

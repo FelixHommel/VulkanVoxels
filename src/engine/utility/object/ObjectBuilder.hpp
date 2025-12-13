@@ -37,13 +37,19 @@ public:
     /// \param intensity (optional) how strong the light is
     /// \param radius (optional) how big the light is
     /// \param color (optional) which color the light has
-    ObjectBuilder& withPointLight(float intensity = PointLightComponent::DEFAULT_INTENSITY, const glm::vec3& color = PointLightComponent::DEFAULT_COLOR, float radius = PointLightComponent::DEFAULT_RADIUS);
+    ObjectBuilder& withPointLight(
+        float intensity = PointLightComponent::DEFAULT_INTENSITY,
+        const glm::vec3& color = PointLightComponent::DEFAULT_COLOR,
+        float radius = PointLightComponent::DEFAULT_RADIUS
+    );
     /// \brief Add a transform component to the \ref Object
     ///
     /// \param translation (optional) starting offset of the \ref Object
     /// \param scale (optional) scaling of the \ref Object
     /// \param rotation (optional) rotation of the \ref Object
-    ObjectBuilder& withTransform(const glm::vec3& translation = {}, const glm::vec3& scale = glm::vec3(1.f), const glm::vec3& rotation = {});
+    ObjectBuilder& withTransform(
+        const glm::vec3& translation = {}, const glm::vec3& scale = glm::vec3(1.f), const glm::vec3& rotation = {}
+    );
     /// \brief Build the \ref Object
     ///
     /// \returns newly created \ref Object

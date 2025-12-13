@@ -98,9 +98,7 @@ public:
     ///
     /// \return \ref VkFormat the chosen format
     [[nodiscard]] VkFormat findSupportedFormat(
-        const std::vector<VkFormat>& candidates,
-        VkImageTiling tiling,
-        VkFormatFeatureFlags features
+        const std::vector<VkFormat>& candidates, VkImageTiling tiling, VkFormatFeatureFlags features
     ) const;
 
     /// \brief Create a new Buffer
@@ -141,11 +139,7 @@ public:
     /// \param height the height of the image
     /// \param layerCount how many layers the image has
     void copyBufferToImage(
-        VkBuffer buffer,
-        VkImage image,
-        std::uint32_t width,
-        std::uint32_t height,
-        std::uint32_t layerCount
+        VkBuffer buffer, VkImage image, std::uint32_t width, std::uint32_t height, std::uint32_t layerCount
     ) const;
 
     /// \brief Create a new Image

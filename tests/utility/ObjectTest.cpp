@@ -1,6 +1,6 @@
+#include "utility/object/Object.hpp"
 #include "utility/Model.hpp"
 #include "utility/object/IdPool.hpp"
-#include "utility/object/Object.hpp"
 #include "utility/object/ObjectBuilder.hpp"
 #include "utility/object/components/ColorComponent.hpp"
 #include "utility/object/components/ModelComponent.hpp"
@@ -15,15 +15,13 @@
 namespace vv::test
 {
 
-class ModelMock : public Model {};
+class ModelMock : public Model
+{};
 
 class ObjectTest : public ::testing::Test
 {
 protected:
-    void SetUp() override
-    {
-        Object::resetIdPool();
-    }
+    void SetUp() override { Object::resetIdPool(); }
 };
 
 TEST_F(ObjectTest, ContinuousIds)
@@ -185,4 +183,4 @@ TEST_F(ObjectTest, GetNonExistentComponent)
     EXPECT_EQ(constResult, nullptr);
 }
 
-}
+} // namespace vv::test

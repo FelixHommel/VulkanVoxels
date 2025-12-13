@@ -30,10 +30,7 @@ public:
         /// \brief Construct a new Descriptor pool builder
         ///
         /// \param device the \ref Device on which the descriptor pool is created
-        Builder(std::shared_ptr<Device> device)
-            : m_device{ std::move(device) }
-        {
-        }
+        Builder(std::shared_ptr<Device> device) : m_device{ std::move(device) } {}
 
         /// \brief add more descriptor types to the pool
         ///
@@ -54,7 +51,7 @@ public:
         [[nodiscard]] std::unique_ptr<DescriptorPool> build() const;
 
     private:
-        static constexpr std::uint32_t DEFAULT_MAX_SETS{ 1000 };
+        static constexpr std::uint32_t DEFAULT_MAX_SETS{ 1'000 };
 
         std::shared_ptr<Device> m_device;
         std::vector<VkDescriptorPoolSize> m_poolSizes;

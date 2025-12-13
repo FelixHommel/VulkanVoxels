@@ -21,11 +21,8 @@ struct PointLightComponent final : public Component
     static constexpr float DEFAULT_RADIUS{ 0.1f };
 
     PointLightComponent(float intensity, const glm::vec3& color, float radius)
-        : intensity{ intensity }
-        , color{ color }
-        , radius{ radius }
-    {
-    }
+        : intensity{ intensity }, color{ color }, radius{ radius }
+    {}
 
     float intensity;
     glm::vec3 color;

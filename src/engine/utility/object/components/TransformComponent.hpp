@@ -16,12 +16,11 @@ namespace vv
 /// \date 11/19/2025
 struct TransformComponent final : public Component
 {
-    constexpr explicit TransformComponent(const glm::vec3& translation = {}, const glm::vec3& scale = glm::vec3(1.f), const glm::vec3& rotation = {})
-        : translation(translation)
-        , scale(scale)
-        , rotation(rotation)
-    {
-    }
+    constexpr explicit TransformComponent(
+        const glm::vec3& translation = {}, const glm::vec3& scale = glm::vec3(1.f), const glm::vec3& rotation = {}
+    )
+        : translation(translation), scale(scale), rotation(rotation)
+    {}
 
     /// \brief Calculate the final matrix that represents the total transformation
     ///
@@ -38,10 +37,10 @@ struct TransformComponent final : public Component
         const float s1{ glm::sin(rotation.y) };
 
         return glm::mat4{
-                { scale.x * (c1 * c3 + s1 * s2 * s3), scale.x * (c2 * s3), scale.x * (c1 * s2 * s3 - c3 * s1), 0.f },
-                { scale.y * (c3 * s1 * s2 - c1 * s3), scale.y * (c2 * c3), scale.y * (c1 * c3 * s2 + s1 * s3), 0.f },
-                { scale.z * (c2 * s1), scale.z * (-s2), scale.z * (c1 * c2), 0.f },
-                { translation.x, translation.y, translation.z, 1.f }
+            { scale.x * (c1 * c3 + s1 * s2 * s3), scale.x * (c2 * s3), scale.x * (c1 * s2 * s3 - c3 * s1), 0.f },
+            { scale.y * (c3 * s1 * s2 - c1 * s3), scale.y * (c2 * c3), scale.y * (c1 * c3 * s2 + s1 * s3), 0.f },
+            { scale.z * (c2 * s1),                scale.z * (-s2),     scale.z * (c1 * c2),                0.f },
+            { translation.x,                      translation.y,       translation.z,                      1.f }
         };
     }
 
@@ -58,21 +57,23 @@ struct TransformComponent final : public Component
         const float s1{ glm::sin(rotation.y) };
         const glm::vec3 invScale{ 1.f / scale };
 
-        return glm::mat3{ {
-            invScale.x * (c1 * c3 + s1 * s2 * s3),
-            invScale.x * (c2 * s3),
-            invScale.x * (c1 * s2 * s3 - c3 * s1),
-        },
-        {
-            invScale.y * (c3 * s1 * s2 - c1 * s3),
-            invScale.y * (c2 * c3),
-            invScale.y * (c1 * c3 * s2 + s1 * s3),
-        },
-        {
-            invScale.z * (c2 * s1),
-            invScale.z * (-s2),
-            invScale.z * (c1 * c2),
-        } };
+        return glm::mat3{
+            {
+             invScale.x * (c1 * c3 + s1 * s2 * s3),
+             invScale.x * (c2 * s3),
+             invScale.x * (c1 * s2 * s3 - c3 * s1),
+             },
+            {
+             invScale.y * (c3 * s1 * s2 - c1 * s3),
+             invScale.y * (c2 * c3),
+             invScale.y * (c1 * c3 * s2 + s1 * s3),
+             },
+            {
+             invScale.z * (c2 * s1),
+             invScale.z * (-s2),
+             invScale.z * (c1 * c2),
+             }
+        };
     }
 
     glm::vec3 translation;

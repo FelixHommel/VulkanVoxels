@@ -21,10 +21,7 @@ namespace vv
 class IPipeline
 {
 public:
-    explicit IPipeline(std::shared_ptr<Device> device)
-        : m_device(std::move(device))
-    {
-    }
+    explicit IPipeline(std::shared_ptr<Device> device) : m_device(std::move(device)) {}
     virtual ~IPipeline() = default;
 
     IPipeline(const IPipeline&) = default;

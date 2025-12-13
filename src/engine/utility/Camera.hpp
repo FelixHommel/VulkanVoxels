@@ -37,9 +37,7 @@ public:
     /// \param direction direction in which the camera is pointing
     /// \param up which direction is up
     void setViewDirection(
-        const glm::vec3& position,
-        const glm::vec3& direction,
-        const glm::vec3& up = glm::vec3{ 0.f, -1.f, 0.f }
+        const glm::vec3& position, const glm::vec3& direction, const glm::vec3& up = glm::vec3{ 0.f, -1.f, 0.f }
     );
     /// \brief Camera is locked to a spcific point in space
     ///
@@ -47,9 +45,7 @@ public:
     /// \param target which position to target
     /// \param up which direction is up
     void setViewTarget(
-        const glm::vec3& position,
-        const glm::vec3& target,
-        const glm::vec3& up = glm::vec3{ 0.f, -1.f, 0.f }
+        const glm::vec3& position, const glm::vec3& target, const glm::vec3& up = glm::vec3{ 0.f, -1.f, 0.f }
     );
     /// \brief Use euler angles to specify the orientation of the camera
     ///

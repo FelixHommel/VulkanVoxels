@@ -16,10 +16,7 @@ namespace vv
 {
 
 DescriptorSetLayout::Builder& DescriptorSetLayout::Builder::addBinding(
-    std::uint32_t binding,
-    VkDescriptorType descriptorType,
-    VkShaderStageFlags stageFlags,
-    std::uint32_t count
+    std::uint32_t binding, VkDescriptorType descriptorType, VkShaderStageFlags stageFlags, std::uint32_t count
 )
 {
 #if defined(VV_ENABLE_ASSERTS)
@@ -43,11 +40,9 @@ std::unique_ptr<DescriptorSetLayout> DescriptorSetLayout::Builder::build() const
 }
 
 DescriptorSetLayout::DescriptorSetLayout(
-    std::shared_ptr<Device> device,
-    std::unordered_map<std::uint32_t, VkDescriptorSetLayoutBinding> bindings
+    std::shared_ptr<Device> device, std::unordered_map<std::uint32_t, VkDescriptorSetLayoutBinding> bindings
 )
-    : m_device{ std::move(device) }
-    , m_bindings{ bindings }
+    : m_device{ std::move(device) }, m_bindings{ bindings }
 {
     std::vector<VkDescriptorSetLayoutBinding> layoutBindings{};
     for(auto [_, b] : m_bindings)

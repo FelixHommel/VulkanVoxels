@@ -1,8 +1,8 @@
 #ifndef VULKAN_VOXELS_SRC_ENGINE_UTILITY_FRAME_INFO_HPP
 #define VULKAN_VOXELS_SRC_ENGINE_UTILITY_FRAME_INFO_HPP
 
-#include "utility/Camera.hpp"
 #include "object/Object.hpp"
+#include "utility/Camera.hpp"
 
 #define GLM_FORCE_RADIANS
 #define GLM_FORCE_DEPTH_ZERO_TO_ONE

@@ -189,10 +189,7 @@ void Buffer::writeToBufferRaw(const void* pData, VkDeviceSize size, VkDeviceSize
 {
 #if defined(VV_ENABLE_ASSERTS)
     assert(m_mapped != nullptr && "Cannot copy to unmapped buffer");
-    assert(
-        offset + size <= m_bufferSize && "The data that is being written to "
-                                         "the buffer exceeds the buffer's size"
-    );
+    assert(offset + size <= m_bufferSize && "The data that is being written to the buffer exceeds the buffer's size");
 #endif
 
     if(offset == 0)

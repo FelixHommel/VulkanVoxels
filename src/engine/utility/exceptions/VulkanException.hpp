@@ -24,9 +24,7 @@ public:
     /// \param result the VkResult that lead to the exception
     /// \param location (optional) where the exception is thrown
     explicit VulkanException(
-        std::string message,
-        VkResult result,
-        std::source_location location = std::source_location::current()
+        std::string message, VkResult result, std::source_location location = std::source_location::current()
     );
 
     [[nodiscard]] VkResult result() const noexcept { return m_result; }

@@ -13,6 +13,7 @@
 
 namespace vv::test
 {
+
 class BufferTest : public ::testing::Test
 {
 protected:
@@ -20,36 +21,24 @@ protected:
     static constexpr auto ALLOCATIONS{ 100u };
     static constexpr auto BUFFER_USAGE{ VK_BUFFER_USAGE_VERTEX_BUFFER_BIT };
     static constexpr auto VMA_ALLOC{
-        VmaAllocationCreateInfo{
-            .flags = VMA_ALLOCATION_CREATE_HOST_ACCESS_SEQUENTIAL_WRITE_BIT,
-            .usage = VMA_MEMORY_USAGE_AUTO_PREFER_HOST,
-            .requiredFlags = 0,
-            .preferredFlags = 0,
-            .memoryTypeBits = 0,
-            .pool = nullptr,
-            .pUserData = nullptr,
-            .priority = 0.f
-        }
+        VmaAllocationCreateInfo{ .flags = VMA_ALLOCATION_CREATE_HOST_ACCESS_SEQUENTIAL_WRITE_BIT,
+                                .usage = VMA_MEMORY_USAGE_AUTO_PREFER_HOST,
+                                .requiredFlags = 0,
+                                .preferredFlags = 0,
+                                .memoryTypeBits = 0,
+                                .pool = nullptr,
+                                .pUserData = nullptr,
+                                .priority = 0.f }
     };
 
-    void SetUp() override
-    {
-        ctx = std::make_unique<TestVulkanContext>();
-    }
+    void SetUp() override { ctx = std::make_unique<TestVulkanContext>(); }
 
     std::unique_ptr<TestVulkanContext> ctx;
-
 };
 
 TEST_F(BufferTest, AllocateBufferWithConstrutor)
 {
-    const Buffer buffer(
-        ctx->device(),
-        ELEMENT_SIZE,
-        ALLOCATIONS,
-        BUFFER_USAGE,
-        VMA_ALLOC
-    );
+    const Buffer buffer(ctx->device(), ELEMENT_SIZE, ALLOCATIONS, BUFFER_USAGE, VMA_ALLOC);
 
     EXPECT_NE(buffer.getBuffer(), VK_NULL_HANDLE);
 }
@@ -62,13 +51,7 @@ TEST_F(BufferTest, UniformBufferIsHostCoherent)
 
 TEST_F(BufferTest, MemoryMappingOperations)
 {
-    Buffer buffer(
-        ctx->device(),
-        ELEMENT_SIZE,
-        ALLOCATIONS,
-        BUFFER_USAGE,
-        VMA_ALLOC
-    );
+    Buffer buffer(ctx->device(), ELEMENT_SIZE, ALLOCATIONS, BUFFER_USAGE, VMA_ALLOC);
 
     ASSERT_EQ(buffer.map(), VK_SUCCESS);
     EXPECT_NE(BufferTestHelper::getMappedMemory(buffer), nullptr);
@@ -80,13 +63,7 @@ TEST_F(BufferTest, MemoryMappingOperations)
 
 TEST_F(BufferTest, WriteToBuffer)
 {
-    Buffer buffer(
-        ctx->device(),
-        ELEMENT_SIZE,
-        ALLOCATIONS,
-        BUFFER_USAGE,
-        VMA_ALLOC
-    );
+    Buffer buffer(ctx->device(), ELEMENT_SIZE, ALLOCATIONS, BUFFER_USAGE, VMA_ALLOC);
 
     buffer.map();
     const std::vector<float> writeData{ 1.f, 2.f, 3.f, 4.f, 5.f };
@@ -118,13 +95,7 @@ TEST_F(BufferTest, CreateBufferMapped)
     allocInfo.usage = VMA_MEMORY_USAGE_AUTO_PREFER_HOST;
     allocInfo.flags = VMA_ALLOCATION_CREATE_HOST_ACCESS_SEQUENTIAL_WRITE_BIT | VMA_ALLOCATION_CREATE_MAPPED_BIT;
 
-    Buffer buffer(
-        ctx->device(),
-        ELEMENT_SIZE,
-        ALLOCATIONS,
-        BUFFER_USAGE,
-        allocInfo
-    );
+    Buffer buffer(ctx->device(), ELEMENT_SIZE, ALLOCATIONS, BUFFER_USAGE, allocInfo);
 
     EXPECT_NE(buffer.getBuffer(), VK_NULL_HANDLE);
     EXPECT_NE(BufferTestHelper::getMappedMemory(buffer), nullptr);

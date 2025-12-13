@@ -64,7 +64,9 @@ public:
     void endRenderPass(VkCommandBuffer commandBuffer) const;
 
 private:
-    static constexpr VkClearColorValue CLEAR_COLOR{ { 0.1f, 0.1f, 0.1f, 1.f } };
+    static constexpr VkClearColorValue CLEAR_COLOR{
+        { 0.1f, 0.1f, 0.1f, 1.f }
+    };
 
     std::shared_ptr<Window> window;
     std::shared_ptr<Device> device;

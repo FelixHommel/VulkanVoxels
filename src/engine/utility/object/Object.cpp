@@ -7,14 +7,9 @@
 namespace vv
 {
 
-Object::Object()
-    : m_id{ s_idPool.acquire() }
-{
-}
+Object::Object() : m_id{ s_idPool.acquire() } {}
 
-Object::Object(Object&& other) noexcept
-    : m_id(other.m_id)
-    , m_components(std::move(other.m_components))
+Object::Object(Object&& other) noexcept : m_id(other.m_id), m_components(std::move(other.m_components))
 {
     other.m_id = INVALID_OBJECT_ID;
     other.m_components.clear();

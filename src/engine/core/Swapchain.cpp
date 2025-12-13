@@ -20,8 +20,7 @@ namespace vv
 {
 
 Swapchain::Swapchain(std::shared_ptr<Device> device, VkExtent2D windowExtent)
-    : device{ std::move(device) }
-    , windowExtent(windowExtent)
+    : device{ std::move(device) }, windowExtent(windowExtent)
 {
     createSwapchain();
     createImageViews();
@@ -32,9 +31,7 @@ Swapchain::Swapchain(std::shared_ptr<Device> device, VkExtent2D windowExtent)
 }
 
 Swapchain::Swapchain(std::shared_ptr<Device> device, VkExtent2D windowExtent, std::shared_ptr<Swapchain> previous)
-    : device{ std::move(device) }
-    , windowExtent(windowExtent)
-    , m_oldSwapchain{ std::move(previous) }
+    : device{ std::move(device) }, windowExtent(windowExtent), m_oldSwapchain{ std::move(previous) }
 {
     createSwapchain();
     createImageViews();
@@ -153,8 +150,8 @@ VkFramebuffer Swapchain::getFramebuffer(const std::size_t index) const
 
 bool Swapchain::compareSwapFormats(const Swapchain& swapchain) const noexcept
 {
-    return swapchain.m_swapchainImageFormat == m_swapchainImageFormat &&
-           swapchain.m_swapchainDepthFormat == m_swapchainDepthFormat;
+    return swapchain.m_swapchainImageFormat == m_swapchainImageFormat
+        && swapchain.m_swapchainDepthFormat == m_swapchainDepthFormat;
 }
 
 /**
@@ -284,10 +281,10 @@ void Swapchain::createRenderPass()
     VkSubpassDependency dependency{};
     dependency.srcSubpass = VK_SUBPASS_EXTERNAL;
     dependency.dstSubpass = 0;
-    dependency.srcStageMask =
-        VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT | VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT;
-    dependency.dstStageMask =
-        VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT | VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT;
+    dependency.srcStageMask
+        = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT | VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT;
+    dependency.dstStageMask
+        = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT | VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT;
     dependency.srcAccessMask = 0;
     dependency.dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT | VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT;
 
@@ -438,10 +435,11 @@ VkExtent2D Swapchain::chooseSwapExtent(const VkSurfaceCapabilitiesKHR& capabilit
         return capabilities.currentExtent;
 
     VkExtent2D actualExtent{ windowExtent };
-    actualExtent.width =
-        std::max(capabilities.minImageExtent.width, std::min(capabilities.minImageExtent.width, actualExtent.width));
-    actualExtent.height =
-        std::max(capabilities.minImageExtent.height, std::min(capabilities.minImageExtent.height, actualExtent.height));
+    actualExtent.width
+        = std::max(capabilities.minImageExtent.width, std::min(capabilities.minImageExtent.width, actualExtent.width));
+    actualExtent.height = std::max(
+        capabilities.minImageExtent.height, std::min(capabilities.minImageExtent.height, actualExtent.height)
+    );
 
     return actualExtent;
 }

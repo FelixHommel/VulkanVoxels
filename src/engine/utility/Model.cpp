@@ -25,7 +25,8 @@
 namespace std
 {
 
-template <> struct hash<vv::Model::Vertex>
+template<>
+struct hash<vv::Model::Vertex>
 {
     std::size_t operator()(const vv::Model::Vertex& vertex) const
     {
@@ -40,6 +41,7 @@ template <> struct hash<vv::Model::Vertex>
 
 namespace vv
 {
+
 std::vector<VkVertexInputBindingDescription> Model::Vertex::getBindingDescriptions()
 {
     std::vector<VkVertexInputBindingDescription> bindingDescriptions(1);
@@ -120,8 +122,7 @@ void Model::Builder::loadModel(const std::filesystem::path& filepath)
     }
 }
 
-Model::Model(std::shared_ptr<Device> device, const Builder& builder)
-    : device{ std::move(device) }
+Model::Model(std::shared_ptr<Device> device, const Builder& builder) : device{ std::move(device) }
 {
     createVertexBuffer(builder.vertices);
     createIndexBuffer(builder.indices);

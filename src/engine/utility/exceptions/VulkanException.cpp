@@ -13,8 +13,7 @@ namespace vv
 {
 
 VulkanException::VulkanException(std::string message, VkResult result, std::source_location location)
-    : Exception{ std::move(message), location }
-    , m_result{ result }
+    : Exception{ std::move(message), location }, m_result{ result }
 {
     VulkanException::buildWhatMessage();
 }

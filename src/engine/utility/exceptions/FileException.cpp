@@ -11,8 +11,7 @@ namespace vv
 {
 
 FileException::FileException(std::string message, std::string filepath, std::source_location location)
-    : Exception{ std::move(message), location }
-    , m_filepath{ std::move(filepath) }
+    : Exception{ std::move(message), location }, m_filepath{ std::move(filepath) }
 {
     FileException::buildWhatMessage();
 }

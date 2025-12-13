@@ -41,9 +41,7 @@ public:
     /// \param renderPass Which RenderPass to use in the pipeline
     /// \param globalSetLayout the layout of globally used descriptor sets
     PointLightRenderSystem(
-        std::shared_ptr<Device> device,
-        VkRenderPass renderPass,
-        VkDescriptorSetLayout globalSetLayout
+        std::shared_ptr<Device> device, VkRenderPass renderPass, VkDescriptorSetLayout globalSetLayout
     );
     ~PointLightRenderSystem() override;
 
@@ -68,7 +66,11 @@ private:
     static constexpr std::uint32_t squareVertexCount{ 6 };
 
     void createPipelineLayout(VkDescriptorSetLayout globalSetLayout) override;
-    void createPipeline(VkRenderPass renderPass, const std::filesystem::path& vertexShaderPath, const std::filesystem::path& fragmentShaderPath) override;
+    void createPipeline(
+        VkRenderPass renderPass,
+        const std::filesystem::path& vertexShaderPath,
+        const std::filesystem::path& fragmentShaderPath
+    ) override;
 };
 
 } // namespace vv

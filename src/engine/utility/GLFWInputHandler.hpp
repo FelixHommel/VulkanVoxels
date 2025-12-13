@@ -12,20 +12,11 @@ class GLFWInputHandler : public IInputHandler
 public:
     explicit GLFWInputHandler(GLFWwindow* window) : m_window{ window } {}
 
-    [[nodiscard]] bool isKeyPressed(int key) const override
-    {
-        return glfwGetKey(m_window, key) == GLFW_PRESS;
-    }
+    [[nodiscard]] bool isKeyPressed(int key) const override { return glfwGetKey(m_window, key) == GLFW_PRESS; }
 
-    [[nodiscard]] bool shouldClose() const override
-    {
-        return glfwWindowShouldClose(m_window) != GLFW_FALSE;
-    }
+    [[nodiscard]] bool shouldClose() const override { return glfwWindowShouldClose(m_window) != GLFW_FALSE; }
 
-    void setShouldClose(bool close) override
-    {
-        glfwSetWindowShouldClose(m_window, static_cast<int>(close));
-    }
+    void setShouldClose(bool close) override { glfwSetWindowShouldClose(m_window, static_cast<int>(close)); }
 
 private:
     GLFWwindow* m_window;

@@ -1,8 +1,8 @@
-#include "gtest/gtest.h"
 #include "spdlog/common.h"
 #include "spdlog/logger.h"
 #include "spdlog/sinks/null_sink.h"
 #include "spdlog/spdlog.h"
+#include "gtest/gtest.h"
 
 #include <memory>
 
@@ -14,6 +14,6 @@ int main(int argc, char** argv)
     spdlog::set_default_logger(nullLogger);
     spdlog::set_level(spdlog::level::off);
 
-	testing::InitGoogleTest(&argc, argv);
-	return RUN_ALL_TESTS();
+    testing::InitGoogleTest(&argc, argv);
+    return RUN_ALL_TESTS();
 }

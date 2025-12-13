@@ -39,8 +39,10 @@ void KeyboardMovementController::moveInPlaneXZ(IInputHandler& input, float dt, O
         object.getComponent<TransformComponent>()->rotation += LOOK_SPEED * dt * glm::normalize(rotate);
 
     // NOTE: Limit pitch values between about +/- ~85 degrees
-    object.getComponent<TransformComponent>()->rotation.x = glm::clamp(object.getComponent<TransformComponent>()->rotation.x, ROTATION_CLAMP_MIN, ROTATION_CLAMP_MAX);
-    object.getComponent<TransformComponent>()->rotation.y = glm::mod(object.getComponent<TransformComponent>()->rotation.y, glm::two_pi<float>());
+    object.getComponent<TransformComponent>()->rotation.x
+        = glm::clamp(object.getComponent<TransformComponent>()->rotation.x, ROTATION_CLAMP_MIN, ROTATION_CLAMP_MAX);
+    object.getComponent<TransformComponent>()->rotation.y
+        = glm::mod(object.getComponent<TransformComponent>()->rotation.y, glm::two_pi<float>());
 
     const float yaw{ object.getComponent<TransformComponent>()->rotation.y };
     const glm::vec3 forward{ std::sin(yaw), 0.f, std::cos(yaw) };

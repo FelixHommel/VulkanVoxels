@@ -14,12 +14,12 @@ class TestVulkanContext
 {
 public:
     TestVulkanContext() = default;
-	~TestVulkanContext() { vkDeviceWaitIdle(m_device->device()); }
+    ~TestVulkanContext() { vkDeviceWaitIdle(m_device->device()); }
 
-	TestVulkanContext(const TestVulkanContext&) = default;
-	TestVulkanContext(TestVulkanContext&&) = delete;
-	TestVulkanContext& operator=(const TestVulkanContext&) = default;
-	TestVulkanContext& operator=(TestVulkanContext&&) = delete;
+    TestVulkanContext(const TestVulkanContext&) = default;
+    TestVulkanContext(TestVulkanContext&&) = delete;
+    TestVulkanContext& operator=(const TestVulkanContext&) = default;
+    TestVulkanContext& operator=(TestVulkanContext&&) = delete;
 
     [[nodiscard]] std::shared_ptr<Device> device() const noexcept { return m_device; }
 

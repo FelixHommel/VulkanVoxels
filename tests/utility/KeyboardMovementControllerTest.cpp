@@ -20,7 +20,7 @@ namespace
 {
 
 const auto angularDifference = [](float from, float to) {
-    return glm::mod(to -from + glm::pi<float>(), glm::two_pi<float>()) - glm::pi<float>();
+    return glm::mod(to - from + glm::pi<float>(), glm::two_pi<float>()) - glm::pi<float>();
 };
 
 }
@@ -40,10 +40,7 @@ protected:
         obj = ObjectBuilder().withTransform().build();
     }
 
-    void TearDown() override
-    {
-        Object::resetIdPool();
-    }
+    void TearDown() override { Object::resetIdPool(); }
 
     std::unique_ptr<MockInputHandler> mockInput;
     Object obj;
@@ -185,7 +182,7 @@ TEST_F(KeyboardMovementControllerTest, LookUp)
 TEST_F(KeyboardMovementControllerTest, LookDown)
 {
     const float oldYaw{ obj.getComponent<TransformComponent>()->rotation.x };
-    
+
     mockInput->setKeyPressed(GLFW_KEY_DOWN, true);
     KeyboardMovementController::moveInPlaneXZ(*mockInput, dt, obj);
 
@@ -222,7 +219,8 @@ TEST_F(KeyboardMovementControllerTest, DiagonalMovementForwardRight)
 TEST_F(KeyboardMovementControllerTest, RotationAffectsMovementDirection)
 {
     mockInput->setKeyPressed(GLFW_KEY_W, true);
-    obj.getComponent<TransformComponent>()->rotation.y = glm::half_pi<float>(); // NOTE: rotate object 90 degrees to the right
+    obj.getComponent<TransformComponent>()->rotation.y
+        = glm::half_pi<float>(); // NOTE: rotate object 90 degrees to the right
 
     KeyboardMovementController::moveInPlaneXZ(*mockInput, dt, obj);
 

@@ -12,12 +12,7 @@ namespace vv
 {
 
 void Camera::setOrthographicProjection(
-    const float left,
-    const float right,
-    const float top,
-    const float bottom,
-    const float near,
-    const float far
+    const float left, const float right, const float top, const float bottom, const float near, const float far
 )
 {
     m_projectionMatrix = glm::mat4{ 1.f };
