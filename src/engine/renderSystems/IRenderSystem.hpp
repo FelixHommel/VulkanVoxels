@@ -8,7 +8,6 @@
 #include <vulkan/vulkan_core.h>
 
 #include <memory>
-#include <string>
 #include <utility>
 
 namespace vv
@@ -55,11 +54,11 @@ public:
 protected:
     std::shared_ptr<Device> device;
 
-    std::unique_ptr<GraphicsPipeline> m_pipeline;
-    VkPipelineLayout m_pipelineLayout{ VK_NULL_HANDLE };
+    VkPipelineLayout m_graphicsPipelineLayout{ VK_NULL_HANDLE };
+    std::unique_ptr<GraphicsPipeline> m_graphicsPipeline;
 
-    virtual void createPipelineLayout(VkDescriptorSetLayout globalSetLayout);
-    virtual void createPipeline(
+    virtual void createGraphicsPipelineLayout(VkDescriptorSetLayout globalSetLayout);
+    virtual void createGraphicsPipeline(
         VkRenderPass renderPass,
         const std::filesystem::path& vertexShaderPath,
         const std::filesystem::path& fragmentShaderPath

@@ -13,6 +13,7 @@ add_library(${NAME}
     ./core/GraphicsPipeline.cpp
     ./core/Renderer.cpp
     ./core/Swapchain.cpp
+    ./core/Texture2D.cpp
     ./core/Window.cpp
     ./renderSystems/BasicRenderSystem.cpp
     ./renderSystems/PointLightRenderSystem.cpp
@@ -27,6 +28,7 @@ add_library(${NAME}
     ./utility/exceptions/ResourceException.cpp
     ./utility/object/Object.cpp
     ./utility/object/ObjectBuilder.cpp
+    ./external/stb_image_impl.cpp
     ./external/tiny_obj_loader_impl.cpp
     ./external/vma_impl.cpp
 )
@@ -46,6 +48,7 @@ target_sources(${NAME}
             ./core/GraphicsPipeline.hpp
             ./core/Renderer.hpp
             ./core/Swapchain.hpp
+            ./core/Texture2D.hpp
             ./core/Window.hpp
             ./renderSystems/BasicRenderSystem.hpp
             ./renderSystems/PointLightRenderSystem.hpp
@@ -70,6 +73,7 @@ target_sources(${NAME}
             ./utility/exceptions/VulkanException.hpp
             ./utility/exceptions/FileException.hpp
             ./utility/exceptions/ResourceException.hpp
+            ./external/stb_image.h
             ./external/tiny_obj_loader.h
 )
 

@@ -65,8 +65,8 @@ private:
     static constexpr auto FRAGMENT_SHADER_PATH{ PROJECT_ROOT "resources/compiledShaders/pointLightFrag.spv" };
     static constexpr std::uint32_t squareVertexCount{ 6 };
 
-    void createPipelineLayout(VkDescriptorSetLayout globalSetLayout) override;
-    void createPipeline(
+    void createGraphicsPipelineLayout(VkDescriptorSetLayout globalSetLayout) override;
+    void createGraphicsPipeline(
         VkRenderPass renderPass,
         const std::filesystem::path& vertexShaderPath,
         const std::filesystem::path& fragmentShaderPath

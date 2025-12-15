@@ -30,13 +30,13 @@ PointLightRenderSystem::PointLightRenderSystem(
 )
     : IRenderSystem(std::move(device))
 {
-    createPipelineLayout(globalSetLayout);
-    createPipeline(renderPass, VERTEX_SHADER_PATH, FRAGMENT_SHADER_PATH);
+    createGraphicsPipelineLayout(globalSetLayout);
+    createGraphicsPipeline(renderPass, VERTEX_SHADER_PATH, FRAGMENT_SHADER_PATH);
 }
 
 PointLightRenderSystem::~PointLightRenderSystem()
 {
-    vkDestroyPipelineLayout(device->device(), m_pipelineLayout, nullptr);
+    vkDestroyPipelineLayout(device->device(), m_graphicsPipelineLayout, nullptr);
 }
 
 void PointLightRenderSystem::update(FrameInfo& frameInfo, GlobalUBO& ubo)
@@ -68,12 +68,12 @@ void PointLightRenderSystem::update(FrameInfo& frameInfo, GlobalUBO& ubo)
 
 void PointLightRenderSystem::render(const FrameInfo& frameInfo) const
 {
-    m_pipeline->bind(frameInfo.commandBuffer);
+    m_graphicsPipeline->bind(frameInfo.commandBuffer);
 
     vkCmdBindDescriptorSets(
         frameInfo.commandBuffer,
         VK_PIPELINE_BIND_POINT_GRAPHICS,
-        m_pipelineLayout,
+        m_graphicsPipelineLayout,
         0,
         1,
         &frameInfo.globalDescriptorSet,
@@ -95,7 +95,7 @@ void PointLightRenderSystem::render(const FrameInfo& frameInfo) const
 
         vkCmdPushConstants(
             frameInfo.commandBuffer,
-            m_pipelineLayout,
+            m_graphicsPipelineLayout,
             VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT,
             0,
             sizeof(PointLightPushConstants),
@@ -107,7 +107,7 @@ void PointLightRenderSystem::render(const FrameInfo& frameInfo) const
 }
 
 /// \brief Create a PipelineLayout that can be used to create a Pipeline
-void PointLightRenderSystem::createPipelineLayout(VkDescriptorSetLayout globalSetLayout)
+void PointLightRenderSystem::createGraphicsPipelineLayout(VkDescriptorSetLayout globalSetLayout)
 {
     VkPushConstantRange pushConstantRange{ .stageFlags = VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT,
                                            .offset = 0,
@@ -121,19 +121,19 @@ void PointLightRenderSystem::createPipelineLayout(VkDescriptorSetLayout globalSe
     createInfo.pushConstantRangeCount = 1;
     createInfo.pPushConstantRanges = &pushConstantRange;
 
-    if(vkCreatePipelineLayout(device->device(), &createInfo, nullptr, &m_pipelineLayout) != VK_SUCCESS)
+    if(vkCreatePipelineLayout(device->device(), &createInfo, nullptr, &m_graphicsPipelineLayout) != VK_SUCCESS)
         throw std::runtime_error("failed to create pipeline layout");
 }
 
 /// \brief Create a Pipeline for Rendering
-void PointLightRenderSystem::createPipeline(
+void PointLightRenderSystem::createGraphicsPipeline(
     VkRenderPass renderPass,
     const std::filesystem::path& vertexShaderPath,
     const std::filesystem::path& fragmentShaderPath
 )
 {
 #if defined(VV_ENABLE_ASSERTS)
-    assert(m_pipelineLayout != VK_NULL_HANDLE && "Cannot create pipeline without pipeline layout");
+    assert(m_graphicsPipelineLayout != VK_NULL_HANDLE && "Cannot create pipeline without pipeline layout");
 #endif
 
     GraphicsPipelineConfigInfo pipelineConfig{};
@@ -141,9 +141,10 @@ void PointLightRenderSystem::createPipeline(
     pipelineConfig.bindingDescription.clear();
     pipelineConfig.attributeDescription.clear();
     pipelineConfig.renderPass = renderPass;
-    pipelineConfig.pipelineLayout = m_pipelineLayout;
+    pipelineConfig.pipelineLayout = m_graphicsPipelineLayout;
 
-    m_pipeline = std::make_unique<GraphicsPipeline>(device, vertexShaderPath, fragmentShaderPath, pipelineConfig);
+    m_graphicsPipeline
+        = std::make_unique<GraphicsPipeline>(device, vertexShaderPath, fragmentShaderPath, pipelineConfig);
 }
 
 } // namespace vv

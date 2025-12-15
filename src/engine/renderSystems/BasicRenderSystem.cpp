@@ -21,23 +21,23 @@ BasicRenderSystem::BasicRenderSystem(
 )
     : IRenderSystem(std::move(device))
 {
-    createPipelineLayout(globalSetLayout);
-    createPipeline(renderPass, VERTEX_SHADER_PATH, FRAGMENT_SHADER_PATH);
+    createGraphicsPipelineLayout(globalSetLayout);
+    createGraphicsPipeline(renderPass, VERTEX_SHADER_PATH, FRAGMENT_SHADER_PATH);
 }
 
 BasicRenderSystem::~BasicRenderSystem()
 {
-    vkDestroyPipelineLayout(device->device(), m_pipelineLayout, nullptr);
+    vkDestroyPipelineLayout(device->device(), m_graphicsPipelineLayout, nullptr);
 }
 
 void BasicRenderSystem::render(const FrameInfo& frameInfo) const
 {
-    m_pipeline->bind(frameInfo.commandBuffer);
+    m_graphicsPipeline->bind(frameInfo.commandBuffer);
 
     vkCmdBindDescriptorSets(
         frameInfo.commandBuffer,
         VK_PIPELINE_BIND_POINT_GRAPHICS,
-        m_pipelineLayout,
+        m_graphicsPipelineLayout,
         0,
         1,
         &frameInfo.globalDescriptorSet,
@@ -55,7 +55,7 @@ void BasicRenderSystem::render(const FrameInfo& frameInfo) const
 
         vkCmdPushConstants(
             frameInfo.commandBuffer,
-            m_pipelineLayout,
+            m_graphicsPipelineLayout,
             VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT,
             0,
             sizeof(SimplePushConstantData),

@@ -14,7 +14,7 @@ namespace vv
 {
 
 /// \brief Create a PipelineLayout that can be used to create a Pipeline
-void IRenderSystem::createPipelineLayout(VkDescriptorSetLayout globalSetLayout)
+void IRenderSystem::createGraphicsPipelineLayout(VkDescriptorSetLayout globalSetLayout)
 {
     constexpr VkPushConstantRange pushConstantRange{ .stageFlags
                                                      = VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT,
@@ -29,28 +29,29 @@ void IRenderSystem::createPipelineLayout(VkDescriptorSetLayout globalSetLayout)
     createInfo.pushConstantRangeCount = 1;
     createInfo.pPushConstantRanges = &pushConstantRange;
 
-    const VkResult result{ vkCreatePipelineLayout(device->device(), &createInfo, nullptr, &m_pipelineLayout) };
+    const VkResult result{ vkCreatePipelineLayout(device->device(), &createInfo, nullptr, &m_graphicsPipelineLayout) };
     if(result != VK_SUCCESS)
         throw VulkanException("Failed to create pipeline layout", result);
 }
 
 /// \brief Create a Pipeline for Rendering
-void IRenderSystem::createPipeline(
+void IRenderSystem::createGraphicsPipeline(
     VkRenderPass renderPass,
     const std::filesystem::path& vertexShaderPath,
     const std::filesystem::path& fragmentShaderPath
 )
 {
 #if defined(VV_ENABLE_ASSERTS)
-    assert(m_pipelineLayout != VK_NULL_HANDLE && "Cannot create pipeline without pipeline layout");
+    assert(m_graphicsPipelineLayout != VK_NULL_HANDLE && "Cannot create pipeline without pipeline layout");
 #endif
 
     GraphicsPipelineConfigInfo pipelineConfig{};
     GraphicsPipeline::defaultGraphicsPipelineConfigInfo(pipelineConfig);
     pipelineConfig.renderPass = renderPass;
-    pipelineConfig.pipelineLayout = m_pipelineLayout;
+    pipelineConfig.pipelineLayout = m_graphicsPipelineLayout;
 
-    m_pipeline = std::make_unique<GraphicsPipeline>(device, vertexShaderPath, fragmentShaderPath, pipelineConfig);
+    m_graphicsPipeline
+        = std::make_unique<GraphicsPipeline>(device, vertexShaderPath, fragmentShaderPath, pipelineConfig);
 }
 
 } // namespace vv

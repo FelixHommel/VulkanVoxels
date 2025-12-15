@@ -63,6 +63,16 @@ Buffer Buffer::createStagingBuffer(std::shared_ptr<Device> device, VkDeviceSize 
     return { std::move(device), elementSize, elementCount, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, allocInfo };
 }
 
+Buffer Buffer::createImageStagingBuffer(std::shared_ptr<Device> device, VkDeviceSize elementSize, std::uint32_t elementCount)
+{
+    VmaAllocationCreateInfo allocInfo{};
+    allocInfo.usage = VMA_MEMORY_USAGE_AUTO_PREFER_HOST;
+    allocInfo.flags = VMA_ALLOCATION_CREATE_HOST_ACCESS_SEQUENTIAL_WRITE_BIT | VMA_ALLOCATION_CREATE_MAPPED_BIT;
+
+    // NOTE: For vkCmdCopyBufferToImage the minAlignment needs to be a multiple of 4
+    return { std::move(device), elementSize, elementCount, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, allocInfo, 4 };
+}
+
 Buffer::Buffer(
     std::shared_ptr<Device> pDevice,
     VkDeviceSize elementSize,
@@ -145,6 +155,24 @@ void Buffer::unmap()
     m_mapped = nullptr;
 }
 
+void Buffer::writeToBufferRaw(const void* pData, VkDeviceSize size, VkDeviceSize offset) const
+{
+#if defined(VV_ENABLE_ASSERTS)
+    assert(m_mapped != nullptr && "Cannot copy to unmapped buffer");
+    assert(offset + size <= m_bufferSize && "The data that is being written to the buffer exceeds the buffer's size");
+#endif
+
+    if(offset == 0)
+        [[likely]] // NOTE: unless in the future more buffers are using offsets this may be a small optimization
+        std::memcpy(m_mapped, pData, size);
+    else
+    {
+        auto* memOffset{ std::next(static_cast<std::byte*>(m_mapped), static_cast<std::ptrdiff_t>(offset)) };
+
+        std::memcpy(memOffset, pData, size);
+    }
+}
+
 void Buffer::flush(VkDeviceSize size, VkDeviceSize offset) const
 {
     if(m_isCoherent)
@@ -178,29 +206,6 @@ VkDeviceSize Buffer::getAlignment(VkDeviceSize elementSize, VkDeviceSize minOffs
         return (elementSize + minOffsetAlignment - 1) & ~(minOffsetAlignment - 1);
 
     return elementSize;
-}
-
-/// \brief Write data to the buffer
-///
-/// \param pData pointer to the data in CPU accessible memory
-/// \param size of the data pointed to by pData (in bytes)
-/// \param offset (optional) offset in to the buffer from where to start writing (in bytes)
-void Buffer::writeToBufferRaw(const void* pData, VkDeviceSize size, VkDeviceSize offset) const
-{
-#if defined(VV_ENABLE_ASSERTS)
-    assert(m_mapped != nullptr && "Cannot copy to unmapped buffer");
-    assert(offset + size <= m_bufferSize && "The data that is being written to the buffer exceeds the buffer's size");
-#endif
-
-    if(offset == 0)
-        [[likely]] // NOTE: unless in the future more buffers are using offsets this may be a small optimization
-        std::memcpy(m_mapped, pData, size);
-    else
-    {
-        auto* memOffset{ std::next(static_cast<std::byte*>(m_mapped), static_cast<std::ptrdiff_t>(offset)) };
-
-        std::memcpy(memOffset, pData, size);
-    }
 }
 
 } // namespace vv

@@ -104,6 +104,18 @@ public:
     static Buffer createStagingBuffer(
         std::shared_ptr<Device> device, VkDeviceSize elementSize, std::uint32_t elementCount
     );
+    /// \brief Create a staging buffer for images
+    ///
+    /// \note Writeable to from Host and automatically mapped on creation
+    ///
+    /// \param device the \ref Device where the buffer is created on
+    /// \param elementSize how big a single element of data is (in byte)
+    /// \param elementCount how many elements of data can fit in the buffer maximally
+    ///
+    /// \returns newly allocated \ref Buffer
+    static Buffer createImageStagingBuffer(
+        std::shared_ptr<Device> device, VkDeviceSize elementSize, std::uint32_t elementCount
+    );
 
     Buffer(const Buffer&) = delete;
     Buffer(Buffer&& other) noexcept;
@@ -143,6 +155,13 @@ public:
         using T = typename C::value_type;
         writeToBufferRaw(data.data(), sizeof(T) * data.size(), offset);
     }
+    /// \brief Write data to the buffer
+    ///
+    /// \param pData pointer to the data in CPU accessible memory
+    /// \param size of the data pointed to by pData (in bytes)
+    /// \param offset (optional) offset in to the buffer from where to start writing (in bytes)
+    void writeToBufferRaw(const void* pData, VkDeviceSize size, VkDeviceSize offset = 0) const;
+
     /// \brief Flush a range of memory to make it available to the GPU.
     ///
     /// \note Only required for non-coherent memory
@@ -182,8 +201,6 @@ private:
     VmaAllocation m_allocation{ VK_NULL_HANDLE };
 
     static VkDeviceSize getAlignment(VkDeviceSize elementSize, VkDeviceSize minOffsetAlignment);
-
-    void writeToBufferRaw(const void* pData, VkDeviceSize size, VkDeviceSize offset = 0) const;
 };
 
 } // namespace vv

@@ -247,6 +247,20 @@ void Device::copyBufferToImage(
     endSingleTimeCommand(commandBuffer);
 }
 
+void Device::createImage(
+    const VkImageCreateInfo& imageInfo,
+    VkImage& image,
+    VmaAllocation& allocation
+) const
+{
+    VmaAllocationCreateInfo allocInfo{};
+    allocInfo.usage = VMA_MEMORY_USAGE_AUTO_PREFER_DEVICE;
+
+    const VkResult result{ vmaCreateImage(m_allocator, &imageInfo, &allocInfo, &image, &allocation, nullptr) };
+    if(result != VK_SUCCESS)
+        throw VulkanException("Failed to create image", result);
+}
+
 void Device::createImageWithInfo(
     const VkImageCreateInfo& imageInfo,
     const VkMemoryPropertyFlags properties,

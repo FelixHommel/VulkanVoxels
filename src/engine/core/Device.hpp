@@ -4,7 +4,6 @@
 #include "Window.hpp"
 
 #include "vk_mem_alloc.h"
-#include <numeric>
 #include <vulkan/vulkan_core.h>
 
 #include <cstdint>
@@ -67,6 +66,7 @@ public:
 
     [[nodiscard]] VkCommandPool commandPool() const noexcept { return m_commandPool; }
     [[nodiscard]] VkDevice device() const noexcept { return m_device; }
+    [[nodiscard]] VkPhysicalDevice physicalDevice() const noexcept { return m_physicalDevice; }
     [[nodiscard]] VmaAllocator allocator() const noexcept { return m_allocator; }
     [[nodiscard]] VkSurfaceKHR surface() const noexcept { return m_surface; }
     [[nodiscard]] VkQueue graphicsQueue() const noexcept { return m_graphicsQueue; }
@@ -142,6 +142,18 @@ public:
         VkBuffer buffer, VkImage image, std::uint32_t width, std::uint32_t height, std::uint32_t layerCount
     ) const;
 
+    /// \brief Create a new Image
+    ///
+    /// Create a new image, allocate memory for it and map the memory regions from physical device to the CPU
+    ///
+    /// \param imageInfo \ref VkImageCreateInfo struct with the required information filled out
+    /// \param image where to store the image handle to
+    /// \param allocation where to store the image memory handle to
+    void createImage(
+        const VkImageCreateInfo& imageInfo,
+        VkImage& image,
+        VmaAllocation& allocation
+    ) const;
     /// \brief Create a new Image
     ///
     /// Create a new image, allocate memory for it and map the memory regions from physical device to the CPU
