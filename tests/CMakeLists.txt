@@ -6,7 +6,7 @@ include(${PROJECT_SOURCE_DIR}/cmake/StaticAnalyzers.cmake)
 add_executable(${TEST_NAME}
     ./main.cpp
     ./core/BufferTest.cpp
-    ./core/TextureTest.cpp
+    ./core/Texture2DTest.cpp
     ./mocks/MockInputHandler.cpp
     ./utility/CameraTest.cpp
     ./utility/KeyboardMovementControllerTest.cpp

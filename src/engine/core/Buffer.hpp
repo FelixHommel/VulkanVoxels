@@ -4,10 +4,10 @@
 #include "Device.hpp"
 
 #include "vk_mem_alloc.h"
+#include <ranges>
 #include <vulkan/vulkan_core.h>
 
 #include <cstdint>
-#include <iterator>
 #include <memory>
 #include <type_traits>
 
@@ -138,7 +138,7 @@ public:
     /// \param data the data that is being written to the buffer
     /// \param offset (optional) offset into the buffer from where to begin writing memory (in byte)
     template<typename T>
-        requires std::is_trivially_copyable_v<T> && std::is_standard_layout_v<T> && (!std::is_pointer_v<T>)
+        requires (!std::ranges::contiguous_range<T>) && std::is_trivially_copyable_v<T>
     void writeToBuffer(const T& data, VkDeviceSize offset = 0)
     {
         writeToBufferRaw(&data, sizeof(data), offset);
@@ -148,19 +148,12 @@ public:
     /// \tparam C can be any container that supports continuous iterators and whose data elements can be trivially copied
     /// \param data the data container that contains the data itself
     /// \param offset (optional) offset into the buffer from where to begin writing memory (in byte)
-    template<typename C>
-        requires std::contiguous_iterator<typename C::pointer> && std::is_trivially_copyable_v<typename C::value_type>
+    template<typename C, typename T = C::value_type>
+        requires std::ranges::contiguous_range<C> && std::is_trivially_copyable_v<typename C::value_type>
     void writeToBuffer(const C& data, VkDeviceSize offset = 0)
     {
-        using T = typename C::value_type;
         writeToBufferRaw(data.data(), sizeof(T) * data.size(), offset);
     }
-    /// \brief Write data to the buffer
-    ///
-    /// \param pData pointer to the data in CPU accessible memory
-    /// \param size of the data pointed to by pData (in bytes)
-    /// \param offset (optional) offset in to the buffer from where to start writing (in bytes)
-    void writeToBufferRaw(const void* pData, VkDeviceSize size, VkDeviceSize offset = 0) const;
 
     /// \brief Flush a range of memory to make it available to the GPU.
     ///
@@ -199,6 +192,8 @@ private:
     void* m_mapped{ nullptr };
     VkBuffer m_buffer{ VK_NULL_HANDLE };
     VmaAllocation m_allocation{ VK_NULL_HANDLE };
+
+    void writeToBufferRaw(const void* pData, VkDeviceSize size, VkDeviceSize offset = 0) const;
 
     static VkDeviceSize getAlignment(VkDeviceSize elementSize, VkDeviceSize minOffsetAlignment);
 };

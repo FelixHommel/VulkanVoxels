@@ -155,24 +155,6 @@ void Buffer::unmap()
     m_mapped = nullptr;
 }
 
-void Buffer::writeToBufferRaw(const void* pData, VkDeviceSize size, VkDeviceSize offset) const
-{
-#if defined(VV_ENABLE_ASSERTS)
-    assert(m_mapped != nullptr && "Cannot copy to unmapped buffer");
-    assert(offset + size <= m_bufferSize && "The data that is being written to the buffer exceeds the buffer's size");
-#endif
-
-    if(offset == 0)
-        [[likely]] // NOTE: unless in the future more buffers are using offsets this may be a small optimization
-        std::memcpy(m_mapped, pData, size);
-    else
-    {
-        auto* memOffset{ std::next(static_cast<std::byte*>(m_mapped), static_cast<std::ptrdiff_t>(offset)) };
-
-        std::memcpy(memOffset, pData, size);
-    }
-}
-
 void Buffer::flush(VkDeviceSize size, VkDeviceSize offset) const
 {
     if(m_isCoherent)
@@ -189,6 +171,28 @@ VkDescriptorBufferInfo Buffer::descriptorInfo(VkDeviceSize size, VkDeviceSize of
 VkResult Buffer::invalidate(VkDeviceSize size, VkDeviceSize offset) const
 {
     return vmaInvalidateAllocation(device->allocator(), m_allocation, offset, size);
+}
+
+/// \brief Write data to the buffer
+///
+/// \param pData pointer to the data in CPU accessible memory
+/// \param size of the data pointed to by pData (in bytes)
+/// \param offset (optional) offset in to the buffer from where to start writing (in bytes)
+void Buffer::writeToBufferRaw(const void* pData, VkDeviceSize size, VkDeviceSize offset) const
+{
+#if defined(VV_ENABLE_ASSERTS)
+    assert(m_mapped != nullptr && "Cannot copy to unmapped buffer");
+    assert(offset + size <= m_bufferSize && "The data that is being written to the buffer exceeds the buffer's size");
+#endif
+
+    if(offset == 0) [[likely]] // NOTE: unless in the future more buffers are using offsets this may be a small optimization
+        std::memcpy(m_mapped, pData, size);
+    else
+    {
+        auto* memOffset{ std::next(static_cast<std::byte*>(m_mapped), static_cast<std::ptrdiff_t>(offset)) };
+
+        std::memcpy(memOffset, pData, size);
+    }
 }
 
 /// \brief Determine the minimum sice that a element needs to be stored in the buffer

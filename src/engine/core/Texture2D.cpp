@@ -2,24 +2,49 @@
 
 #include "core/Buffer.hpp"
 #include "utility/exceptions/Exception.hpp"
+#include "utility/exceptions/FileException.hpp"
 #include "utility/exceptions/VulkanException.hpp"
 
 #include "external/stb_image.h"
 #include <vulkan/vulkan_core.h>
 
-#include <algorithm>
 #include <cmath>
+#include <cstddef>
 #include <cstdint>
 #include <memory>
+#include <span>
 #include <utility>
 
 namespace vv
 {
 
-Texture2D::Texture2D(std::shared_ptr<Device> device, const std::filesystem::path& filepath)
-    : device(std::move(device))
+Texture2D Texture2D::loadFromFile(std::shared_ptr<Device> device, const std::filesystem::path& filepath, const TextureConfig& config)
 {
-    loadFromFile(filepath);
+    // NOTE: When HDR is implemented the sRGB parameter plays a role
+    int texWidth{ 0 };
+    int texHeight{ 0 };
+    int texChannels{ 0 };
+    stbi_uc* pixels{ stbi_load(filepath.c_str(), &texWidth, &texHeight, &texChannels, STBI_rgb_alpha) };
+
+    if(pixels == nullptr)
+        throw FileException("Failed to load texture image", filepath);
+
+    const auto size{ static_cast<std::size_t>(texWidth * texHeight) * 4 };
+    std::span<const std::byte> pixelSpan{ reinterpret_cast<const std::byte*>(pixels), size };
+    Texture2D texture{ std::move(device), static_cast<std::uint32_t>(texWidth), static_cast<std::uint32_t>(texHeight), config, pixelSpan };
+    stbi_image_free(pixels);
+
+    return texture;
+}
+
+Texture2D::Texture2D(std::shared_ptr<Device> device, std::uint32_t width, std::uint32_t height, const TextureConfig& config, std::span<const std::byte> pixels)
+    : device(std::move(device))
+    , m_width{ width }
+    , m_height{ height }
+    , m_mipLevels{ config.mipmapsEnable ? static_cast<uint32_t>(std::floor(std::log2(std::max(m_width, m_height)))) + 1 : 1 }
+    , m_config{ config }
+{
+    uploadImageData(pixels);
     generateMipMaps();
     createImageView();
     createSampler();
@@ -29,10 +54,12 @@ Texture2D::Texture2D(std::shared_ptr<Device> device, const std::filesystem::path
 
 Texture2D::~Texture2D()
 {
+    if(device == nullptr)
+        return;
+
+    vkDestroySampler(device->device(), m_sampler, nullptr);
     vkDestroyImageView(device->device(), m_imageView, nullptr);
     vmaDestroyImage(device->allocator(), m_image, m_allocation);
-    if(m_sampler != VK_NULL_HANDLE)
-        vkDestroySampler(device->device(), m_sampler, nullptr);
 }
 
 Texture2D::Texture2D(Texture2D&& other) noexcept
@@ -45,6 +72,7 @@ Texture2D::Texture2D(Texture2D&& other) noexcept
     , m_width(other.m_width)
     , m_height(other.m_height)
     , m_mipLevels(other.m_mipLevels)
+    , m_config(other.m_config)
 {
     other.m_image = VK_NULL_HANDLE;
     other.m_imageView = VK_NULL_HANDLE;
@@ -54,7 +82,7 @@ Texture2D::Texture2D(Texture2D&& other) noexcept
 
     other.m_width = 0;
     other.m_height = 0;
-    other.m_mipLevels = 0;
+    other.m_mipLevels = 1;
 }
 
 void Texture2D::updateDescriptor() noexcept
@@ -64,28 +92,16 @@ void Texture2D::updateDescriptor() noexcept
     m_descriptor.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
 }
 
-/// \brief Load the image data from the file
+/// \brief Upload the image data to the Device
 ///
-/// \param filepath path to the image texture
-void Texture2D::loadFromFile(const std::filesystem::path& filepath)
+/// \param pixels the raw image data in bytes to upload
+void Texture2D::uploadImageData(std::span<const std::byte> pixels)
 {
-    int texWidth{ 0 };
-    int texHeight{ 0 };
-    int texChannels{ 0 };
-    stbi_uc* pixels{ stbi_load(filepath.c_str(), &texWidth, &texHeight, &texChannels, STBI_rgb_alpha) };
-    m_width = static_cast<std::uint32_t>(texWidth);
-    m_height = static_cast<std::uint32_t>(texHeight);
-    m_mipLevels = static_cast<std::uint32_t>(std::floor(std::log2(std::max(texWidth, texHeight)))) + 1;
-
-    if(pixels == nullptr)
-        throw Exception("Failed to load texture image");
-
-    VkDeviceSize imageSize{ static_cast<VkDeviceSize>(texWidth * texHeight) * 4 };
+    const VkDeviceSize imageSize{ static_cast<VkDeviceSize>(m_width * m_height) * 4 };
     auto stagingBuffer{ Buffer::createStagingBuffer(this->device, imageSize, 1) };
 
-    stagingBuffer.writeToBufferRaw(pixels, imageSize);
+    stagingBuffer.writeToBuffer(pixels);
     stagingBuffer.flush();
-    stbi_image_free(pixels);
     
     VkImageCreateInfo imageCI{};
     imageCI.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
@@ -97,7 +113,7 @@ void Texture2D::loadFromFile(const std::filesystem::path& filepath)
     };
     imageCI.mipLevels = m_mipLevels;
     imageCI.arrayLayers = 1;
-    imageCI.format = m_format;
+    imageCI.format = m_config.format;
     imageCI.tiling = VK_IMAGE_TILING_OPTIMAL;
     imageCI.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
     imageCI.usage = VK_IMAGE_USAGE_TRANSFER_SRC_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT;
@@ -113,7 +129,7 @@ void Texture2D::loadFromFile(const std::filesystem::path& filepath)
 void Texture2D::generateMipMaps()
 {
     VkFormatProperties formatProperties{};
-    vkGetPhysicalDeviceFormatProperties(device->physicalDevice(), m_format, &formatProperties);
+    vkGetPhysicalDeviceFormatProperties(device->physicalDevice(), m_config.format, &formatProperties);
 
     if((formatProperties.optimalTilingFeatures & VK_FORMAT_FEATURE_SAMPLED_IMAGE_FILTER_LINEAR_BIT) == 0u)
         throw Exception("Texture image format does not support linear blitting");
@@ -198,7 +214,7 @@ void Texture2D::createImageView()
     imageViewCI.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
     imageViewCI.image = m_image;
     imageViewCI.viewType = VK_IMAGE_VIEW_TYPE_2D;
-    imageViewCI.format = m_format;
+    imageViewCI.format = m_config.format;
     imageViewCI.subresourceRange = {
         .aspectMask = VK_IMAGE_ASPECT_COLOR_BIT,
         .baseMipLevel = 0,
@@ -217,17 +233,17 @@ void Texture2D::createSampler()
 {
     VkSamplerCreateInfo samplerCI{};
     samplerCI.sType = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO;
-    samplerCI.magFilter = VK_FILTER_LINEAR;
-    samplerCI.minFilter = VK_FILTER_LINEAR;
-    samplerCI.addressModeU = VK_SAMPLER_ADDRESS_MODE_REPEAT;
-    samplerCI.addressModeV = VK_SAMPLER_ADDRESS_MODE_REPEAT;
-    samplerCI.addressModeW = VK_SAMPLER_ADDRESS_MODE_REPEAT;
-    samplerCI.anisotropyEnable = VK_TRUE;
-    samplerCI.maxAnisotropy = device->properties.limits.maxSamplerAnisotropy;
+    samplerCI.minFilter = m_config.minFilter;
+    samplerCI.magFilter = m_config.magFilter;
+    samplerCI.addressModeU = m_config.addressMode;
+    samplerCI.addressModeV = m_config.addressMode;
+    samplerCI.addressModeW = m_config.addressMode;
+    samplerCI.anisotropyEnable = m_config.anisotropyEnable ? VK_TRUE : VK_FALSE;
+    samplerCI.maxAnisotropy = m_config.anisotropyEnable ? device->properties.limits.maxSamplerAnisotropy : 1.f;
     samplerCI.borderColor = VK_BORDER_COLOR_INT_OPAQUE_BLACK;
     samplerCI.unnormalizedCoordinates = VK_FALSE;
     samplerCI.compareEnable = VK_FALSE;
-    samplerCI.mipmapMode = VK_SAMPLER_MIPMAP_MODE_LINEAR;
+    samplerCI.mipmapMode = m_config.mipmapMode;
     samplerCI.minLod = 0.f;
     samplerCI.maxLod = static_cast<float>(m_mipLevels);
     samplerCI.mipLodBias = 0.f;
