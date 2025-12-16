@@ -5,6 +5,7 @@ build
 .idea
 resources/compiledShaders/*
 !resources/models/*
+clang-tidy-out.log
 
 # Created by https://www.toptal.com/developers/gitignore/api/cmake,c++
 # Edit at https://www.toptal.com/developers/gitignore?templates=cmake,c++
