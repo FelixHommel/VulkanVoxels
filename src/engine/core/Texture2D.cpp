@@ -1,16 +1,20 @@
 #include "Texture2D.hpp"
 
 #include "core/Buffer.hpp"
+#include "core/Device.hpp"
 #include "utility/exceptions/Exception.hpp"
 #include "utility/exceptions/FileException.hpp"
 #include "utility/exceptions/VulkanException.hpp"
 
 #include "external/stb_image.h"
+#include "vk_mem_alloc.h"
 #include <vulkan/vulkan_core.h>
 
+#include <algorithm>
 #include <cmath>
 #include <cstddef>
 #include <cstdint>
+#include <filesystem>
 #include <memory>
 #include <span>
 #include <utility>

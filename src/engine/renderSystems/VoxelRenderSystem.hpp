@@ -2,8 +2,14 @@
 #define VULKAN_VOXELS_SRC_ENGINE_RENDER_SYSTEMS_VOXEL_RENDER_SYSTEM_HPP
 
 #include "core/ComputePipeline.hpp"
+#include "core/Device.hpp"
 #include "renderSystems/IRenderSystem.hpp"
 #include "utility/FrameInfo.hpp"
+
+#include <vulkan/vulkan_core.h>
+
+#include <filesystem>
+#include <memory>
 
 namespace vv
 {

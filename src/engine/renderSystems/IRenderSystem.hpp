@@ -7,6 +7,7 @@
 
 #include <vulkan/vulkan_core.h>
 
+#include <filesystem>
 #include <memory>
 #include <utility>
 
