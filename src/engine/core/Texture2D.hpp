@@ -28,13 +28,10 @@ public:
     VkSamplerAddressMode addressMode{ VK_SAMPLER_ADDRESS_MODE_REPEAT };
     VkSamplerMipmapMode mipmapMode{ VK_SAMPLER_MIPMAP_MODE_LINEAR };
     // TODO: Implement functionality of these flags. Currently non-functional (mipmaps and anisotropy alwasy on)
-    bool mipmapsEnable{ true }; 
+    bool mipmapsEnable{ true };
     bool anisotropyEnable{ true };
 
-    static TextureConfig albedo()
-    {
-        return {};
-    }
+    static TextureConfig albedo() { return {}; }
 
     static TextureConfig normal()
     {
@@ -61,7 +58,9 @@ public:
 class Texture2D
 {
 public:
-    static Texture2D loadFromFile(std::shared_ptr<Device> device, const std::filesystem::path& filepath, const TextureConfig& config);
+    static Texture2D loadFromFile(
+        std::shared_ptr<Device> device, const std::filesystem::path& filepath, const TextureConfig& config
+    );
 
     /// \brief Create a new 2D Texture
     ///
@@ -70,7 +69,13 @@ public:
     /// \param height the height of the image
     /// \param config \ref TextureConfig containing configuring information for the texture
     /// \param pixels (optional) the raw image data
-    Texture2D(std::shared_ptr<Device> device, std::uint32_t width, std::uint32_t height, const TextureConfig& config, std::span<const std::byte> pixels = {});
+    Texture2D(
+        std::shared_ptr<Device> device,
+        std::uint32_t width,
+        std::uint32_t height,
+        const TextureConfig& config,
+        std::span<const std::byte> pixels = {}
+    );
     ~Texture2D();
 
     Texture2D(const Texture2D&) = delete;

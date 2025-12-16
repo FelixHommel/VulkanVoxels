@@ -149,11 +149,7 @@ public:
     /// \param imageInfo \ref VkImageCreateInfo struct with the required information filled out
     /// \param image where to store the image handle to
     /// \param allocation where to store the image memory handle to
-    void createImage(
-        const VkImageCreateInfo& imageInfo,
-        VkImage& image,
-        VmaAllocation& allocation
-    ) const;
+    void createImage(const VkImageCreateInfo& imageInfo, VkImage& image, VmaAllocation& allocation) const;
     /// \brief Create a new Image
     ///
     /// Create a new image, allocate memory for it and map the memory regions from physical device to the CPU

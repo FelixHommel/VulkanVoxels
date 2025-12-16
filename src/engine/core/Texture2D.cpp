@@ -22,7 +22,9 @@
 namespace vv
 {
 
-Texture2D Texture2D::loadFromFile(std::shared_ptr<Device> device, const std::filesystem::path& filepath, const TextureConfig& config)
+Texture2D Texture2D::loadFromFile(
+    std::shared_ptr<Device> device, const std::filesystem::path& filepath, const TextureConfig& config
+)
 {
     // NOTE: When HDR is implemented the sRGB parameter plays a role
     int texWidth{ 0 };
@@ -35,24 +37,35 @@ Texture2D Texture2D::loadFromFile(std::shared_ptr<Device> device, const std::fil
 
     const auto size{ static_cast<std::size_t>(texWidth * texHeight) * 4 };
     std::span<const std::byte> pixelSpan{ reinterpret_cast<const std::byte*>(pixels), size };
-    Texture2D texture{ std::move(device), static_cast<std::uint32_t>(texWidth), static_cast<std::uint32_t>(texHeight), config, pixelSpan };
+    Texture2D texture{ std::move(device),
+                       static_cast<std::uint32_t>(texWidth),
+                       static_cast<std::uint32_t>(texHeight),
+                       config,
+                       pixelSpan };
     stbi_image_free(pixels);
 
     return texture;
 }
 
-Texture2D::Texture2D(std::shared_ptr<Device> device, std::uint32_t width, std::uint32_t height, const TextureConfig& config, std::span<const std::byte> pixels)
+Texture2D::Texture2D(
+    std::shared_ptr<Device> device,
+    std::uint32_t width,
+    std::uint32_t height,
+    const TextureConfig& config,
+    std::span<const std::byte> pixels
+)
     : device(std::move(device))
     , m_width{ width }
     , m_height{ height }
-    , m_mipLevels{ config.mipmapsEnable ? static_cast<uint32_t>(std::floor(std::log2(std::max(m_width, m_height)))) + 1 : 1 }
+    , m_mipLevels{ config.mipmapsEnable ? static_cast<uint32_t>(std::floor(std::log2(std::max(m_width, m_height)))) + 1
+                                        : 1 }
     , m_config{ config }
 {
     uploadImageData(pixels);
     generateMipMaps();
     createImageView();
     createSampler();
-    
+
     updateDescriptor();
 }
 
@@ -106,15 +119,11 @@ void Texture2D::uploadImageData(std::span<const std::byte> pixels)
 
     stagingBuffer.writeToBuffer(pixels);
     stagingBuffer.flush();
-    
+
     VkImageCreateInfo imageCI{};
     imageCI.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
     imageCI.imageType = VK_IMAGE_TYPE_2D;
-    imageCI.extent = {
-        .width = m_width,
-        .height = m_height,
-        .depth = 1
-    };
+    imageCI.extent = { .width = m_width, .height = m_height, .depth = 1 };
     imageCI.mipLevels = m_mipLevels;
     imageCI.arrayLayers = 1;
     imageCI.format = m_config.format;
@@ -161,38 +170,57 @@ void Texture2D::generateMipMaps()
         barrier.srcAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
         barrier.dstAccessMask = VK_ACCESS_TRANSFER_READ_BIT;
 
-        vkCmdPipelineBarrier(commandBuffer, VK_PIPELINE_STAGE_TRANSFER_BIT, VK_PIPELINE_STAGE_TRANSFER_BIT, 0, 0, nullptr, 0, nullptr, 1, &barrier);
+        vkCmdPipelineBarrier(
+            commandBuffer,
+            VK_PIPELINE_STAGE_TRANSFER_BIT,
+            VK_PIPELINE_STAGE_TRANSFER_BIT,
+            0,
+            0,
+            nullptr,
+            0,
+            nullptr,
+            1,
+            &barrier
+        );
 
         VkImageBlit blit{};
         blit.srcOffsets[0] = { .x = 0, .y = 0, .z = 0 };
         blit.srcOffsets[1] = { .x = mipWidth, .y = mipHeight, .z = 1 };
-        blit.srcSubresource = {
-            .aspectMask = VK_IMAGE_ASPECT_COLOR_BIT,
-            .mipLevel = i - 1,
-            .baseArrayLayer = 0,
-            .layerCount = 1
-        };
+        blit.srcSubresource
+            = { .aspectMask = VK_IMAGE_ASPECT_COLOR_BIT, .mipLevel = i - 1, .baseArrayLayer = 0, .layerCount = 1 };
         blit.dstOffsets[0] = { .x = 0, .y = 0, .z = 0 };
-        blit.dstOffsets[1] = {
-            .x = mipWidth > 1 ? mipWidth / 2 : 1,
-            .y = mipHeight > 1 ? mipHeight / 2 : 1,
-            .z = 1
-        };
-        blit.dstSubresource = {
-            .aspectMask = VK_IMAGE_ASPECT_COLOR_BIT,
-            .mipLevel = i,
-            .baseArrayLayer = 0,
-            .layerCount = 1
-        };
+        blit.dstOffsets[1] = { .x = mipWidth > 1 ? mipWidth / 2 : 1, .y = mipHeight > 1 ? mipHeight / 2 : 1, .z = 1 };
+        blit.dstSubresource
+            = { .aspectMask = VK_IMAGE_ASPECT_COLOR_BIT, .mipLevel = i, .baseArrayLayer = 0, .layerCount = 1 };
 
-        vkCmdBlitImage(commandBuffer, m_image, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL, m_image, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, 1, &blit, VK_FILTER_LINEAR);
+        vkCmdBlitImage(
+            commandBuffer,
+            m_image,
+            VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL,
+            m_image,
+            VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
+            1,
+            &blit,
+            VK_FILTER_LINEAR
+        );
 
         barrier.oldLayout = VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL;
         barrier.newLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
         barrier.srcAccessMask = VK_ACCESS_TRANSFER_READ_BIT;
         barrier.dstAccessMask = VK_ACCESS_SHADER_READ_BIT;
 
-        vkCmdPipelineBarrier(commandBuffer, VK_PIPELINE_STAGE_TRANSFER_BIT, VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT, 0, 0, nullptr, 0, nullptr, 1, &barrier);
+        vkCmdPipelineBarrier(
+            commandBuffer,
+            VK_PIPELINE_STAGE_TRANSFER_BIT,
+            VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT,
+            0,
+            0,
+            nullptr,
+            0,
+            nullptr,
+            1,
+            &barrier
+        );
 
         if(mipWidth > 1)
             mipWidth /= 2;
@@ -206,7 +234,18 @@ void Texture2D::generateMipMaps()
     barrier.srcAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
     barrier.dstAccessMask = VK_ACCESS_SHADER_READ_BIT;
 
-    vkCmdPipelineBarrier(commandBuffer, VK_PIPELINE_STAGE_TRANSFER_BIT, VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT, 0, 0, nullptr, 0, nullptr, 1, &barrier);
+    vkCmdPipelineBarrier(
+        commandBuffer,
+        VK_PIPELINE_STAGE_TRANSFER_BIT,
+        VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT,
+        0,
+        0,
+        nullptr,
+        0,
+        nullptr,
+        1,
+        &barrier
+    );
 
     device->endSingleTimeCommand(commandBuffer);
 }
@@ -219,13 +258,11 @@ void Texture2D::createImageView()
     imageViewCI.image = m_image;
     imageViewCI.viewType = VK_IMAGE_VIEW_TYPE_2D;
     imageViewCI.format = m_config.format;
-    imageViewCI.subresourceRange = {
-        .aspectMask = VK_IMAGE_ASPECT_COLOR_BIT,
-        .baseMipLevel = 0,
-        .levelCount = m_mipLevels,
-        .baseArrayLayer = 0,
-        .layerCount = 1
-    };
+    imageViewCI.subresourceRange = { .aspectMask = VK_IMAGE_ASPECT_COLOR_BIT,
+                                     .baseMipLevel = 0,
+                                     .levelCount = m_mipLevels,
+                                     .baseArrayLayer = 0,
+                                     .layerCount = 1 };
 
     const VkResult result{ vkCreateImageView(device->device(), &imageViewCI, nullptr, &m_imageView) };
     if(result != VK_SUCCESS)
@@ -273,14 +310,12 @@ void Texture2D::transitionImageLayout(VkImage image, VkImageLayout oldLayout, Vk
     barrier.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
     barrier.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
     barrier.image = image;
-    barrier.subresourceRange = {
-        .aspectMask = VK_IMAGE_ASPECT_COLOR_BIT,
-        .baseMipLevel = 0,
-        .levelCount = m_mipLevels,
-        .baseArrayLayer = 0,
-        .layerCount = 1
-    };
-    
+    barrier.subresourceRange = { .aspectMask = VK_IMAGE_ASPECT_COLOR_BIT,
+                                 .baseMipLevel = 0,
+                                 .levelCount = m_mipLevels,
+                                 .baseArrayLayer = 0,
+                                 .layerCount = 1 };
+
     VkPipelineStageFlags srcStage{ 0 };
     VkPipelineStageFlags dstStage{ 0 };
 

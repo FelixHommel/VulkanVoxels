@@ -138,7 +138,7 @@ public:
     /// \param data the data that is being written to the buffer
     /// \param offset (optional) offset into the buffer from where to begin writing memory (in byte)
     template<typename T>
-        requires (!std::ranges::contiguous_range<T>) && std::is_trivially_copyable_v<T>
+        requires(!std::ranges::contiguous_range<T>) && std::is_trivially_copyable_v<T>
     void writeToBuffer(const T& data, VkDeviceSize offset = 0)
     {
         writeToBufferRaw(&data, sizeof(data), offset);

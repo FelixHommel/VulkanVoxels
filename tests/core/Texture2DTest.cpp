@@ -35,7 +35,7 @@ TEST_F(Texture2DTest, createTextureFromMemory)
     constexpr std::uint32_t h{ 256 };
     const std::vector<std::uint8_t> pixels(static_cast<std::size_t>(w * h * 4), 255);
     const auto tex{ Texture2D(ctx->device(), w, h, TextureConfig::albedo(), std::as_bytes(std::span(pixels))) };
-    
+
     EXPECT_NE(tex.image(), VK_NULL_HANDLE);
 }
 

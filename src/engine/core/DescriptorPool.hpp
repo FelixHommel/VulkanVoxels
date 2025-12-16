@@ -51,7 +51,7 @@ public:
         [[nodiscard]] std::unique_ptr<DescriptorPool> build() const;
 
     private:
-        static constexpr std::uint32_t DEFAULT_MAX_SETS{ 1'000 };
+        static constexpr std::uint32_t DEFAULT_MAX_SETS{ 1000 };
 
         std::shared_ptr<Device> m_device;
         std::vector<VkDescriptorPoolSize> m_poolSizes;

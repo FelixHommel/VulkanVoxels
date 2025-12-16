@@ -247,11 +247,7 @@ void Device::copyBufferToImage(
     endSingleTimeCommand(commandBuffer);
 }
 
-void Device::createImage(
-    const VkImageCreateInfo& imageInfo,
-    VkImage& image,
-    VmaAllocation& allocation
-) const
+void Device::createImage(const VkImageCreateInfo& imageInfo, VkImage& image, VmaAllocation& allocation) const
 {
     VmaAllocationCreateInfo allocInfo{};
     allocInfo.usage = VMA_MEMORY_USAGE_AUTO_PREFER_DEVICE;

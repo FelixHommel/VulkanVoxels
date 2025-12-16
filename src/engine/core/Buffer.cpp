@@ -63,7 +63,9 @@ Buffer Buffer::createStagingBuffer(std::shared_ptr<Device> device, VkDeviceSize 
     return { std::move(device), elementSize, elementCount, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, allocInfo };
 }
 
-Buffer Buffer::createImageStagingBuffer(std::shared_ptr<Device> device, VkDeviceSize elementSize, std::uint32_t elementCount)
+Buffer Buffer::createImageStagingBuffer(
+    std::shared_ptr<Device> device, VkDeviceSize elementSize, std::uint32_t elementCount
+)
 {
     VmaAllocationCreateInfo allocInfo{};
     allocInfo.usage = VMA_MEMORY_USAGE_AUTO_PREFER_HOST;
@@ -185,7 +187,8 @@ void Buffer::writeToBufferRaw(const void* pData, VkDeviceSize size, VkDeviceSize
     assert(offset + size <= m_bufferSize && "The data that is being written to the buffer exceeds the buffer's size");
 #endif
 
-    if(offset == 0) [[likely]] // NOTE: unless in the future more buffers are using offsets this may be a small optimization
+    if(offset == 0)
+        [[likely]] // NOTE: unless in the future more buffers are using offsets this may be a small optimization
         std::memcpy(m_mapped, pData, size);
     else
     {
