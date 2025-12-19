@@ -16,6 +16,7 @@ add_library(${NAME}
     ./core/Texture2D.cpp
     ./core/Window.cpp
     ./renderSystems/BasicRenderSystem.cpp
+    ./renderSystems/PBRRenderSystem.cpp
     ./renderSystems/PointLightRenderSystem.cpp
     ./renderSystems/IRenderSystem.cpp
     ./renderSystems/VoxelRenderSystem.cpp
@@ -28,6 +29,8 @@ add_library(${NAME}
     ./utility/exceptions/ResourceException.cpp
     ./utility/object/Object.cpp
     ./utility/object/ObjectBuilder.cpp
+    ./utility/material/Material.cpp
+    ./utility/material/MaterialBuilder.cpp
     ./external/stb_image_impl.cpp
     ./external/tiny_obj_loader_impl.cpp
     ./external/vma_impl.cpp
@@ -51,6 +54,7 @@ target_sources(${NAME}
             ./core/Texture2D.hpp
             ./core/Window.hpp
             ./renderSystems/BasicRenderSystem.hpp
+            ./renderSystems/PBRRenderSystem.hpp
             ./renderSystems/PointLightRenderSystem.hpp
             ./renderSystems/IRenderSystem.hpp
             ./renderSystems/VoxelRenderSystem.hpp
@@ -73,6 +77,9 @@ target_sources(${NAME}
             ./utility/exceptions/VulkanException.hpp
             ./utility/exceptions/FileException.hpp
             ./utility/exceptions/ResourceException.hpp
+            ./utility/material/Material.hpp
+            ./utility/material/MaterialAlphaMode.hpp
+            ./utility/material/MaterialBuilder.hpp
             ./external/stb_image.h
             ./external/tiny_obj_loader.h
 )
