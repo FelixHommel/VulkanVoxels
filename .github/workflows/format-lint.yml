@@ -30,14 +30,25 @@ jobs:
           else
             echo "Format check failed on dev/feature branch - please run clang-format"
           fi
+
   clang-tidy:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Install dependencies
+      - name: Install system dependencies
         run: |
           sudo apt-get update
-          sudo apt install -y clang-tidy-20 cmake ninja-build
+          sudo apt install -y \
+          cmake \
+          ninja-build \
+          gcc-14 \
+          g++-14 \
+          clang-tidy-20 \
+          libxrandr-dev \
+          libxinerama-dev \
+          libxcursor-dev \
+          libxi-dev \
+          libgl1-mesa-dev
       - name: Setup vckpkg
         uses: lukka/run-vcpkg@v11
         with:
