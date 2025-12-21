@@ -19,7 +19,9 @@ MaterialBuilder& MaterialBuilder::withNormal(std::shared_ptr<Texture2D> tex, flo
     return *this;
 }
 
-MaterialBuilder& MaterialBuilder::withMetallicRoughness(std::shared_ptr<Texture2D> tex, float factorMetallic, float factorRoughness)
+MaterialBuilder& MaterialBuilder::withMetallicRoughness(
+    std::shared_ptr<Texture2D> tex, float factorMetallic, float factorRoughness
+)
 {
     config.metallicRoughnessTexture = std::move(tex);
     config.metallicFactor = factorMetallic;
@@ -65,7 +67,11 @@ MaterialBuilder& MaterialBuilder::doubleSided(bool enable)
     return *this;
 }
 
-Material MaterialBuilder::build(std::shared_ptr<Device> device, std::shared_ptr<DescriptorPool> /*pool*/, std::shared_ptr<DescriptorSetLayout> /*layout*/)
+Material MaterialBuilder::build(
+    std::shared_ptr<Device> device,
+    std::shared_ptr<DescriptorPool> /*pool*/,
+    std::shared_ptr<DescriptorSetLayout> /*layout*/
+)
 {
     return { std::move(device), config };
 }

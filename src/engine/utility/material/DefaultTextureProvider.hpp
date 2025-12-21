@@ -20,11 +20,16 @@ class DefaultTextureProvider
 {
 public:
     DefaultTextureProvider(std::shared_ptr<Device> device)
-        : m_white{ std::make_shared<Texture2D>(device, 1, 1, TextureConfig::albedo(), std::span<const std::byte>(whiteColorArray)) }
-        , m_black{ std::make_shared<Texture2D>(device, 1, 1, TextureConfig::albedo(), std::span<const std::byte>(blackColorArray)) }
-        , m_normal{ std::make_shared<Texture2D>(device, 1, 1, TextureConfig::normal(), std::span<const std::byte>(normalColorArray)) }
-    {
-    }
+        : m_white{ std::make_shared<Texture2D>(
+              device, 1, 1, TextureConfig::albedo(), std::span<const std::byte>(whiteColorArray)
+          ) }
+        , m_black{ std::make_shared<Texture2D>(
+              device, 1, 1, TextureConfig::albedo(), std::span<const std::byte>(blackColorArray)
+          ) }
+        , m_normal{ std::make_shared<Texture2D>(
+              device, 1, 1, TextureConfig::normal(), std::span<const std::byte>(normalColorArray)
+          ) }
+    {}
     ~DefaultTextureProvider() = default;
 
     DefaultTextureProvider(const DefaultTextureProvider&) = delete;
