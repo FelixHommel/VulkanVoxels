@@ -41,12 +41,13 @@ jobs:
           sudo apt install -y \
           cmake \
           ninja-build \
-          gcc-14 \
-          g++-14 \
+          clang-20 \
+          clang++-20 \
           clang-tidy-20 \
           libxrandr-dev \
           libxinerama-dev \
           libxcursor-dev \
+          libxkbcommon-dev \
           libxi-dev \
           libgl1-mesa-dev
       - name: Setup vckpkg
