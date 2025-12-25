@@ -49,10 +49,6 @@ jobs:
           libxkbcommon-dev \
           libxi-dev \
           libgl1-mesa-dev
-      - name: Setup vckpkg
-        uses: lukka/run-vcpkg@v11
-        with:
-          vcpkgGitCommitId: 'a42af01b72c28a8e1d7b48107b33e4f286a55ef6'
       - name: Install Vulkan SDK
         uses: humbletim/setup-vulkan-sdk@v1.2.1
         with:
@@ -61,7 +57,7 @@ jobs:
           vulkan-use-cache: true
       - name: Configure CMake for clang-tidy
         run: |
-         cmake --preset clang-debug -DCMAKE_TOOLCHAIN_FILE="${VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake"
+         cmake --preset clang-debug
       - name: Run clang-tidy on changed files
         id: tidy
         continue-on-error: ${{ github.ref != 'refs/heads/main' }}

@@ -23,10 +23,6 @@ jobs:
           libxcursor-dev \
           libxi-dev \
           libgl1-mesa-dev
-      - name: Setup vckpkg
-        uses: lukka/run-vcpkg@v11
-        with:
-          vcpkgGitCommitId: 'a42af01b72c28a8e1d7b48107b33e4f286a55ef6'
       - name: Install Vulkan SDK
         uses: humbletim/setup-vulkan-sdk@v1.2.1
         with:
@@ -37,7 +33,7 @@ jobs:
         id: build
         continue-on-error: true
         run: |
-          cmake --preset debug -DCMAKE_TOOLCHAIN_FILE="${VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake"
+          cmake --preset debug
           cmake --build --preset debug
       - name: Summary
         run: |
@@ -49,3 +45,4 @@ jobs:
           else
             echo "**Build**(failure): Compilation errors found" >> $GITHUB_STEP_SUMMARY
           fi
+
