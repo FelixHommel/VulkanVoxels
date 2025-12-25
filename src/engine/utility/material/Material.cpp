@@ -2,8 +2,10 @@
 
 #include "core/Device.hpp"
 
-#include <utility>
 #include <vulkan/vulkan_core.h>
+
+#include <memory>
+#include <utility>
 
 namespace vv
 {

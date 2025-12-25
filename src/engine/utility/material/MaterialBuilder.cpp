@@ -1,5 +1,15 @@
 #include "MaterialBuilder.hpp"
 
+#include "core/DescriptorPool.hpp"
+#include "core/DescriptorSetLayout.hpp"
+#include "core/Device.hpp"
+#include "core/Texture2D.hpp"
+#include "utility/material/Material.hpp"
+#include "utility/material/MaterialAlphaMode.hpp"
+
+#include <memory>
+#include <utility>
+
 namespace vv
 {
 
