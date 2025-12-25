@@ -15,8 +15,8 @@ jobs:
           sudo apt install -y \
           cmake \
           ninja-build \
-          gcc-14 \
-          g++-14 \
+          gcc-13 \
+          g++-13 \
           libxkbcommon-dev \
           libxrandr-dev \
           libxinerama-dev \

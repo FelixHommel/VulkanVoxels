@@ -41,7 +41,7 @@ jobs:
           sudo apt install -y \
           cmake \
           ninja-build \
-          clang-20 \
+          clang-19 \
           clang-tidy-20 \
           libxrandr-dev \
           libxinerama-dev \
