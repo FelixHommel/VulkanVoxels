@@ -33,7 +33,7 @@ add_library(${NAME}
     ./utility/material/MaterialBuilder.cpp
     ./external/stb_image_impl.cpp
     ./external/tiny_obj_loader_impl.cpp
-    ./external/vma_impl.cpp
+    ./external/vk_mem_alloc_impl.cpp
 )
 
 target_sources(${NAME}
@@ -82,11 +82,8 @@ target_sources(${NAME}
             ./utility/material/MaterialBuilder.hpp
             ./external/stb_image.h
             ./external/tiny_obj_loader.h
+            ./external/vk_mem_alloc.h
 )
-
-# NOTE: Add VMA as Interface to exclude from compiler warnings that the project has
-add_library(VMA INTERFACE)
-target_include_directories(VMA INTERFACE ${vma_SOURCE_DIR}/include)
 
 target_include_directories(${NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 target_compile_features(${NAME} PRIVATE cxx_std_23)
@@ -98,5 +95,4 @@ target_link_libraries(${NAME}
         spdlog::spdlog
         glm
         glfw
-        VMA
 )
