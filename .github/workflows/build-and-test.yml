@@ -13,8 +13,8 @@ jobs:
       matrix:
         build_type: [ Debug, Release ]
         compiler:
-          - { cc: gcc-14, cxx: g++-14 }
-          - { cc: clang-20, cxx: clang++-20 }
+          - { cc: gcc-13, cxx: g++-13 }
+          - { cc: clang-19, cxx: clang++-19 }
     steps:
       - uses: actions/checkout@v4
       - name: Install system dependencies
