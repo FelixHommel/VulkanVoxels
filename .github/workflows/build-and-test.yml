@@ -46,7 +46,8 @@ jobs:
         run: |
           cmake -B build \
             -G Ninja \
-            -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
+            -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} \
+            -DVV_USE_SLANG=OFF
       - name: Build
         run: cmake --build build --config ${{ matrix.build_type }}
       - name: Run tests
@@ -91,7 +92,7 @@ jobs:
           vulkan-components: Vulkan-Headers, Vulkan-Loader
           vulkan-use-cache: true
       - name: Configure with coverage
-        run: cmake --preset=code-coverage
+        run: cmake --preset=code-coverage -DVV_USE_SLANG=OFF
       - name: Build
         run: cmake --build build/code-coverage
       - name: Run tests with coverage

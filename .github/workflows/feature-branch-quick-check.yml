@@ -33,7 +33,7 @@ jobs:
         id: build
         continue-on-error: true
         run: |
-          cmake --preset debug
+          cmake --preset debug -DVV_USE_SLANG=OFF
           cmake --build --preset debug
       - name: Summary
         run: |
