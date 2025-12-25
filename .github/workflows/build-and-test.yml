@@ -25,7 +25,8 @@ jobs:
             ninja-build \
             gcc-13 \
             g++-13 \
-            llvm-19 \
+            clang-19 \
+            clang-tools-19 \
             libxkbcommon-dev \
             libxrandr-dev \
             libxinerama-dev \
