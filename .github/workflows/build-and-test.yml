@@ -43,12 +43,6 @@ jobs:
         with:
           version: latest
           cache: true
-      - name: Dump Vulkan layers
-        run: |
-          echo "VK_LAYER_PATH=$VK_LAYER_PATH"
-          ls -R /usr/share/vulkan || true
-          ls -R $VULKAN_SDK/etc/vulkan || true
-          vulkaninfo --summary || true
       - name: Configure CMake
         env:
           CC: ${{ matrix.compiler.cc }}
@@ -57,7 +51,8 @@ jobs:
           cmake -B build \
             -G Ninja \
             -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} \
-            -DVV_USE_SLANG=OFF
+            -DVV_USE_SLANG=OFF \
+            -DVV_DEBUG=OFF
       - name: Build
         run: cmake --build build --config ${{ matrix.build_type }}
       - name: Run tests
