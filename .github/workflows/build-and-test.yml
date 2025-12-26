@@ -56,7 +56,7 @@ jobs:
       - name: Run tests
         id: tests
         continue-on-error: ${{ github.ref != 'refs/heads/main' && github.base_ref != 'main' }}
-        run: ctest --preset test-all
+        run: ctest --test-dir ./build/ --progress --output-on-failure
       - name: Test results
         if: failure() && steps.tests.outcome == 'failure'
         run: |
