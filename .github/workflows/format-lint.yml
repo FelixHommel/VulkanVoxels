@@ -49,7 +49,7 @@ jobs:
           libxkbcommon-dev \
           libxi-dev \
           libgl1-mesa-dev \
-          vulkan-validationlayers-dev
+          vulkan-utility-libraries
       - name: Install Vulkan SDK
         uses: humbletim/setup-vulkan-sdk@v1.2.1
         with:

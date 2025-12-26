@@ -35,7 +35,7 @@ jobs:
             libgl1-mesa-dev \
             libgmock-dev \
             libgtest-dev \
-            vulkan-validationlayers-dev
+            vulkan-utility-libraries
       - name: Install Vulkan SDK
         uses: humbletim/setup-vulkan-sdk@v1.2.1
         with:
@@ -90,7 +90,7 @@ jobs:
             libgl1-mesa-dev \
             libgmock-dev \
             libgtest-dev \
-            vulkan-validationlayers-dev
+            vulkan-utility-libraries
       - name: Install Vulkan SDK
         uses: humbletim/setup-vulkan-sdk@v1.2.1
         with:
