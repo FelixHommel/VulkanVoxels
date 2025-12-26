@@ -111,6 +111,18 @@
                 "stopOnFailure": false,
                 "jobs": 4
             }
+        },
+        {
+            "name": "test-coverage",
+            "displayName": "Test for code coverage",
+            "configurePreset": "code-coverage",
+            "output": {
+                "outputOnFailure": true
+            },
+            "execution": {
+                "stopOnFailure": false,
+                "jobs": 4
+            }
         }
     ]
 }
