@@ -1,8 +1,8 @@
 #ifndef VULKAN_VOXELS_SRC_ENGINE_UTILITY_MATERIAL_MATERIAL_BUILDER_HPP
 #define VULKAN_VOXELS_SRC_ENGINE_UTILITY_MATERIAL_MATERIAL_BUILDER_HPP
 
-#include "core/DescriptorSetLayout.hpp"
 #include "core/DescriptorPool.hpp"
+#include "core/DescriptorSetLayout.hpp"
 #include "core/Device.hpp"
 #include "core/Texture2D.hpp"
 #include "utility/material/Material.hpp"
@@ -28,7 +28,9 @@ public:
     ///
     /// \param tex \ref Texture2D with the albedo image
     /// \param factor for scaling the color components
-    MaterialBuilder& withAlbedo(std::shared_ptr<Texture2D> tex, const glm::vec4& factor = MaterialConfig::DEFAULT_BASE_COLOR_FACTOR);
+    MaterialBuilder& withAlbedo(
+        std::shared_ptr<Texture2D> tex, const glm::vec4& factor = MaterialConfig::DEFAULT_BASE_COLOR_FACTOR
+    );
     /// \brief Add a normal texture to the material
     ///
     /// \param tex \ref Texture2D with the normal image
@@ -39,17 +41,25 @@ public:
     /// \param tex \ref Texture2D with the metallic/roughness image
     /// \param factorMetallic for scaling the metallicness part of the texture
     /// \param factorRoughness for scaling the roughness part of the texture
-    MaterialBuilder& withMetallicRoughness(std::shared_ptr<Texture2D> tex, float factorMetallic = MaterialConfig::DEFAULT_METALLIC_FACTOR, float factorRoughness = MaterialConfig::DEFAULT_ROUGHNESS_FACTOR);
+    MaterialBuilder& withMetallicRoughness(
+        std::shared_ptr<Texture2D> tex,
+        float factorMetallic = MaterialConfig::DEFAULT_METALLIC_FACTOR,
+        float factorRoughness = MaterialConfig::DEFAULT_ROUGHNESS_FACTOR
+    );
     /// \brief Add a occlusiion texture to the image
     ///
     /// \param tex \ref Texture2D with the occlusion image
     /// \param strength how strong the occlusion effect is
-    MaterialBuilder& withOcclusion(std::shared_ptr<Texture2D> tex, float strength = MaterialConfig::DEFAULT_OCCLUSION_STRENGTH);
+    MaterialBuilder& withOcclusion(
+        std::shared_ptr<Texture2D> tex, float strength = MaterialConfig::DEFAULT_OCCLUSION_STRENGTH
+    );
     /// \brief Add a emission texture to the image
     ///
     /// \param tex \ref Texture2D with the emission image
     /// \param factor how string the emission is
-    MaterialBuilder& withEmission(std::shared_ptr<Texture2D> tex, const glm::vec3& factor = MaterialConfig::DEFAULT_EMISSIVE_FACTOR);
+    MaterialBuilder& withEmission(
+        std::shared_ptr<Texture2D> tex, const glm::vec3& factor = MaterialConfig::DEFAULT_EMISSIVE_FACTOR
+    );
 
     /// \brief Which \ref AlphaMode to use
     ///
@@ -71,7 +81,11 @@ public:
     /// \param layout \ref DescriptorSetLayout that is used
     ///
     /// \returns \ref Material constructed from the configuration
-    Material build(std::shared_ptr<Device> device, std::shared_ptr<DescriptorPool> pool, std::shared_ptr<DescriptorSetLayout> layout);
+    Material build(
+        std::shared_ptr<Device> device,
+        std::shared_ptr<DescriptorPool> pool,
+        std::shared_ptr<DescriptorSetLayout> layout
+    );
 
 private:
     MaterialConfig config{};

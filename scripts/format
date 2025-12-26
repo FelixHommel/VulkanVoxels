@@ -1,0 +1,1 @@
+find src tests -name '*.cpp' -o -name '*.hpp' | xargs clang-format-20 -i

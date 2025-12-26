@@ -89,24 +89,24 @@ private:
     std::shared_ptr<Device> device;
 
     // Textures (optional)
-    std::shared_ptr<Texture2D> m_albedoTexture; ///< Base color of the material
-    std::shared_ptr<Texture2D> m_normalTexture; ///< Surface details (no geometry required)
+    std::shared_ptr<Texture2D> m_albedoTexture;            ///< Base color of the material
+    std::shared_ptr<Texture2D> m_normalTexture;            ///< Surface details (no geometry required)
     std::shared_ptr<Texture2D> m_metallicRoughnessTexture; ///< How metalloc and how rough the material is
-    std::shared_ptr<Texture2D> m_occlusionTexture; ///< Ambient shadow in gaps
-    std::shared_ptr<Texture2D> m_emissiveTexture; ///< Self illumination and light emission
+    std::shared_ptr<Texture2D> m_occlusionTexture;         ///< Ambient shadow in gaps
+    std::shared_ptr<Texture2D> m_emissiveTexture;          ///< Self illumination and light emission
 
     // Factors (always present)
     glm::vec4 m_baseColorFactor; ///< Tint the albedo texture
-    float m_normalScale; ///< Scaling factor for normals
-    float m_metallicFactor; ///< Scaling factor for metallic
-    float m_roughnessFactor; ///< Scaling factor for roughness
-    float m_occlusionStrength; ///< Scaling factor for occlusion
-    glm::vec3 m_emissiveFactor; ///< Scaling factor for emission
+    float m_normalScale;         ///< Scaling factor for normals
+    float m_metallicFactor;      ///< Scaling factor for metallic
+    float m_roughnessFactor;     ///< Scaling factor for roughness
+    float m_occlusionStrength;   ///< Scaling factor for occlusion
+    glm::vec3 m_emissiveFactor;  ///< Scaling factor for emission
 
     // Rendering state
     AlphaMode m_alphaMode; ///< Alpha property of the Material
-    float m_alphaCutoff; ///< When a Material is fully non-seethrough
-    bool m_doubleSided; ///< Whether to render both sides or not
+    float m_alphaCutoff;   ///< When a Material is fully non-seethrough
+    bool m_doubleSided;    ///< Whether to render both sides or not
 
     // Vulkan Resources
     VkDescriptorSet m_descriptorSet{ VK_NULL_HANDLE }; ///< The Descriptor set for the Material

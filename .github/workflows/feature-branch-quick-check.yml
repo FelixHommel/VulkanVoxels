@@ -1,0 +1,48 @@
+name: Feature Branch Quick Check
+
+on:
+  push:
+    branches: [ 'feature-**' ]
+
+jobs:
+  quick-build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt install -y \
+          cmake \
+          ninja-build \
+          gcc-13 \
+          g++-13 \
+          libxkbcommon-dev \
+          libxrandr-dev \
+          libxinerama-dev \
+          libxcursor-dev \
+          libxi-dev \
+          libgl1-mesa-dev
+      - name: Install Vulkan SDK
+        uses: humbletim/setup-vulkan-sdk@v1.2.1
+        with:
+          vulkan-query-version: latest
+          vulkan-components: Vulkan-Headers, Vulkan-Loader
+          vulkan-use-cache: true
+      - name: Quick build check
+        id: build
+        continue-on-error: true
+        run: |
+          cmake --preset debug -DVV_USE_SLANG=OFF
+          cmake --build --preset debug
+      - name: Summary
+        run: |
+          echo "## Feature Branch Check Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          if [[ "${{ steps.build.outcome }}" == "success" ]]; then
+            echo "**Build**(success): Builds successfully" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "**Build**(failure): Compilation errors found" >> $GITHUB_STEP_SUMMARY
+          fi
+
