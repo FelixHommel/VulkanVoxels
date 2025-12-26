@@ -37,11 +37,14 @@ jobs:
             libgtest-dev \
             vulkan-utility-libraries-dev
       - name: Install Vulkan SDK
-        uses: humbletim/setup-vulkan-sdk@v1.2.1
+        uses: humbletim/install-vulkan-sdk@v1.2
         with:
-          vulkan-query-version: latest
-          vulkan-components: Vulkan-Headers, Vulkan-Loader
-          vulkan-use-cache: true
+          version: latest
+          cache: true
+      - name: Source Vulkan SDK environment
+        run: |
+          source $VULKAN_SDK/setup-env.sh
+          env | grep -E 'VULKAN_SDK|VK_LAYER_PATH'
       - name: Configure CMake
         env:
           CC: ${{ matrix.compiler.cc }}
@@ -92,11 +95,14 @@ jobs:
             libgtest-dev \
             vulkan-utility-libraries-dev
       - name: Install Vulkan SDK
-        uses: humbletim/setup-vulkan-sdk@v1.2.1
+        uses: humbletim/install-vulkan-sdk@v1.2
         with:
-          vulkan-query-version: latest
-          vulkan-components: Vulkan-Headers, Vulkan-Loader
-          vulkan-use-cache: true
+          version: latest
+          cache: true
+      - name: Source Vulkan SDK environment
+        run: |
+          source $VULKAN_SDK/setup-env.sh
+          env | grep -E 'VULKAN_SDK|VK_LAYER_PATH'
       - name: Configure with coverage
         run: cmake --preset code-coverage -DVV_USE_SLANG=OFF
       - name: Build
