@@ -22,14 +22,16 @@
         },
         {
             "name": "code-coverage",
-            "displayName": "Debug",
+            "displayName": "Code coverage",
             "generator": "Ninja",
             "binaryDir": "build/code-coverage",
             "cacheVariables": {
-                "CMAKE_BUILD_TYPE": "Debug",
-                "CMAKE_C_COMPILER": "gcc",
-                "CMAKE_CXX_COMPILER": "g++",
-                "VV_CODE_COVERAGE": "ON"
+                "CMAKE_BUILD_TYPE": "RelWithDebInfo",
+                "CMAKE_C_COMPILER": "gcc-13",
+                "CMAKE_CXX_COMPILER": "g++-13",
+                "VV_CODE_COVERAGE": "ON",
+                "VV_DEBUG": "OFF",
+                "VV_WARNINGS_AS_ERRORS": "OFF"
             }
         },
         {
@@ -39,8 +41,8 @@
             "binaryDir": "build/debug",
             "cacheVariables": {
                 "CMAKE_BUILD_TYPE": "Debug",
-                "CMAKE_C_COMPILER": "clang",
-                "CMAKE_CXX_COMPILER": "clang++",
+                "CMAKE_C_COMPILER": "clang-19",
+                "CMAKE_CXX_COMPILER": "clang++-19",
                 "VV_WARNINGS_AS_ERRORS": "ON"
             }
         },
@@ -51,8 +53,8 @@
             "binaryDir": "build/release",
             "cacheVariables": {
                 "CMAKE_BUILD_TYPE": "Release",
-                "CMAKE_C_COMPILER": "clang",
-                "CMAKE_CXX_COMPILER": "clang++"
+                "CMAKE_C_COMPILER": "clang-19",
+                "CMAKE_CXX_COMPILER": "clang++-19"
             }
         },
         {
@@ -62,8 +64,8 @@
             "binaryDir": "build/debug",
             "cacheVariables": {
                 "CMAKE_BUILD_TYPE": "Debug",
-                "CMAKE_C_COMPILER": "gcc",
-                "CMAKE_CXX_COMPILER": "g++",
+                "CMAKE_C_COMPILER": "gcc-13",
+                "CMAKE_CXX_COMPILER": "g++-13",
                 "VV_WARNINGS_AS_ERRORS": "ON"
             }
         },
@@ -74,8 +76,8 @@
             "binaryDir": "build/release",
             "cacheVariables": {
                 "CMAKE_BUILD_TYPE": "Release",
-                "CMAKE_C_COMPILER": "gcc",
-                "CMAKE_CXX_COMPILER": "g++"
+                "CMAKE_C_COMPILER": "gcc-13",
+                "CMAKE_CXX_COMPILER": "g++-13"
             }
         }
     ],
@@ -104,6 +106,18 @@
             "name": "test-all",
             "displayName": "Test all",
             "configurePreset": "debug",
+            "output": {
+                "outputOnFailure": true
+            },
+            "execution": {
+                "stopOnFailure": false,
+                "jobs": 4
+            }
+        },
+        {
+            "name": "test-coverage",
+            "displayName": "Test for code coverage",
+            "configurePreset": "code-coverage",
             "output": {
                 "outputOnFailure": true
             },

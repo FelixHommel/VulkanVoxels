@@ -28,9 +28,3 @@ FetchContent_Declare(
 )
 add_subdirectory(spdlog)
 
-FetchContent_Declare(
-    vma
-    GIT_REPOSITORY https://github.com/GPUOpen-LibrariesAndSDKs/VulkanMemoryAllocator
-    GIT_TAG v3.3.0
-)
-add_subdirectory(vma)

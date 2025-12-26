@@ -16,7 +16,7 @@ namespace vv
 /// \date 12/7/2025
 struct ModelComponent final : public Component
 {
-    constexpr explicit ModelComponent(std::shared_ptr<Model> model) : model(std::move(model)) {}
+    explicit ModelComponent(std::shared_ptr<Model> model) : model(std::move(model)) {}
 
     std::shared_ptr<Model> model;
 };

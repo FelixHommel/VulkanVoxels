@@ -16,6 +16,7 @@ add_library(${NAME}
     ./core/Texture2D.cpp
     ./core/Window.cpp
     ./renderSystems/BasicRenderSystem.cpp
+    ./renderSystems/PBRRenderSystem.cpp
     ./renderSystems/PointLightRenderSystem.cpp
     ./renderSystems/IRenderSystem.cpp
     ./renderSystems/VoxelRenderSystem.cpp
@@ -28,9 +29,11 @@ add_library(${NAME}
     ./utility/exceptions/ResourceException.cpp
     ./utility/object/Object.cpp
     ./utility/object/ObjectBuilder.cpp
+    ./utility/material/Material.cpp
+    ./utility/material/MaterialBuilder.cpp
     ./external/stb_image_impl.cpp
     ./external/tiny_obj_loader_impl.cpp
-    ./external/vma_impl.cpp
+    ./external/vk_mem_alloc_impl.cpp
 )
 
 target_sources(${NAME}
@@ -51,6 +54,7 @@ target_sources(${NAME}
             ./core/Texture2D.hpp
             ./core/Window.hpp
             ./renderSystems/BasicRenderSystem.hpp
+            ./renderSystems/PBRRenderSystem.hpp
             ./renderSystems/PointLightRenderSystem.hpp
             ./renderSystems/IRenderSystem.hpp
             ./renderSystems/VoxelRenderSystem.hpp
@@ -73,14 +77,15 @@ target_sources(${NAME}
             ./utility/exceptions/VulkanException.hpp
             ./utility/exceptions/FileException.hpp
             ./utility/exceptions/ResourceException.hpp
+            ./utility/material/Material.hpp
+            ./utility/material/MaterialAlphaMode.hpp
+            ./utility/material/MaterialBuilder.hpp
             ./external/stb_image.h
             ./external/tiny_obj_loader.h
+            ./external/vk_mem_alloc.h
 )
 
-# NOTE: Add VMA as Interface to exclude from compiler warnings that the project has
-add_library(VMA INTERFACE)
-target_include_directories(VMA INTERFACE ${vma_SOURCE_DIR}/include)
-
+target_include_directories(${NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/external)
 target_include_directories(${NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 target_compile_features(${NAME} PRIVATE cxx_std_23)
 target_link_libraries(${NAME}
@@ -91,5 +96,4 @@ target_link_libraries(${NAME}
         spdlog::spdlog
         glm
         glfw
-        VMA
 )

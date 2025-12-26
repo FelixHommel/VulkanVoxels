@@ -1,0 +1,90 @@
+name: Format and Lint Check
+
+on:
+  push:
+    branches: [ main, dev, "feature-**" ]
+  pull_request:
+    branches: [ main, dev ]
+
+jobs:
+  format-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install clang-format
+        run: |
+          sudo apt-get update
+          sudo apt install -y clang-format-20
+      - name: Run clang-format check
+        id: format
+        continue-on-error: ${{ github.ref != 'refs/heads/main' }}
+        run: |
+          clang-format-20 --dry-run --Werror $(find ./src -regex '.*\.\(cpp\|hpp\)')
+          clang-format-20 --dry-run --Werror $(find ./tests -regex '.*\.\(cpp\|hpp\)')
+      - name: Format check result
+        if: failure() && steps.format.outcome == 'failure'
+        run: |
+          if [[ "${{ github.ref }}" == "refs/heads/main" ]]; then
+            echo "Format check failed on main branch"
+            exit 1
+          else
+            echo "Format check failed on dev/feature branch - please run clang-format"
+          fi
+
+  clang-tidy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt install -y \
+          cmake \
+          ninja-build \
+          clang-19 \
+          clang-tidy-20 \
+          libxrandr-dev \
+          libxinerama-dev \
+          libxcursor-dev \
+          libxkbcommon-dev \
+          libxi-dev \
+          libgl1-mesa-dev \
+          vulkan-utility-libraries-dev
+      - name: Install Vulkan SDK
+        uses: humbletim/setup-vulkan-sdk@v1.2.1
+        with:
+          vulkan-query-version: latest
+          vulkan-components: Vulkan-Headers, Vulkan-Loader
+          vulkan-use-cache: true
+      - name: Configure CMake for clang-tidy
+        run: |
+         cmake --preset clang-debug -DVV_USE_SLANG=OFF -DVV_WARNINGS_AS_ERRORS=OFF
+      - name: Run clang-tidy on changed files
+        id: tidy
+        continue-on-error: ${{ github.ref != 'refs/heads/main' }}
+        run: |
+          # Get list of changed C++ files
+          if [[ "${{ github.event_name }}" == "pull_request" ]]; then
+            CHANGED_FILES=$(git diff --name-only origin/${{ github.base_ref }}...HEAD | \
+              grep -E '\.(cpp|hpp)$' || true)
+          else
+            # For pushes, check files changed in last commit
+            CHANGED_FILES=$(git diff --name-only HEAD~1 | \
+              grep -E '\.(cpp|hpp)$' || true)
+          fi
+
+          if [ -z "$CHANGED_FILES" ]; then
+            echo "No C++ files changed"
+            exit 0
+          fi
+
+          echo "Checking files: $CHANGED_FILES"
+          echo "$CHANGED_FILES" | xargs clang-tidy-20 -p build/debug
+      - name: Tidy check result
+        if: failure() && steps.tidy.outcome == 'failure'
+        run: |
+          if [[ "${{ github.ref }}" == "refs/heads/main" ]]; then
+            echo "Clang-tidy check failed on main branch"
+          else
+            echo "Clang-tidy warnings found on dev/feature branch - please fix before merging to main"
+          fi
