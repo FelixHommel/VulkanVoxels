@@ -22,14 +22,15 @@
         },
         {
             "name": "code-coverage",
-            "displayName": "Debug",
+            "displayName": "Code coverage",
             "generator": "Ninja",
             "binaryDir": "build/code-coverage",
             "cacheVariables": {
-                "CMAKE_BUILD_TYPE": "Debug",
+                "CMAKE_BUILD_TYPE": "RelWithDebInfo",
                 "CMAKE_C_COMPILER": "gcc-13",
                 "CMAKE_CXX_COMPILER": "g++-13",
-                "VV_CODE_COVERAGE": "ON"
+                "VV_CODE_COVERAGE": "ON",
+                "VV_DEBUG": "OFF"
             }
         },
         {

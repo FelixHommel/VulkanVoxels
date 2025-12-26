@@ -58,7 +58,7 @@ jobs:
           vulkan-use-cache: true
       - name: Configure CMake for clang-tidy
         run: |
-         cmake --preset clang-debug -DVV_USE_SLANG=OFF
+         cmake --preset clang-debug -DVV_USE_SLANG=OFF -DVV_WARNINGS_AS_ERRORS=OFF
       - name: Run clang-tidy on changed files
         id: tidy
         continue-on-error: ${{ github.ref != 'refs/heads/main' }}

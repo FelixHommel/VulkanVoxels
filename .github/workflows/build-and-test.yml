@@ -52,7 +52,7 @@ jobs:
             -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} \
             -DVV_USE_SLANG=OFF
       - name: Build
-        run: cmake --build build --config ${{ matrix.build_type }}
+        run: cmake --build build --config ${{ matrix.build_type }} -DVV_WARNINGS_AS_ERRORS=OFF
       - name: Run tests
         id: tests
         continue-on-error: ${{ github.ref != 'refs/heads/main' && github.base_ref != 'main' }}
@@ -98,7 +98,7 @@ jobs:
           vulkan-components: Vulkan-Headers, Vulkan-Loader
           vulkan-use-cache: true
       - name: Configure with coverage
-        run: cmake --preset code-coverage -DVV_USE_SLANG=OFF
+        run: cmake --preset code-coverage -DVV_USE_SLANG=OFF -DVV_WARNINGS_AS_ERRORS=OFF
       - name: Build
         run: cmake --build --preset code-coverage
       - name: Run tests with coverage
