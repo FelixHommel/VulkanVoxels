@@ -32,7 +32,9 @@ jobs:
             libxinerama-dev \
             libxcursor-dev \
             libxi-dev \
-            libgl1-mesa-dev
+            libgl1-mesa-dev \
+            libgmock-dev \
+            libgtest-dev
       - name: Install Vulkan SDK
         uses: humbletim/setup-vulkan-sdk@v1.2.1
         with:
