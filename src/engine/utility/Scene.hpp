@@ -30,7 +30,7 @@ public:
     Scene& operator=(const Scene&) = delete;
     Scene& operator=(Scene&&) = default;
 
-    void createMaterial(const MaterialConfig& config);
+    void createMaterial(MaterialConfig& config);
     void addObject(Object&& o);
     void addPointlight(const glm::vec3& position, const glm::vec3& color, float intensity);
 
@@ -56,7 +56,7 @@ private:
     std::shared_ptr<Object::ObjectMap> m_objects; ///< Objects
     std::vector<Object> m_pointLights;            ///< Lights
 
-    VkDescriptorSet allocateMaterialDescriptorSet(const MaterialConfig& config);
+    VkDescriptorSet allocateMaterialDescriptorSet(MaterialConfig& config);
 };
 
 } // namespace vv

@@ -24,7 +24,7 @@ Scene::Scene(std::shared_ptr<Device> device, std::shared_ptr<DescriptorSetLayout
                          .build();
 }
 
-void Scene::createMaterial(const MaterialConfig& config)
+void Scene::createMaterial(MaterialConfig& config)
 {
     VkDescriptorSet descriptorSet{ allocateMaterialDescriptorSet(config) };
     m_materialCache.emplace_back(std::make_shared<Material>(m_device, config, descriptorSet));
@@ -37,12 +37,23 @@ void Scene::addObject(Object&& o)
 
 void Scene::addPointlight(const glm::vec3& position, const glm::vec3& color, float intensity) {}
 
-VkDescriptorSet Scene::allocateMaterialDescriptorSet(const MaterialConfig& config)
+VkDescriptorSet Scene::allocateMaterialDescriptorSet(MaterialConfig& config)
 {
     VkDescriptorSet descriptorSet{ VK_NULL_HANDLE };
 
     if(!m_materialPool->allocateDescriptor(m_materialSetLayout->getDescriptorLayout(), descriptorSet))
         throw Exception("Failed to allocate material descriptor set");
+
+    if(!config.albedoTexture)
+        config.albedoTexture = m_defaultTextures->white();
+    if(!config.normalTexture)
+        config.normalTexture = m_defaultTextures->normal();
+    if(!config.metallicRoughnessTexture)
+        config.metallicRoughnessTexture = m_defaultTextures->white();
+    if(!config.occlusionTexture)
+        config.occlusionTexture = m_defaultTextures->white();
+    if(!config.emissiveTexture)
+        config.emissiveTexture = m_defaultTextures->black();
 
     auto albedoInfo{ config.albedoTexture->descriptor() };
     auto normalInfo{ config.normalTexture->descriptor() };
