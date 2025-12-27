@@ -4,6 +4,7 @@
 #include "utility/Model.hpp"
 #include "utility/object/Object.hpp"
 #include "utility/object/components/ColorComponent.hpp"
+#include "utility/object/components/MaterialComponent.hpp"
 #include "utility/object/components/ModelComponent.hpp"
 #include "utility/object/components/PointLightComponent.hpp"
 #include "utility/object/components/TransformComponent.hpp"
@@ -28,9 +29,13 @@ public:
     ///
     /// \param color which color the \ref Object is going to have
     ObjectBuilder& withColor(const glm::vec3& color);
+    /// \brief Add a Material component, giving the \ref Object a texture
+    ///
+    /// \param material shared pointer to the \ref Material 
+    ObjectBuilder& withMaterial(std::shared_ptr<Material> material);
     /// \brief Add a Model component, giving the object a mesh representation
     ///
-    /// \param model shared pointer to the model \ref Object
+    /// \param model shared pointer to the \ref Model
     ObjectBuilder& withModel(std::shared_ptr<Model> model);
     /// \brief Add a point light component to the \ref Object
     ///
@@ -60,6 +65,7 @@ private:
     std::unique_ptr<ModelComponent> m_model;
     std::unique_ptr<PointLightComponent> m_pointLight;
     std::unique_ptr<TransformComponent> m_transform;
+    std::unique_ptr<MaterialComponent> m_material;
 };
 
 } // namespace vv

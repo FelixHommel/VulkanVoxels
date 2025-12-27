@@ -2,7 +2,6 @@
 
 #include "core/DescriptorWriter.hpp"
 #include "core/Device.hpp"
-#include "utility/FrameInfo.hpp"
 #include "utility/exceptions/Exception.hpp"
 #include "utility/material/DefaultTextureProvider.hpp"
 #include "utility/object/ObjectBuilder.hpp"

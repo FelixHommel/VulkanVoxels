@@ -3,6 +3,7 @@
 #include "utility/Model.hpp"
 #include "utility/object/Object.hpp"
 #include "utility/object/components/ColorComponent.hpp"
+#include "utility/object/components/MaterialComponent.hpp"
 #include "utility/object/components/ModelComponent.hpp"
 #include "utility/object/components/PointLightComponent.hpp"
 #include "utility/object/components/TransformComponent.hpp"
@@ -20,6 +21,12 @@ namespace vv
 ObjectBuilder& ObjectBuilder::withColor(const glm::vec3& color)
 {
     m_color = std::make_unique<ColorComponent>(color);
+    return *this;
+}
+
+ObjectBuilder& ObjectBuilder::withMaterial(std::shared_ptr<Material> material)
+{
+    m_material = std::make_unique<MaterialComponent>(std::move(material));
     return *this;
 }
 
@@ -49,6 +56,8 @@ Object ObjectBuilder::build()
 
     if(m_color)
         obj.addComponent<ColorComponent>(std::move(m_color));
+    if(m_material)
+        obj.addComponent<MaterialComponent>(std::move(m_material));
     if(m_model)
         obj.addComponent<ModelComponent>(std::move(m_model));
     if(m_pointLight)
