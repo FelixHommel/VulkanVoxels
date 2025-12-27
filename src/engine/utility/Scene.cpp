@@ -2,8 +2,10 @@
 
 #include "core/DescriptorWriter.hpp"
 #include "core/Device.hpp"
+#include "utility/FrameInfo.hpp"
 #include "utility/exceptions/Exception.hpp"
 #include "utility/material/DefaultTextureProvider.hpp"
+#include "utility/object/ObjectBuilder.hpp"
 
 #include <memory>
 #include <utility>
@@ -35,7 +37,10 @@ void Scene::addObject(Object&& o)
     m_objects->emplace(o.getId(), std::move(o));
 }
 
-void Scene::addPointlight(const glm::vec3& position, const glm::vec3& color, float intensity) {}
+void Scene::addPointlight(const glm::vec3& position, const glm::vec3& color, float intensity)
+{
+    m_pointLights.emplace_back(ObjectBuilder().withPointLight(intensity, color).withTransform(position).build());
+}
 
 VkDescriptorSet Scene::allocateMaterialDescriptorSet(MaterialConfig& config)
 {
