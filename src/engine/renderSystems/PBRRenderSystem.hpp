@@ -1,6 +1,7 @@
 #ifndef VULKAN_VOXELS_SRC_ENGINE_RENDER_SYSTEMS_PBR_RENDER_SYSTEM_HPP
 #define VULKAN_VOXELS_SRC_ENGINE_RENDER_SYSTEMS_PBR_RENDER_SYSTEM_HPP
 
+#include "core/DescriptorSetLayout.hpp"
 #include "core/Device.hpp"
 #include "renderSystems/IRenderSystem.hpp"
 #include "utility/FrameInfo.hpp"
@@ -47,6 +48,8 @@ public:
     void render(const FrameInfo& frameInfo) const override;
 
 private:
+    std::unique_ptr<DescriptorSetLayout> m_materialSetLayout;
+
     void createGraphicsPipelineLayout(VkDescriptorSetLayout globalSetLayout) override;
     void createGraphicsPipeline(
         VkRenderPass renderPass,

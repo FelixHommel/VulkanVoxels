@@ -75,7 +75,7 @@ class Material
 {
 public:
     /// \brief Create a new Material
-    Material(std::shared_ptr<Device> device, const MaterialConfig& config);
+    Material(std::shared_ptr<Device> device, const MaterialConfig& config, VkDescriptorSet descriptor);
     Material(Material&& other) noexcept;
     ~Material() = default;
 

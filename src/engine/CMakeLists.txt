@@ -22,6 +22,7 @@ add_library(${NAME}
     ./renderSystems/VoxelRenderSystem.cpp
     ./utility/Camera.cpp
     ./utility/Model.cpp
+    ./utility/Scene.cpp
     ./utility/KeyboardMovementController.cpp
     ./utility/exceptions/Exception.cpp
     ./utility/exceptions/VulkanException.cpp
@@ -62,8 +63,9 @@ target_sources(${NAME}
             ./utility/FrameInfo.hpp
             ./utility/GLFWInputHandler.hpp
             ./utility/IInputHandler.hpp
-            ./utility/Model.hpp
             ./utility/KeyboardMovementController.hpp
+            ./utility/Model.hpp
+            ./utility/Scene.hpp
             ./utility/Utils.hpp
             ./utility/object/Object.hpp
             ./utility/object/ObjectBuilder.hpp

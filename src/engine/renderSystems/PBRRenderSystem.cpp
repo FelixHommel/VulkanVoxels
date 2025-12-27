@@ -21,6 +21,13 @@ PBRRenderSystem::PBRRenderSystem(
     VkDescriptorSetLayout globalSetLayout
 )
     : IRenderSystem(std::move(device))
+    , m_materialSetLayout{ DescriptorSetLayout::Builder(this->device)
+                               .addBinding(0, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, VK_SHADER_STAGE_FRAGMENT_BIT)
+                               .addBinding(1, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, VK_SHADER_STAGE_FRAGMENT_BIT)
+                               .addBinding(2, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, VK_SHADER_STAGE_FRAGMENT_BIT)
+                               .addBinding(3, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, VK_SHADER_STAGE_FRAGMENT_BIT)
+                               .addBinding(4, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, VK_SHADER_STAGE_FRAGMENT_BIT)
+                               .build() }
 {
     PBRRenderSystem::createGraphicsPipelineLayout(globalSetLayout);
     PBRRenderSystem::createGraphicsPipeline(renderPass, vertexShaderPath, fragmentShaderPath);
@@ -35,7 +42,6 @@ void PBRRenderSystem::render(const FrameInfo& frameInfo) const
 {
     // TODO: Implement drawing functionality
 }
-
 
 void PBRRenderSystem::createGraphicsPipelineLayout(VkDescriptorSetLayout globalSetLayout)
 {

@@ -10,7 +10,7 @@
 namespace vv
 {
 
-Material::Material(std::shared_ptr<Device> device, const MaterialConfig& config)
+Material::Material(std::shared_ptr<Device> device, const MaterialConfig& config, VkDescriptorSet descriptor)
     : device(std::move(device))
     , m_albedoTexture(std::move(config.albedoTexture))
     , m_normalTexture(std::move(config.normalTexture))
@@ -26,6 +26,7 @@ Material::Material(std::shared_ptr<Device> device, const MaterialConfig& config)
     , m_alphaCutoff{ config.alphaCutoff }
     , m_alphaMode{ config.alphaMode }
     , m_doubleSided{ config.doubleSided }
+    , m_descriptorSet(descriptor)
 {}
 
 Material::Material(Material&& other) noexcept
@@ -44,6 +45,7 @@ Material::Material(Material&& other) noexcept
     , m_alphaCutoff{ other.m_alphaCutoff }
     , m_alphaMode{ other.m_alphaMode }
     , m_doubleSided{ other.m_doubleSided }
+    , m_descriptorSet(other.m_descriptorSet)
 {}
 
 void Material::bind(VkCommandBuffer commandBuffer, VkPipelineLayout layout)
