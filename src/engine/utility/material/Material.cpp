@@ -1,6 +1,7 @@
 #include "Material.hpp"
 
 #include "core/Device.hpp"
+#include "renderSystems/IRenderSystem.hpp"
 
 #include <vulkan/vulkan_core.h>
 
@@ -61,7 +62,14 @@ void Material::bind(VkCommandBuffer commandBuffer, VkPipelineLayout layout)
         .occlusionStrength = m_occlusionStrength,
     };
 
-    vkCmdPushConstants(commandBuffer, layout, VK_SHADER_STAGE_FRAGMENT_BIT, 0, sizeof(MaterialPushConstants), &push);
+    vkCmdPushConstants(
+        commandBuffer,
+        layout,
+        VK_SHADER_STAGE_FRAGMENT_BIT,
+        sizeof(SimplePushConstantData),
+        sizeof(MaterialPushConstants),
+        &push
+    );
 }
 
 } // namespace vv

@@ -48,16 +48,17 @@ void PBRRenderSystem::render(const FrameInfo& frameInfo) const
 
 void PBRRenderSystem::createGraphicsPipelineLayout(VkDescriptorSetLayout globalSetLayout)
 {
-    // NOTE: These push constants provide the factors for the material system
-    constexpr VkPushConstantRange pushConstantRangeMaterial{ .stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT,
-                                                             .offset = 0,
-                                                             .size = sizeof(MaterialPushConstants) };
-
     // NOTE: These push constants conatin the model and normal matrix
     constexpr VkPushConstantRange pushConstantRangeModel{ .stageFlags
                                                           = VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT,
                                                           .offset = 0,
                                                           .size = sizeof(SimplePushConstantData) };
+
+    // NOTE: These push constants provide the factors for the material system
+    constexpr VkPushConstantRange pushConstantRangeMaterial{ .stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT,
+                                                             .offset = sizeof(SimplePushConstantData),
+                                                             .size = sizeof(MaterialPushConstants) };
+
 
     std::vector<VkPushConstantRange> pushConstantRanges{ pushConstantRangeMaterial, pushConstantRangeModel };
 

@@ -83,6 +83,12 @@ public:
     Material& operator=(const Material&) = delete;
     Material& operator=(Material&&) = delete;
 
+    /// \brief Binde the material to the pipeline
+    ///
+    /// This does not bind any models or meshes - only the textures related to the material are bound by this method
+    ///
+    /// \param commandBuffer the command buffer that is rendered to
+    /// \param layoput the layout of the used graphics pipeline
     void bind(VkCommandBuffer commandBuffer, VkPipelineLayout layout);
 
 private:
