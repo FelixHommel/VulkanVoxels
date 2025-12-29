@@ -25,12 +25,6 @@ layout(set = 0, binding = 0) uniform UniformBufferGlobal
     int numLights;
 } global;
 
-layout(set = 1, binding = 0) uniform sampler2D albedoTexture;
-layout(set = 1, binding = 1) uniform sampler2D normaTexturel;
-layout(set = 1, binding = 2) uniform sampler2D metallicRoughnessTexture;
-layout(set = 1, binding = 3) uniform sampler2D occlusionTexture;
-layout(set = 1, binding = 4) uniform sampler2D emissiveTexture;
-
 layout(push_constant) uniform Push
 {
     // offset(0)
