@@ -31,7 +31,7 @@ public:
     ObjectBuilder& withColor(const glm::vec3& color);
     /// \brief Add a Material component, giving the \ref Object a texture
     ///
-    /// \param material shared pointer to the \ref Material 
+    /// \param material shared pointer to the \ref Material
     ObjectBuilder& withMaterial(std::shared_ptr<Material> material);
     /// \brief Add a Model component, giving the object a mesh representation
     ///

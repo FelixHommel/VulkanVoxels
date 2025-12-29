@@ -49,20 +49,33 @@ void PBRRenderSystem::render(const FrameInfo& frameInfo) const
     m_graphicsPipeline->bind(frameInfo.commandBuffer);
 
     // NOTE: bind global descriptor (set 0; view, projection, and lights)
-    vkCmdBindDescriptorSets(frameInfo.commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, m_graphicsPipelineLayout, 0, 1, &frameInfo.globalDescriptorSet, 0, nullptr);
+    vkCmdBindDescriptorSets(
+        frameInfo.commandBuffer,
+        VK_PIPELINE_BIND_POINT_GRAPHICS,
+        m_graphicsPipelineLayout,
+        0,
+        1,
+        &frameInfo.globalDescriptorSet,
+        0,
+        nullptr
+    );
 
     for(auto& [id, obj] : *frameInfo.objects)
     {
         if(!obj.hasComponent<ModelComponent>())
             continue;
-        
-        const auto* transform{ obj.getComponent<TransformComponent>() };
-        SimplePushConstantData modelPush{
-            .modelMatrix = transform->mat4(),
-            .normalMatrix = transform->normalMatrix()
-        };
 
-        vkCmdPushConstants(frameInfo.commandBuffer, m_graphicsPipelineLayout, VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT, 0, sizeof(SimplePushConstantData), &modelPush);
+        const auto* transform{ obj.getComponent<TransformComponent>() };
+        SimplePushConstantData modelPush{ .modelMatrix = transform->mat4(), .normalMatrix = transform->normalMatrix() };
+
+        vkCmdPushConstants(
+            frameInfo.commandBuffer,
+            m_graphicsPipelineLayout,
+            VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT,
+            0,
+            sizeof(SimplePushConstantData),
+            &modelPush
+        );
 
         // NOTE: bind material descriptor (set 1; material textures) and push material factors
         obj.getComponent<MaterialComponent>()->material->bind(frameInfo.commandBuffer, m_graphicsPipelineLayout);
