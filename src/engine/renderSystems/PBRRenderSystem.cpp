@@ -85,9 +85,11 @@ void PBRRenderSystem::render(const FrameInfo& frameInfo) const
 void PBRRenderSystem::createGraphicsPipelineLayout(VkDescriptorSetLayout globalSetLayout)
 {
     // NOTE: These push constants conatin the model and normal matrix
-    constexpr VkPushConstantRange pushConstantRange{ .stageFlags = VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT,
-                                                          .offset = 0,
-                                                          .size = sizeof(SimplePushConstantData) + sizeof(MaterialPushConstants) };
+    constexpr VkPushConstantRange pushConstantRange{
+        .stageFlags = VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT,
+        .offset = 0,
+        .size = sizeof(SimplePushConstantData) + sizeof(MaterialPushConstants)
+    };
 
     std::vector<VkPushConstantRange> pushConstantRanges{ pushConstantRange };
 
