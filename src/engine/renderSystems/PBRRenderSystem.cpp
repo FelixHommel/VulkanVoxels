@@ -24,11 +24,11 @@ PBRRenderSystem::PBRRenderSystem(
 )
     : IRenderSystem(std::move(device))
     , m_materialSetLayout{ DescriptorSetLayout::Builder(this->device)
-                               .addBinding(0, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, VK_SHADER_STAGE_FRAGMENT_BIT)
-                               .addBinding(1, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, VK_SHADER_STAGE_FRAGMENT_BIT)
-                               .addBinding(2, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, VK_SHADER_STAGE_FRAGMENT_BIT)
-                               .addBinding(3, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, VK_SHADER_STAGE_FRAGMENT_BIT)
-                               .addBinding(4, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, VK_SHADER_STAGE_FRAGMENT_BIT)
+                               .addBinding(0, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, VK_SHADER_STAGE_ALL_GRAPHICS)
+                               .addBinding(1, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, VK_SHADER_STAGE_ALL_GRAPHICS)
+                               .addBinding(2, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, VK_SHADER_STAGE_ALL_GRAPHICS)
+                               .addBinding(3, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, VK_SHADER_STAGE_ALL_GRAPHICS)
+                               .addBinding(4, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, VK_SHADER_STAGE_ALL_GRAPHICS)
                                .buildShared() }
 {
     PBRRenderSystem::createGraphicsPipelineLayout(globalSetLayout);
@@ -85,17 +85,11 @@ void PBRRenderSystem::render(const FrameInfo& frameInfo) const
 void PBRRenderSystem::createGraphicsPipelineLayout(VkDescriptorSetLayout globalSetLayout)
 {
     // NOTE: These push constants conatin the model and normal matrix
-    constexpr VkPushConstantRange pushConstantRangeModel{ .stageFlags = VK_SHADER_STAGE_VERTEX_BIT,
+    constexpr VkPushConstantRange pushConstantRange{ .stageFlags = VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT,
                                                           .offset = 0,
-                                                          .size = sizeof(SimplePushConstantData) };
+                                                          .size = sizeof(SimplePushConstantData) + sizeof(MaterialPushConstants) };
 
-    // NOTE: These push constants provide the factors for the material system
-    constexpr VkPushConstantRange pushConstantRangeMaterial{ .stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT,
-                                                             .offset = sizeof(SimplePushConstantData),
-                                                             .size = sizeof(MaterialPushConstants) };
-
-
-    std::vector<VkPushConstantRange> pushConstantRanges{ pushConstantRangeMaterial, pushConstantRangeModel };
+    std::vector<VkPushConstantRange> pushConstantRanges{ pushConstantRange };
 
     std::vector<VkDescriptorSetLayout> descriptorSetLayouts{ globalSetLayout,
                                                              m_materialSetLayout->getDescriptorLayout() };

@@ -68,9 +68,9 @@ public:
     ~DescriptorSetLayout();
 
     DescriptorSetLayout(const DescriptorSetLayout&) = delete;
-    DescriptorSetLayout(DescriptorSetLayout&&) = delete;
+    DescriptorSetLayout(DescriptorSetLayout&&) = default;
     DescriptorSetLayout& operator=(const DescriptorSetLayout&) = delete;
-    DescriptorSetLayout& operator=(DescriptorSetLayout&&) = delete;
+    DescriptorSetLayout& operator=(DescriptorSetLayout&&) = default;
 
     [[nodiscard]] VkDescriptorSetLayout getDescriptorLayout() const noexcept { return m_descriptorSetLayout; }
 
