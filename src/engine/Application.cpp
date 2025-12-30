@@ -71,7 +71,7 @@ void Application::run()
     PointLightRenderSystem pointLightRenderSystem{ m_device,
                                                    m_renderer->getRenderPass(),
                                                    globalSetLayout->getDescriptorLayout() };
-    PBRRenderSystem pbrRenderSystem{m_device, m_renderer->getRenderPass(), globalSetLayout->getDescriptorLayout() };
+    PBRRenderSystem pbrRenderSystem{ m_device, m_renderer->getRenderPass(), globalSetLayout->getDescriptorLayout() };
 
     m_scene = std::make_unique<Scene>(m_device, pbrRenderSystem.getMaterialSetLayout());
     initScene();
@@ -203,7 +203,9 @@ void Application::initScene()
 
     auto material = m_scene->createMaterial(matConfig);
     std::shared_ptr<Model> model = Model::loadFromFile(m_device, SMOOTH_VASE_PATH);
-    Object smoothVase{ ObjectBuilder().withModel(model).withTransform(smoothVasePos, vaseScale).withMaterial(material).build() };
+    Object smoothVase{
+        ObjectBuilder().withModel(model).withTransform(smoothVasePos, vaseScale).withMaterial(material).build()
+    };
 
     m_scene->addObject(std::move(smoothVase));
 }

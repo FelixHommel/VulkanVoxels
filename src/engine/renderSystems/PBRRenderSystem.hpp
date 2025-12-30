@@ -27,9 +27,7 @@ public:
     /// \param renderPass which render pass to use for the graphics pipeline
     /// \param globalSetLayout layout of the global descriptor set
     explicit PBRRenderSystem(
-        std::shared_ptr<Device> device,
-        VkRenderPass renderPass,
-        VkDescriptorSetLayout globalSetLayout
+        std::shared_ptr<Device> device, VkRenderPass renderPass, VkDescriptorSetLayout globalSetLayout
     );
     ~PBRRenderSystem() override;
 
@@ -38,7 +36,10 @@ public:
     PBRRenderSystem& operator=(const PBRRenderSystem&) = delete;
     PBRRenderSystem& operator=(PBRRenderSystem&&) = delete;
 
-    [[nodiscard]] std::shared_ptr<DescriptorSetLayout> getMaterialSetLayout() const noexcept { return m_materialSetLayout; }
+    [[nodiscard]] std::shared_ptr<DescriptorSetLayout> getMaterialSetLayout() const noexcept
+    {
+        return m_materialSetLayout;
+    }
 
     /// \brief Render voxelized meshes
     ///

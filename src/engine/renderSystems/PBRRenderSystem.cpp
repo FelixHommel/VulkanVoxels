@@ -20,9 +20,7 @@ namespace vv
 {
 
 PBRRenderSystem::PBRRenderSystem(
-    std::shared_ptr<Device> device,
-    VkRenderPass renderPass,
-    VkDescriptorSetLayout globalSetLayout
+    std::shared_ptr<Device> device, VkRenderPass renderPass, VkDescriptorSetLayout globalSetLayout
 )
     : IRenderSystem(std::move(device))
     , m_materialSetLayout{ DescriptorSetLayout::Builder(this->device)
@@ -87,8 +85,7 @@ void PBRRenderSystem::render(const FrameInfo& frameInfo) const
 void PBRRenderSystem::createGraphicsPipelineLayout(VkDescriptorSetLayout globalSetLayout)
 {
     // NOTE: These push constants conatin the model and normal matrix
-    constexpr VkPushConstantRange pushConstantRangeModel{ .stageFlags
-                                                          = VK_SHADER_STAGE_VERTEX_BIT,
+    constexpr VkPushConstantRange pushConstantRangeModel{ .stageFlags = VK_SHADER_STAGE_VERTEX_BIT,
                                                           .offset = 0,
                                                           .size = sizeof(SimplePushConstantData) };
 
