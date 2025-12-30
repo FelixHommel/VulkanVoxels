@@ -25,10 +25,12 @@ Scene::Scene(std::shared_ptr<Device> device, std::shared_ptr<DescriptorSetLayout
                          .build();
 }
 
-void Scene::createMaterial(MaterialConfig& config)
+std::shared_ptr<Material> Scene::createMaterial(MaterialConfig& config)
 {
     VkDescriptorSet descriptorSet{ allocateMaterialDescriptorSet(config) };
     m_materialCache.emplace_back(std::make_shared<Material>(m_device, config, descriptorSet));
+
+    return m_materialCache.back();
 }
 
 void Scene::addObject(Object&& o)

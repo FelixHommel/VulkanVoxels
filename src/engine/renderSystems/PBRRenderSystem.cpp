@@ -22,8 +22,6 @@ namespace vv
 PBRRenderSystem::PBRRenderSystem(
     std::shared_ptr<Device> device,
     VkRenderPass renderPass,
-    const std::filesystem::path& vertexShaderPath,
-    const std::filesystem::path& fragmentShaderPath,
     VkDescriptorSetLayout globalSetLayout
 )
     : IRenderSystem(std::move(device))
@@ -33,10 +31,10 @@ PBRRenderSystem::PBRRenderSystem(
                                .addBinding(2, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, VK_SHADER_STAGE_FRAGMENT_BIT)
                                .addBinding(3, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, VK_SHADER_STAGE_FRAGMENT_BIT)
                                .addBinding(4, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, VK_SHADER_STAGE_FRAGMENT_BIT)
-                               .build() }
+                               .buildShared() }
 {
     PBRRenderSystem::createGraphicsPipelineLayout(globalSetLayout);
-    PBRRenderSystem::createGraphicsPipeline(renderPass, vertexShaderPath, fragmentShaderPath);
+    PBRRenderSystem::createGraphicsPipeline(renderPass, PBR_VERTEX_SHADER_PATH, PBR_FRAGMENT_SHADER_PATH);
 }
 
 PBRRenderSystem::~PBRRenderSystem()
@@ -90,7 +88,7 @@ void PBRRenderSystem::createGraphicsPipelineLayout(VkDescriptorSetLayout globalS
 {
     // NOTE: These push constants conatin the model and normal matrix
     constexpr VkPushConstantRange pushConstantRangeModel{ .stageFlags
-                                                          = VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT,
+                                                          = VK_SHADER_STAGE_VERTEX_BIT,
                                                           .offset = 0,
                                                           .size = sizeof(SimplePushConstantData) };
 

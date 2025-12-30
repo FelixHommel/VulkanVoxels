@@ -39,6 +39,11 @@ std::unique_ptr<DescriptorSetLayout> DescriptorSetLayout::Builder::build() const
     return std::make_unique<DescriptorSetLayout>(device, m_bindings);
 }
 
+std::shared_ptr<DescriptorSetLayout> DescriptorSetLayout::Builder::buildShared() const
+{
+    return std::make_shared<DescriptorSetLayout>(device, m_bindings);
+}
+
 DescriptorSetLayout::DescriptorSetLayout(
     std::shared_ptr<Device> device, std::unordered_map<std::uint32_t, VkDescriptorSetLayoutBinding> bindings
 )

@@ -5,7 +5,7 @@
 #include "core/Device.hpp"
 #include "core/Renderer.hpp"
 #include "core/Window.hpp"
-#include "utility/object/Object.hpp"
+#include "utility/Scene.hpp"
 
 #include <cstdint>
 #include <memory>
@@ -47,9 +47,11 @@ private:
     std::shared_ptr<Device> m_device;
     std::unique_ptr<DescriptorPool> m_globalPool;
     std::unique_ptr<Renderer> m_renderer;
+    std::unique_ptr<Scene> m_scene;
     std::shared_ptr<Object::ObjectMap> m_objects{ std::make_shared<Object::ObjectMap>() };
 
     void loadObjects() const;
+    void initScene();
 };
 
 } // namespace vv

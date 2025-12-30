@@ -30,7 +30,7 @@ public:
     Scene& operator=(const Scene&) = delete;
     Scene& operator=(Scene&&) = default;
 
-    void createMaterial(MaterialConfig& config);
+    std::shared_ptr<Material> createMaterial(MaterialConfig& config);
     void addObject(Object&& o);
     void addPointlight(const glm::vec3& position, const glm::vec3& color, float intensity);
 

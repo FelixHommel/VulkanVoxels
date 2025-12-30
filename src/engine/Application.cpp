@@ -9,11 +9,11 @@
 #include "core/Swapchain.hpp"
 #include "core/Window.hpp"
 #include "renderSystems/BasicRenderSystem.hpp"
+#include "renderSystems/PBRRenderSystem.hpp"
 #include "renderSystems/PointLightRenderSystem.hpp"
 #include "utility/Camera.hpp"
 #include "utility/FrameInfo.hpp"
 #include "utility/KeyboardMovementController.hpp"
-#include "utility/Model.hpp"
 #include "utility/object/Object.hpp"
 #include "utility/object/ObjectBuilder.hpp"
 
@@ -28,7 +28,6 @@
 #include <chrono>
 #include <cstddef>
 #include <memory>
-#include <utility>
 #include <vector>
 
 namespace vv
@@ -54,7 +53,7 @@ void Application::run()
 
     auto globalSetLayout{ DescriptorSetLayout::Builder(m_device)
                               .addBinding(0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_ALL_GRAPHICS)
-                              .build() };
+                              .buildShared() };
 
     std::vector<VkDescriptorSet> globalDescriptorSets(Swapchain::MAX_FRAMES_IN_FLIGHT);
     for(std::size_t i{ 0 }; i < globalDescriptorSets.size(); ++i)
@@ -72,6 +71,11 @@ void Application::run()
     PointLightRenderSystem pointLightRenderSystem{ m_device,
                                                    m_renderer->getRenderPass(),
                                                    globalSetLayout->getDescriptorLayout() };
+    PBRRenderSystem pbrRenderSystem{m_device, m_renderer->getRenderPass(), globalSetLayout->getDescriptorLayout() };
+
+    m_scene = std::make_unique<Scene>(m_device, pbrRenderSystem.getMaterialSetLayout());
+    initScene();
+
     std::shared_ptr<Camera> camera{ std::make_shared<Camera>() };
     std::unique_ptr<Object> viewer{ std::make_unique<Object>(ObjectBuilder().withTransform().build()) };
     viewer->getComponent<TransformComponent>()->translation.z = CAMERA_START_OFFSET_Z;
@@ -106,7 +110,7 @@ void Application::run()
                                  .commandBuffer = commandBuffer,
                                  .camera = camera,
                                  .globalDescriptorSet = globalDescriptorSets[frameIndex],
-                                 .objects = m_objects };
+                                 .objects = m_scene->getObjects() };
             GlobalUBO ubo{};
             ubo.projection = camera->getProjection();
             ubo.view = camera->getView();
@@ -118,7 +122,8 @@ void Application::run()
 
             m_renderer->beginRenderPass(commandBuffer);
 
-            basicRenderSystem.render(frameInfo);
+            // basicRenderSystem.render(frameInfo);
+            pbrRenderSystem.render(frameInfo);
             pointLightRenderSystem.render(frameInfo);
 
             m_renderer->endRenderPass(commandBuffer);
@@ -184,6 +189,23 @@ void Application::loadObjects() const
         };
         m_objects->emplace(pointLight.getId(), std::move(pointLight));
     }
+}
+
+void Application::initScene()
+{
+    constexpr glm::vec3 vaseScale{
+        glm::vec3{ 3.f, 1.5f, 3.f }
+    };
+    constexpr glm::vec3 smoothVasePos{
+        glm::vec3{ 0.5f, 0.5f, 0.f }
+    };
+    MaterialConfig matConfig{};
+
+    auto material = m_scene->createMaterial(matConfig);
+    std::shared_ptr<Model> model = Model::loadFromFile(m_device, SMOOTH_VASE_PATH);
+    Object smoothVase{ ObjectBuilder().withModel(model).withTransform(smoothVasePos, vaseScale).withMaterial(material).build() };
+
+    m_scene->addObject(std::move(smoothVase));
 }
 
 } // namespace vv

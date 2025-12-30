@@ -48,6 +48,10 @@ public:
         ///
         /// \returns \ref DescriptorSetLayout wrapped in a unique_ptr
         [[nodiscard]] std::unique_ptr<DescriptorSetLayout> build() const;
+        /// \brief build the \ref DescriptorSetLayout
+        ///
+        /// \returns \ref DescriptorSetLayout wrapped in a shared_ptr
+        [[nodiscard]] std::shared_ptr<DescriptorSetLayout> buildShared() const;
 
     private:
         std::shared_ptr<Device> device;
