@@ -27,17 +27,8 @@ layout(set = 0, binding = 0) uniform UniformBufferGlobal
 
 layout(push_constant) uniform Push
 {
-    // offset(0)
     mat4 modelMatrix;
     mat4 normalMatrix;
-
-    // offset(SimplePushData)
-    vec4 albedo;
-    float normal;
-    float metallic;
-    float roughness;
-    float occlusion;
-    vec3 emissive;
 } push;
 
 void main()
