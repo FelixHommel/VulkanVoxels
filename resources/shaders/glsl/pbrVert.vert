@@ -29,6 +29,12 @@ layout(push_constant) uniform Push
 {
     mat4 modelMatrix;
     mat4 normalMatrix;
+    vec4 albedoFactor;
+    float normalFactor;
+    float metallicFactor;
+    float roughnessFactor;
+    float occlusionFactor;
+    vec3 emissiveFactor;
 } push;
 
 void main()

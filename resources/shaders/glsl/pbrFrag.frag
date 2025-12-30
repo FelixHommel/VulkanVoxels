@@ -30,6 +30,8 @@ layout(set = 1, binding = 4) uniform sampler2D emissiveTexture;
 
 layout(push_constant) uniform Push
 {
+    mat4 modelMatrix;
+    mat4 normalMatrix;
     vec4 albedoFactor;
     float normalFactor;
     float metallicFactor;
