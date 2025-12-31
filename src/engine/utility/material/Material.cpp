@@ -65,7 +65,7 @@ void Material::bind(VkCommandBuffer commandBuffer, VkPipelineLayout layout)
     vkCmdPushConstants(
         commandBuffer,
         layout,
-        VK_SHADER_STAGE_FRAGMENT_BIT,
+        VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT,
         sizeof(SimplePushConstantData),
         sizeof(MaterialPushConstants),
         &push

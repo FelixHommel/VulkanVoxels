@@ -81,7 +81,7 @@ public:
     Texture2D(const Texture2D&) = delete;
     Texture2D(Texture2D&& other) noexcept;
     Texture2D& operator=(const Texture2D&) = delete;
-    Texture2D& operator=(Texture2D&&) = delete;
+    Texture2D& operator=(Texture2D&& other) noexcept;
 
     [[nodiscard]] VkImage image() const noexcept { return m_image; }
     [[nodiscard]] VkDescriptorImageInfo descriptor() const noexcept { return m_descriptor; }

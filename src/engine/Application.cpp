@@ -7,6 +7,7 @@
 #include "core/Device.hpp"
 #include "core/Renderer.hpp"
 #include "core/Swapchain.hpp"
+#include "core/Texture2D.hpp"
 #include "core/Window.hpp"
 #include "renderSystems/BasicRenderSystem.hpp"
 #include "renderSystems/PBRRenderSystem.hpp"
@@ -200,6 +201,18 @@ void Application::initScene()
         glm::vec3{ 0.5f, 0.5f, 0.f }
     };
     MaterialConfig matConfig{};
+    static constexpr auto MATERIAL_ALBEDO_PATH{ PROJECT_ROOT "resources/textures/redbrick/red_brick_diff_1k.jpg" };
+    static constexpr auto MATERIAL_NORMAL_PATH{ PROJECT_ROOT "resources/textures/redbrick/red_brick_nor_gl_1k.png" };
+    static constexpr auto MATERIAL_METALLIC_ROUGHNESS_PATH{ PROJECT_ROOT "resources/textures/redbrick/red_brick_arm_1k.jpg" };
+    static constexpr auto MATERIAL_OCCLUSION_PATH{ PROJECT_ROOT "resources/textures/redbrick/red_brick_ao_1k.jpg" };
+    std::shared_ptr<Texture2D> texture{ std::make_shared<Texture2D>(Texture2D::loadFromFile(m_device, MATERIAL_ALBEDO_PATH, TextureConfig::albedo())) };
+    matConfig.albedoTexture = texture;
+    texture = std::make_shared<Texture2D>(Texture2D::loadFromFile(m_device, MATERIAL_NORMAL_PATH, TextureConfig::normal()));
+    matConfig.normalTexture = texture;
+    texture = std::make_shared<Texture2D>(Texture2D::loadFromFile(m_device, MATERIAL_METALLIC_ROUGHNESS_PATH, TextureConfig::albedo()));
+    matConfig.metallicRoughnessTexture = texture;
+    texture = std::make_shared<Texture2D>(Texture2D::loadFromFile(m_device, MATERIAL_OCCLUSION_PATH, TextureConfig::albedo()));
+    matConfig.occlusionTexture = texture;
 
     auto material = m_scene->createMaterial(matConfig);
     std::shared_ptr<Model> model = Model::loadFromFile(m_device, SMOOTH_VASE_PATH);
