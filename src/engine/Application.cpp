@@ -44,8 +44,8 @@ Application::Application()
     , m_renderer{ std::make_unique<Renderer>(m_window, m_device) }
     , m_uboBuffers(Swapchain::MAX_FRAMES_IN_FLIGHT)
     , m_globalSetLayout{ DescriptorSetLayout::Builder(m_device)
-                              .addBinding(0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_ALL_GRAPHICS)
-                              .buildShared() }
+                             .addBinding(0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_ALL_GRAPHICS)
+                             .buildShared() }
     , m_globalDescriptorSets(Swapchain::MAX_FRAMES_IN_FLIGHT)
 {
     for(std::size_t i{ 0 }; i < m_uboBuffers.size(); ++i)
@@ -60,13 +60,15 @@ Application::Application()
             .build(m_globalDescriptorSets[i]);
     }
 
-    m_basicRenderSystem = std::make_unique<BasicRenderSystem>(m_device,
-                                         m_renderer->getRenderPass(),
-                                         m_globalSetLayout->getDescriptorLayout());
-    m_pointLightRenderSystem = std::make_unique<PointLightRenderSystem>(m_device,
-                                                   m_renderer->getRenderPass(),
-                                                   m_globalSetLayout->getDescriptorLayout());
-    m_pbrRenderSystem = std::make_unique<PBRRenderSystem>(m_device, m_renderer->getRenderPass(), m_globalSetLayout->getDescriptorLayout());
+    m_basicRenderSystem = std::make_unique<BasicRenderSystem>(
+        m_device, m_renderer->getRenderPass(), m_globalSetLayout->getDescriptorLayout()
+    );
+    m_pointLightRenderSystem = std::make_unique<PointLightRenderSystem>(
+        m_device, m_renderer->getRenderPass(), m_globalSetLayout->getDescriptorLayout()
+    );
+    m_pbrRenderSystem = std::make_unique<PBRRenderSystem>(
+        m_device, m_renderer->getRenderPass(), m_globalSetLayout->getDescriptorLayout()
+    );
     m_scene = std::make_unique<Scene>(m_device, m_pbrRenderSystem->getMaterialSetLayout());
     initScene();
 }
@@ -175,8 +177,12 @@ void Application::initScene()
     Object floor{ ObjectBuilder().withModel(model).withTransform(floorPos, floorScale).withMaterial(material).build() };
     m_scene->addObject(std::move(floor));
 
-    constexpr auto COLOR_RED{ glm::vec3{ 1.f, 0.f, 0.f } };
-    constexpr auto COLOR_BLUE{ glm::vec3{ 0.f, 0.f, 1.f } };
+    constexpr auto COLOR_RED{
+        glm::vec3{ 1.f, 0.f, 0.f }
+    };
+    constexpr auto COLOR_BLUE{
+        glm::vec3{ 0.f, 0.f, 1.f }
+    };
     constexpr std::size_t LIGHTS{ 2 };
     for(std::size_t i{ 0 }; i < LIGHTS; ++i)
     {
@@ -187,7 +193,12 @@ void Application::initScene()
         ) };
         const auto translateLight{ glm::vec3(rotateLight * glm::vec4(-1.f, -1.f, -1.f, 1.f)) };
 
-        m_scene->addPointlight(ObjectBuilder().withPointLight(POINT_LIGHT_INTENSITY, i % 2 == 0 ? COLOR_RED : COLOR_BLUE).withTransform(translateLight).build());
+        m_scene->addPointlight(
+            ObjectBuilder()
+                .withPointLight(POINT_LIGHT_INTENSITY, i % 2 == 0 ? COLOR_RED : COLOR_BLUE)
+                .withTransform(translateLight)
+                .build()
+        );
     }
 }
 
