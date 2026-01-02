@@ -117,12 +117,12 @@ FSOutput main(FSInput in)
     for(int i = 0; i < global.numLights; ++i)
     {
         float3 lightPos = global.pointLights[i].position.xyz;
-        float3 L = normalize(lightPos);
+        float3 L = normalize(lightPos - in.worldPos);
         float3 H = normalize(V + L);
 
         float dist = length(lightPos - in.worldPos);
         float attenuation = 1.0 / (dist * dist);
-        float3 radiance = global.pointLights[i].color.xyz * attenuation;
+        float3 radiance = global.pointLights[i].color.rgb * global.pointLights[i].color.w * attenuation;
 
         float NDF = distributionGGX(N, H, roughness);
         float G = geometrySmith(N, V, L, roughness);
@@ -141,12 +141,11 @@ FSOutput main(FSInput in)
         Lo += (kD * albedo / PI + specular) * radiance * nDotL;
     }
 
-    float3 ambient = float3(0.03) * albedo * ao;
+    float3 ambient = global.ambientLightColor.rgb * global.ambientLightColor.w * albedo * ao;
     float3 color = ambient + Lo;
 
     // NOTE: HDR tonemapping
     color = color / (color + float3(1.0));
-
     // NOTE: gamma correction
     color = pow(color, float3(1.0 / 2.2));
 

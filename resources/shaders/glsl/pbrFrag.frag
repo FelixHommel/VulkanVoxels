@@ -82,7 +82,7 @@ vec3 fresnelSchlick(float cosTheta, vec3 F0)
 
 void main()
 {
-    // sample textures
+    // NOTE: sample textures
     vec3 albedo = texture(albedoTexture, uv).rgb * push.albedoFactor.rgb;
     vec2 metallicRoughness = texture(metallicRoughnessTexture, uv).bg; // NOTE: b = metallic, g = roughness
     float metallic = metallicRoughness.x * push.metallicFactor;
@@ -93,21 +93,19 @@ void main()
     vec3 N = normalize(normal);
     vec3 V = normalize(global.inverseView[3].xyz - worldPos);
 
-    // TODO: Implemenmt BEDF model
     vec3 F0 = vec3(0.04);
     F0 = mix(F0, albedo, metallic);
 
     vec3 Lo = vec3(0.0);
-
     for(int i = 0; i < global.numLights; ++i)
     {
         vec3 lightPos = global.pointLights[i].position.xyz;
-        vec3 L = normalize(lightPos);
+        vec3 L = normalize(lightPos - worldPos);
         vec3 H = normalize(V + L);
 
         float distance = length(lightPos - worldPos);
         float attenuation = 1.0 / (distance * distance);
-        vec3 radiance = global.pointLights[i].color.xyz * attenuation;
+        vec3 radiance = global.pointLights[i].color.rgb * global.pointLights[i].color.w * attenuation;
 
         float NDF = distributionGGX(N, H, roughness);
         float G = geometrySmith(N, V, L, roughness);
@@ -125,13 +123,12 @@ void main()
 
         Lo += (kD * albedo / PI + specular) * radiance * nDotL;
     }
-    vec3 ambient = vec3(0.03) * albedo * ao;
 
+    vec3 ambient = global.ambientLightColor.rgb * global.ambientLightColor.w * albedo * ao;
     vec3 color = ambient + Lo;
 
     // NOTE: HDR tonemapping
     color = color / (color + vec3(1.0));
-
     // NOTE: gamma correction
     color = pow(color, vec3(1.0/2.2));
 
