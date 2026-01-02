@@ -32,10 +32,11 @@ public:
 
     std::shared_ptr<Material> createMaterial(MaterialConfig& config);
     void addObject(Object&& o);
-    void addPointlight(const glm::vec3& position, const glm::vec3& color, float intensity);
+    void addPointlight(Object&& o);
 
     [[nodiscard]] std::shared_ptr<Object::ObjectMap> getObjects() const { return m_objects; }
     [[nodiscard]] const std::vector<Object>& getPointLights() const { return m_pointLights; }
+    [[nodiscard]] std::vector<Object>& getPointLights() { return m_pointLights; }
 
 private:
     static constexpr std::size_t MAX_MATERIAL_SETS{ 100 };

@@ -46,7 +46,7 @@ public:
     /// \note This may do nothing for certain render systems that don't have to update anything
     ///
     /// \param frameInfo \ref FrameInfo important frame related data
-    virtual void update(FrameInfo& frameInfo, GlobalUBO& ubo) {}
+    virtual void update([[maybe_unused]] FrameInfo& frameInfo, [[maybe_unused]] GlobalUBO& ubo) {}
     /// \brief Render whatever the render system is responsible for
     ///
     /// \param frameInfo \ref FrameInfo with data about the current frame

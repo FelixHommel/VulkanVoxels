@@ -5,6 +5,9 @@
 #include "core/Device.hpp"
 #include "core/Renderer.hpp"
 #include "core/Window.hpp"
+#include "renderSystems/BasicRenderSystem.hpp"
+#include "renderSystems/PBRRenderSystem.hpp"
+#include "renderSystems/PointLightRenderSystem.hpp"
 #include "utility/Scene.hpp"
 
 #include <cstdint>
@@ -39,18 +42,30 @@ public:
 private:
     static constexpr auto SMOOTH_VASE_PATH{ PROJECT_ROOT "resources/models/smooth_vase.obj" };
     static constexpr auto FLAT_VASE_PATH{ PROJECT_ROOT "resources/models/flat_vase.obj" };
+    static constexpr auto CUBE_PATH{ PROJECT_ROOT "resources/models/cube.obj" };
+    static constexpr auto SPHERE_PATH{ PROJECT_ROOT "resources/models/sphere.obj" };
+    static constexpr auto DRAGON_VASE_PATH{ PROJECT_ROOT "resources/models/dragon.obj" };
     static constexpr auto QUAD_PATH{ PROJECT_ROOT "resources/models/quad.obj" };
-    static constexpr float POINT_LIGHT_INTENSITY{ 0.2f };
-    static constexpr float CAMERA_START_OFFSET_Z{ -2.5f };
+    static constexpr auto POINT_LIGHT_INTENSITY{ 0.2f };
+    static constexpr auto CAMERA_START_OFFSET_Z{ -2.5f };
+    static constexpr auto MATERIAL_ALBEDO_PATH{ PROJECT_ROOT "resources/textures/redbrick/red_brick_diff_1k.jpg" };
+    static constexpr auto MATERIAL_NORMAL_PATH{ PROJECT_ROOT "resources/textures/redbrick/red_brick_nor_gl_1k.png" };
+    static constexpr auto MATERIAL_METALLIC_ROUGHNESS_PATH{ PROJECT_ROOT
+                                                            "resources/textures/redbrick/red_brick_arm_1k.jpg" };
+    static constexpr auto MATERIAL_OCCLUSION_PATH{ PROJECT_ROOT "resources/textures/redbrick/red_brick_ao_1k.jpg" };
 
     std::shared_ptr<Window> m_window;
     std::shared_ptr<Device> m_device;
     std::unique_ptr<DescriptorPool> m_globalPool;
     std::unique_ptr<Renderer> m_renderer;
+    std::vector<std::unique_ptr<Buffer>> m_uboBuffers;
+    std::shared_ptr<DescriptorSetLayout> m_globalSetLayout;
+    std::vector<VkDescriptorSet> m_globalDescriptorSets;
+    std::unique_ptr<BasicRenderSystem> m_basicRenderSystem;
+    std::unique_ptr<PointLightRenderSystem> m_pointLightRenderSystem;
+    std::unique_ptr<PBRRenderSystem> m_pbrRenderSystem;
     std::unique_ptr<Scene> m_scene;
-    std::shared_ptr<Object::ObjectMap> m_objects{ std::make_shared<Object::ObjectMap>() };
 
-    void loadObjects() const;
     void initScene();
 };
 

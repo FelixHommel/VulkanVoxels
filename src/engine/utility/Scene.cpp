@@ -38,9 +38,9 @@ void Scene::addObject(Object&& o)
     m_objects->emplace(o.getId(), std::move(o));
 }
 
-void Scene::addPointlight(const glm::vec3& position, const glm::vec3& color, float intensity)
+void Scene::addPointlight(Object&& o)
 {
-    m_pointLights.emplace_back(ObjectBuilder().withPointLight(intensity, color).withTransform(position).build());
+    m_pointLights.emplace_back(std::move(o));
 }
 
 VkDescriptorSet Scene::allocateMaterialDescriptorSet(MaterialConfig& config)

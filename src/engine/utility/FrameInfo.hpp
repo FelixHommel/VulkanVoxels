@@ -12,6 +12,7 @@
 #include <array>
 #include <cstddef>
 #include <memory>
+#include <vector>
 
 namespace vv
 {
@@ -63,6 +64,7 @@ struct FrameInfo
     std::shared_ptr<Camera> camera;
     VkDescriptorSet globalDescriptorSet;
     std::shared_ptr<Object::ObjectMap> objects;
+    std::vector<Object>& lights;
 };
 
 } // namespace vv

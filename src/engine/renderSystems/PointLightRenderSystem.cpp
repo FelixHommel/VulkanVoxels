@@ -44,7 +44,7 @@ void PointLightRenderSystem::update(FrameInfo& frameInfo, GlobalUBO& ubo)
     constexpr float ROTATE_FACTOR{ 0.5f };
     const auto rotateLight{ glm::rotate(glm::mat4(1.f), ROTATE_FACTOR * frameInfo.dt, { 0.f, -1.f, 0.f }) };
     std::size_t lightIndex{ 0 };
-    for(auto& obj : *frameInfo.objects | std::views::values)
+    for(auto& obj : frameInfo.lights)
     {
         if(!obj.hasComponent<PointLightComponent>() || !obj.hasComponent<TransformComponent>())
             continue;
@@ -53,9 +53,11 @@ void PointLightRenderSystem::update(FrameInfo& frameInfo, GlobalUBO& ubo)
         assert(lightIndex < MAX_LIGHTS && "Point lights exceed the allowed maximum");
 #endif
 
+        // NOTE: Rotate the light
         obj.getComponent<TransformComponent>()->translation
             = glm::vec3(rotateLight * glm::vec4(obj.getComponent<TransformComponent>()->translation, 1.f));
 
+        // NOTE: Write the information about the light into the UBO
         ubo.pointLights.at(lightIndex).position = glm::vec4(obj.getComponent<TransformComponent>()->translation, 1.f);
         ubo.pointLights.at(lightIndex).color = glm::vec4(
             obj.getComponent<PointLightComponent>()->color, obj.getComponent<PointLightComponent>()->intensity
@@ -81,7 +83,7 @@ void PointLightRenderSystem::render(const FrameInfo& frameInfo) const
         nullptr
     );
 
-    for(auto& obj : *frameInfo.objects | std::views::values)
+    for(auto& obj : frameInfo.lights)
     {
         if(!obj.hasComponent<PointLightComponent>() || !obj.hasComponent<TransformComponent>())
             continue;
