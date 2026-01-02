@@ -95,6 +95,11 @@ float3 fresnelSchlick(float cosTheta, float3 F0)
 [shader("fragment")]
 FSOutput main(FSInput in)
 {
+    // FIXME:
+    // It seems like the shader is treating point lights as solid objects
+    // because a shadow, right where the point light would be is cast on other objects.
+    // The issue could also be caused from the point light shader (GLSL PBR shaders are not
+    // seeing the same issue)
     float3 albedo = albedoTexture.Sample(in.uv).rgb * push.albedoFactor.rgb;
     float2 metallicRoughness = metallicRoughnessTexture.Sample(in.uv).bg;
     float metallic = metallicRoughness.x * push.metallicFactor;
