@@ -142,12 +142,13 @@ void Application::initScene()
         glm::vec3{ 0.f, 0.f, 0.f }
     };
     MaterialConfig matConfigMetal{};
-    std::shared_ptr<Texture2D> texture{
-        std::make_shared<Texture2D>(Texture2D::loadFromFile(m_device, MATERIAL_ALBEDO_PATH_METAL, TextureConfig::albedo()))
-    };
+    std::shared_ptr<Texture2D> texture{ std::make_shared<Texture2D>(
+        Texture2D::loadFromFile(m_device, MATERIAL_ALBEDO_PATH_METAL, TextureConfig::albedo())
+    ) };
     matConfigMetal.albedoTexture = texture;
-    texture
-        = std::make_shared<Texture2D>(Texture2D::loadFromFile(m_device, MATERIAL_NORMAL_PATH_METAL, TextureConfig::normal()));
+    texture = std::make_shared<Texture2D>(
+        Texture2D::loadFromFile(m_device, MATERIAL_NORMAL_PATH_METAL, TextureConfig::normal())
+    );
     matConfigMetal.normalTexture = texture;
     texture = std::make_shared<Texture2D>(
         Texture2D::loadFromFile(m_device, MATERIAL_METALLIC_ROUGHNESS_PATH_METAL, TextureConfig::albedo())
@@ -174,11 +175,13 @@ void Application::initScene()
     };
 
     MaterialConfig matConfigBrick{};
-    texture =
-        std::make_shared<Texture2D>(Texture2D::loadFromFile(m_device, MATERIAL_ALBEDO_PATH_BRICK, TextureConfig::albedo()));
+    texture = std::make_shared<Texture2D>(
+        Texture2D::loadFromFile(m_device, MATERIAL_ALBEDO_PATH_BRICK, TextureConfig::albedo())
+    );
     matConfigMetal.albedoTexture = texture;
-    texture
-        = std::make_shared<Texture2D>(Texture2D::loadFromFile(m_device, MATERIAL_NORMAL_PATH_BRICK, TextureConfig::normal()));
+    texture = std::make_shared<Texture2D>(
+        Texture2D::loadFromFile(m_device, MATERIAL_NORMAL_PATH_BRICK, TextureConfig::normal())
+    );
     matConfigMetal.normalTexture = texture;
     texture = std::make_shared<Texture2D>(
         Texture2D::loadFromFile(m_device, MATERIAL_METALLIC_ROUGHNESS_PATH_BRICK, TextureConfig::albedo())
@@ -194,7 +197,9 @@ void Application::initScene()
     Object floor{ ObjectBuilder().withModel(model).withTransform(floorPos, floorScale).withMaterial(material).build() };
     m_scene->addObject(std::move(floor));
 
-    m_scene->addPointlight(ObjectBuilder().withPointLight(50.f, glm::vec3(1.f, 1.f, 1.f)).withTransform(glm::vec3(2.f, -2.f, -1.f)).build());
+    m_scene->addPointlight(
+        ObjectBuilder().withPointLight(50.f, glm::vec3(1.f, 1.f, 1.f)).withTransform(glm::vec3(2.f, -2.f, -1.f)).build()
+    );
     // m_scene->addPointlight(ObjectBuilder().withPointLight(20.f, glm::vec3(0.8f, 0.8f, 1.f)).withTransform(glm::vec3(-2.f, -1.f, 0.f)).build());
 
     // constexpr auto COLOR_RED{
