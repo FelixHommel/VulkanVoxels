@@ -39,9 +39,11 @@ layout(push_constant) uniform Push
 
 void main()
 {
-    uv = inUv;
-    worldPos = vec3(push.modelMatrix * vec4(inPosition, 1.0));
-    normal = mat3(push.normalMatrix) * inNormal;
+    const vec4 worldPosition = push.modelMatrix * vec4(inPosition, 1.0);
 
-    gl_Position = global.projection * global.view * vec4(worldPos, 1.0);
+    uv = inUv;
+    worldPos = worldPosition.xyz;
+    normal = normalize(mat3(push.normalMatrix) * inNormal);
+
+    gl_Position = global.projection * global.view * worldPosition;
 }

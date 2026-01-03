@@ -127,10 +127,15 @@ void main()
     vec3 ambient = global.ambientLightColor.rgb * global.ambientLightColor.w * albedo * ao;
     vec3 color = ambient + Lo;
 
-    // NOTE: HDR tonemapping
-    color = color / (color + vec3(1.0));
-    // NOTE: gamma correction
-    color = pow(color, vec3(1.0/2.2));
+    // // NOTE: HDR tonemapping
+    // color = color / (color + vec3(1.0));
+    // // NOTE: gamma correction
+    // color = pow(color, vec3(1.0/2.2));
 
     outColor = vec4(color, 1.0);
+    // outColor = vec4(ambient, 1.0); // NOTE: only ambient light
+    // outColor = vec4(Lo, 1.0); // NOTE: only direct lighting
+    // outColor = vec4(N * 0.5 + 0.5, 1.0); // NOTE: normal mapping
+    // outColor = vec4(albedo, 1.0); // NOTE: mapping of albedo texture
+    // outColor = vec4(0.0, metallicRoughness.yx, 1.0); // NOTE: mapping of metallicRoughness texture
 }
