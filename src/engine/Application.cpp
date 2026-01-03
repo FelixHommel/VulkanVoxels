@@ -178,10 +178,10 @@ void Application::initScene()
     m_scene->addObject(std::move(floor));
 
     constexpr auto COLOR_RED{
-        glm::vec3{ 1.f, 0.f, 0.f }
+        glm::vec3{ 1.f, 1.f, 1.f }
     };
     constexpr auto COLOR_BLUE{
-        glm::vec3{ 0.f, 0.f, 1.f }
+        glm::vec3{ 1.f, 1.f, 1.f }
     };
     constexpr std::size_t LIGHTS{ 2 };
     for(std::size_t i{ 0 }; i < LIGHTS; ++i)
