@@ -54,8 +54,8 @@ void PointLightRenderSystem::update(FrameInfo& frameInfo, GlobalUBO& ubo)
 #endif
 
         // NOTE: Rotate the light
-        obj.getComponent<TransformComponent>()->translation
-            = glm::vec3(rotateLight * glm::vec4(obj.getComponent<TransformComponent>()->translation, 1.f));
+        // obj.getComponent<TransformComponent>()->translation
+        //     = glm::vec3(rotateLight * glm::vec4(obj.getComponent<TransformComponent>()->translation, 1.f));
 
         // NOTE: Write the information about the light into the UBO
         ubo.pointLights.at(lightIndex).position = glm::vec4(obj.getComponent<TransformComponent>()->translation, 1.f);

@@ -46,18 +46,28 @@ private:
     static constexpr auto SPHERE_PATH{ PROJECT_ROOT "resources/models/sphere.obj" };
     static constexpr auto DRAGON_VASE_PATH{ PROJECT_ROOT "resources/models/dragon.obj" };
     static constexpr auto QUAD_PATH{ PROJECT_ROOT "resources/models/quad.obj" };
-    static constexpr auto POINT_LIGHT_INTENSITY{ 0.2f };
+    static constexpr auto POINT_LIGHT_INTENSITY{ 20.f };
     static constexpr auto CAMERA_START_OFFSET_Z{ -2.5f };
-    static constexpr auto MATERIAL_ALBEDO_PATH{ PROJECT_ROOT
+    static constexpr auto MATERIAL_ALBEDO_PATH_METAL{ PROJECT_ROOT
                                                 "resources/textures/worn-shiny-metal-bl/worn-shiny-metal_albedo.png" };
-    static constexpr auto MATERIAL_NORMAL_PATH{
+    static constexpr auto MATERIAL_NORMAL_PATH_METAL{
         PROJECT_ROOT "resources/textures/worn-shiny-metal-bl/worn-shiny-metal_Normal-ogl.png"
     };
-    static constexpr auto MATERIAL_METALLIC_ROUGHNESS_PATH{
+    static constexpr auto MATERIAL_METALLIC_ROUGHNESS_PATH_METAL{
         PROJECT_ROOT "resources/textures/worn-shiny-metal-bl/worn-shiny-metal_metallicRoughness.png"
     };
-    static constexpr auto MATERIAL_OCCLUSION_PATH{ PROJECT_ROOT
+    static constexpr auto MATERIAL_OCCLUSION_PATH_METAL{ PROJECT_ROOT
                                                    "resources/textures/worn-shiny-metal-bl/worn-shiny-metal_ao.png" };
+    static constexpr auto MATERIAL_ALBEDO_PATH_BRICK{ PROJECT_ROOT
+                                                "resources/textures/rough-brick-bl/rough-brick1_albedo.png" };
+    static constexpr auto MATERIAL_NORMAL_PATH_BRICK{
+        PROJECT_ROOT "resources/textures/rough-brick-bl/rough-brick1_normal-ogl.png"
+    };
+    static constexpr auto MATERIAL_METALLIC_ROUGHNESS_PATH_BRICK{
+        PROJECT_ROOT "resources/textures/rough-brick-bl/rough-brick1_metallicRoughness.png"
+    };
+    static constexpr auto MATERIAL_OCCLUSION_PATH_BRICK{ PROJECT_ROOT
+                                                   "resources/textures/rough-brick-bl/rough-brick1_ao.png" };
 
     std::shared_ptr<Window> m_window;
     std::shared_ptr<Device> m_device;
