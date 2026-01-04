@@ -143,21 +143,21 @@ void Application::initScene()
     };
     MaterialConfig matConfigMetal{};
     std::shared_ptr<Texture2D> texture{ std::make_shared<Texture2D>(
-        Texture2D::loadFromFile(m_device, MATERIAL_ALBEDO_PATH_METAL, TextureConfig::albedo())
+        Texture2D::loadFromFile(m_device, MATERIAL_ALBEDO_PATH_RUSTED, TextureConfig::albedo())
     ) };
     matConfigMetal.albedoTexture = texture;
     texture = std::make_shared<Texture2D>(
-        Texture2D::loadFromFile(m_device, MATERIAL_NORMAL_PATH_METAL, TextureConfig::normal())
+        Texture2D::loadFromFile(m_device, MATERIAL_NORMAL_PATH_RUSTED, TextureConfig::normal())
     );
     matConfigMetal.normalTexture = texture;
     texture = std::make_shared<Texture2D>(
-        Texture2D::loadFromFile(m_device, MATERIAL_METALLIC_ROUGHNESS_PATH_METAL, TextureConfig::albedo())
+        Texture2D::loadFromFile(m_device, MATERIAL_METALLIC_ROUGHNESS_PATH_RUSTED, TextureConfig::albedo())
     );
     matConfigMetal.metallicRoughnessTexture = texture;
-    texture = std::make_shared<Texture2D>(
-        Texture2D::loadFromFile(m_device, MATERIAL_OCCLUSION_PATH_METAL, TextureConfig::albedo())
-    );
-    matConfigMetal.occlusionTexture = texture;
+    // texture = std::make_shared<Texture2D>(
+    //     Texture2D::loadFromFile(m_device, MATERIAL_OCCLUSION_PATH_METAL, TextureConfig::albedo())
+    // );
+    // matConfigMetal.occlusionTexture = texture;
 
     auto material = m_scene->createMaterial(matConfigMetal);
     std::shared_ptr<Model> model = Model::loadFromFile(m_device, SPHERE_PATH);

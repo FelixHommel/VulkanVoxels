@@ -46,7 +46,7 @@ private:
     static constexpr auto SPHERE_PATH{ PROJECT_ROOT "resources/models/sphere.obj" };
     static constexpr auto DRAGON_VASE_PATH{ PROJECT_ROOT "resources/models/dragon.obj" };
     static constexpr auto QUAD_PATH{ PROJECT_ROOT "resources/models/quad.obj" };
-    static constexpr auto POINT_LIGHT_INTENSITY{ 20.f };
+    static constexpr auto POINT_LIGHT_INTENSITY{ 10.f };
     static constexpr auto CAMERA_START_OFFSET_Z{ -2.5f };
     static constexpr auto MATERIAL_ALBEDO_PATH_METAL{
         PROJECT_ROOT "resources/textures/worn-shiny-metal-bl/worn-shiny-metal_albedo.png"
@@ -59,6 +59,24 @@ private:
     };
     static constexpr auto MATERIAL_OCCLUSION_PATH_METAL{
         PROJECT_ROOT "resources/textures/worn-shiny-metal-bl/worn-shiny-metal_ao.png"
+    };
+    static constexpr auto MATERIAL_ALBEDO_PATH_TITANIUM{
+        PROJECT_ROOT "resources/textures/Titanium-Scuffed-bl/Titanium-Scuffed_basecolor.png"
+    };
+    static constexpr auto MATERIAL_NORMAL_PATH_TITANIUM{
+        PROJECT_ROOT "resources/textures/Titanium-Scuffed-bl/Titanium-Scuffed_normal.png"
+    };
+    static constexpr auto MATERIAL_METALLIC_ROUGHNESS_PATH_TITANIUM{
+        PROJECT_ROOT "resources/textures/Titanium-Scuffed-bl/Titanium-Scuffed_metallicRoughness.png"
+    };
+    static constexpr auto MATERIAL_ALBEDO_PATH_RUSTED{
+        PROJECT_ROOT "resources/textures/rustediron1-alt2-bl/rustediron2_basecolor.png"
+    };
+    static constexpr auto MATERIAL_NORMAL_PATH_RUSTED{
+        PROJECT_ROOT "resources/textures/rustediron1-alt2-bl/rustediron2_normal.png"
+    };
+    static constexpr auto MATERIAL_METALLIC_ROUGHNESS_PATH_RUSTED{
+        PROJECT_ROOT "resources/textures/rustediron1-alt2-bl/rustediron2_metallicRoughness.png"
     };
     static constexpr auto MATERIAL_ALBEDO_PATH_BRICK{ PROJECT_ROOT
                                                       "resources/textures/rough-brick-bl/rough-brick1_albedo.png" };
