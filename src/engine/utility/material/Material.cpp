@@ -1,6 +1,7 @@
 #include "Material.hpp"
 
 #include "core/Device.hpp"
+#include "renderSystems/IRenderSystem.hpp"
 
 #include <vulkan/vulkan_core.h>
 
@@ -10,7 +11,7 @@
 namespace vv
 {
 
-Material::Material(std::shared_ptr<Device> device, const MaterialConfig& config)
+Material::Material(std::shared_ptr<Device> device, const MaterialConfig& config, VkDescriptorSet descriptor)
     : device(std::move(device))
     , m_albedoTexture(std::move(config.albedoTexture))
     , m_normalTexture(std::move(config.normalTexture))
@@ -26,6 +27,7 @@ Material::Material(std::shared_ptr<Device> device, const MaterialConfig& config)
     , m_alphaCutoff{ config.alphaCutoff }
     , m_alphaMode{ config.alphaMode }
     , m_doubleSided{ config.doubleSided }
+    , m_descriptorSet(descriptor)
 {}
 
 Material::Material(Material&& other) noexcept
@@ -44,6 +46,7 @@ Material::Material(Material&& other) noexcept
     , m_alphaCutoff{ other.m_alphaCutoff }
     , m_alphaMode{ other.m_alphaMode }
     , m_doubleSided{ other.m_doubleSided }
+    , m_descriptorSet(other.m_descriptorSet)
 {}
 
 void Material::bind(VkCommandBuffer commandBuffer, VkPipelineLayout layout)
@@ -59,7 +62,14 @@ void Material::bind(VkCommandBuffer commandBuffer, VkPipelineLayout layout)
         .occlusionStrength = m_occlusionStrength,
     };
 
-    vkCmdPushConstants(commandBuffer, layout, VK_SHADER_STAGE_FRAGMENT_BIT, 0, sizeof(MaterialPushConstants), &push);
+    vkCmdPushConstants(
+        commandBuffer,
+        layout,
+        VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT,
+        sizeof(SimplePushConstantData),
+        sizeof(MaterialPushConstants),
+        &push
+    );
 }
 
 } // namespace vv

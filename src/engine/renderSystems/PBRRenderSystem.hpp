@@ -1,6 +1,7 @@
 #ifndef VULKAN_VOXELS_SRC_ENGINE_RENDER_SYSTEMS_PBR_RENDER_SYSTEM_HPP
 #define VULKAN_VOXELS_SRC_ENGINE_RENDER_SYSTEMS_PBR_RENDER_SYSTEM_HPP
 
+#include "core/DescriptorSetLayout.hpp"
 #include "core/Device.hpp"
 #include "renderSystems/IRenderSystem.hpp"
 #include "utility/FrameInfo.hpp"
@@ -24,15 +25,9 @@ public:
     ///
     /// \param device the \ref Device used to create pipelines
     /// \param renderPass which render pass to use for the graphics pipeline
-    /// \param vertexShaderPath filepath to the vertex shader
-    /// \param fragmentShaderPath filepath to the fragment shader
     /// \param globalSetLayout layout of the global descriptor set
     explicit PBRRenderSystem(
-        std::shared_ptr<Device> device,
-        VkRenderPass renderPass,
-        const std::filesystem::path& vertexShaderPath,
-        const std::filesystem::path& fragmentShaderPath,
-        VkDescriptorSetLayout globalSetLayout
+        std::shared_ptr<Device> device, VkRenderPass renderPass, VkDescriptorSetLayout globalSetLayout
     );
     ~PBRRenderSystem() override;
 
@@ -41,12 +36,21 @@ public:
     PBRRenderSystem& operator=(const PBRRenderSystem&) = delete;
     PBRRenderSystem& operator=(PBRRenderSystem&&) = delete;
 
+    [[nodiscard]] std::shared_ptr<DescriptorSetLayout> getMaterialSetLayout() const noexcept
+    {
+        return m_materialSetLayout;
+    }
+
     /// \brief Render voxelized meshes
     ///
     /// \param frameInfo \ref FrameInfo with data about the current frame
     void render(const FrameInfo& frameInfo) const override;
 
 private:
+    static constexpr auto PBR_VERTEX_SHADER_PATH{ PROJECT_ROOT "resources/compiledShaders/pbrVert.spv" };
+    static constexpr auto PBR_FRAGMENT_SHADER_PATH{ PROJECT_ROOT "resources/compiledShaders/pbrFrag.spv" };
+    std::shared_ptr<DescriptorSetLayout> m_materialSetLayout;
+
     void createGraphicsPipelineLayout(VkDescriptorSetLayout globalSetLayout) override;
     void createGraphicsPipeline(
         VkRenderPass renderPass,

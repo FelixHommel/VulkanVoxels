@@ -42,7 +42,7 @@ DescriptorWriter& DescriptorWriter::writeBuffer(std::uint32_t binding, VkDescrip
 DescriptorWriter& DescriptorWriter::writeImage(std::uint32_t binding, VkDescriptorImageInfo* imageInfo)
 {
 #if defined(VV_ENABLE_ASSERTS)
-    assert(!setLayout->m_bindings.contains(binding) && "Layout does not contain specified binding");
+    assert(setLayout->m_bindings.contains(binding) && "Layout does not contain specified binding");
 #endif
 
     auto& bindingDescription{ setLayout->m_bindings[binding] };

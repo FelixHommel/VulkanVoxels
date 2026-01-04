@@ -102,6 +102,32 @@ Texture2D::Texture2D(Texture2D&& other) noexcept
     other.m_mipLevels = 1;
 }
 
+Texture2D& Texture2D::operator=(Texture2D&& other) noexcept
+{
+    device = std::move(other.device);
+    m_image = other.m_image;
+    m_imageView = other.m_imageView;
+    m_allocation = other.m_allocation;
+    m_sampler = other.m_sampler;
+    m_descriptor = other.m_descriptor;
+    m_width = other.m_width;
+    m_height = other.m_height;
+    m_mipLevels = other.m_mipLevels;
+    m_config = other.m_config;
+
+    other.m_image = VK_NULL_HANDLE;
+    other.m_imageView = VK_NULL_HANDLE;
+    other.m_allocation = VK_NULL_HANDLE;
+    other.m_sampler = VK_NULL_HANDLE;
+    other.m_descriptor = {};
+
+    other.m_width = 0;
+    other.m_height = 0;
+    other.m_mipLevels = 1;
+
+    return *this;
+}
+
 void Texture2D::updateDescriptor() noexcept
 {
     m_descriptor.sampler = m_sampler;

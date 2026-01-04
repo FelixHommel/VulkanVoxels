@@ -71,7 +71,7 @@ protected:
         if(!fileHandle.is_open())
             throw FileException("Failed to open shader file", filepath);
 
-        std::vector<char> buffer(fileHandle.tellg());
+        std::vector<char> buffer(static_cast<unsigned long>(fileHandle.tellg()));
 
         fileHandle.seekg(0);
         fileHandle.read(buffer.data(), static_cast<std::streamsize>(buffer.size()));

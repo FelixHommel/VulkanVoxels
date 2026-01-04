@@ -1,0 +1,49 @@
+#version 450
+
+layout(location = 0) in vec3 inPosition;
+layout(location = 1) in vec3 inColor;
+layout(location = 2) in vec3 inNormal;
+layout(location = 3) in vec2 inUv;
+
+layout(location = 0) out vec2 uv;
+layout(location = 1) out vec3 worldPos;
+layout(location = 2) out vec3 normal;
+
+struct PointLight
+{
+    vec4 position;
+    vec4 color;
+};
+
+layout(set = 0, binding = 0) uniform UniformBufferGlobal
+{
+    mat4 projection;
+    mat4 view;
+    mat4 inverseView;
+    vec4 ambientLightColor;
+    PointLight pointLights[10];
+    int numLights;
+} global;
+
+layout(push_constant) uniform Push
+{
+    mat4 modelMatrix;
+    mat4 normalMatrix;
+    vec4 albedoFactor;
+    float normalFactor;
+    float metallicFactor;
+    float roughnessFactor;
+    float occlusionFactor;
+    vec3 emissiveFactor;
+} push;
+
+void main()
+{
+    const vec4 worldPosition = push.modelMatrix * vec4(inPosition, 1.0);
+
+    uv = inUv;
+    worldPos = worldPosition.xyz;
+    normal = normalize(mat3(push.normalMatrix) * inNormal);
+
+    gl_Position = global.projection * global.view * worldPosition;
+}
