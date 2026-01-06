@@ -1,0 +1,151 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "title": "Scene",
+    "description": "Scene Descriptor file for the VulkanVoxels Renderer",
+    "type": "object",
+    "properties": {
+        "materials": {
+            "description": "Materials that are used by the scene",
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "description": "The name of the material",
+                        "type": "string"
+                    },
+                    "textures": {
+                        "description": "Paths to the material texture maps",
+                        "type": "object",
+                        "properties": {
+                            "albedo": {
+                                "type": "string"
+                            },
+                            "normal": {
+                                "type": "string"
+                            },
+                            "metallicRoughness": {
+                                "type": "string"
+                            },
+                            "occlusion": {
+                                "type": "string"
+                            },
+                            "emission": {
+                                "type": "string"
+                            },
+                            "height": {
+                                "type": "string"
+                            }
+                        },
+                        "required": [ "albedo", "normal", "metallicRoughness", "occlusion", "emission", "height" ]
+                    }
+                },
+                "required": [ "name", "textures" ]
+            }
+        },
+        "models": {
+            "description": "Models that are used by the scene",
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "description": "The name of the model",
+                        "type": "string"
+                    },
+                    "path": {
+                        "description": "The path to the model",
+                        "type": "string"
+                    }
+                },
+                "required": [ "name", "path" ]
+            }
+        },
+        "objects": {
+            "description": "Objects that are in the scene",
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "model": {
+                        "description": "Name of the model that is used for the object",
+                        "type": "string"
+                    },
+                    "material": {
+                        "description": "Name of the material that is used for the object",
+                        "type": "string"
+                    },
+                    "transform": {
+                        "description": "The transformation of the Object",
+                        "type": "object",
+                        "properties": {
+                            "position": {
+                                "description": "The position of the Object",
+                                "type": "array",
+                                "items": {
+                                    "type": "number"
+                                },
+                                "minItems": 3,
+                                "maxItems": 3,
+                                "uniqueItems": false
+                            },
+                            "scale": {
+                                "description": "The scale of the Object",
+                                "type": "array",
+                                "items": {
+                                    "type": "number"
+                                },
+                                "minItems": 3,
+                                "maxItems": 3,
+                                "uniqueItems": false
+                            }
+                        },
+                        "required": [ "position", "scale" ]
+                    }
+                },
+                "required": [ "model", "material", "transform" ]
+            }
+        },
+        "lights": {
+            "description": "Lights that are in the scene",
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "pointLight": {
+                        "description": "The description of the point lights attributes",
+                        "type": "object",
+                        "properties": {
+                            "intensity": {
+                                "description": "The intensity of the light",
+                                "type": "number"
+                            },
+                            "color": {
+                                "description": "The color of the Light",
+                                "type": "array",
+                                "items": {
+                                    "type": "number"
+                                },
+                                "minItems": 3,
+                                "maxItems": 3,
+                                "uniqueItems": false
+                            }
+                        },
+                        "required": [ "intensity", "color" ]
+                    },
+                    "position": {
+                        "description": "The position of the Light",
+                        "type": "array",
+                        "items": {
+                            "type": "number"
+                        },
+                        "minItems": 3,
+                        "maxItems": 3,
+                        "uniqueItems": false
+                    }
+                },
+                "required": [ "pointLight", "position" ]
+            }
+        }
+    }
+}
