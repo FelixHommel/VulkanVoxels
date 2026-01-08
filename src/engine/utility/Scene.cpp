@@ -78,7 +78,7 @@ void Scene::loadTexture(const std::filesystem::path& filepath, const TextureConf
     fullPath /= filepath;
     spdlog::info("registering new texture: {}", fullPath.string());
 
-    m_texturaCache.emplace(filepath, std::make_shared<Texture2D>(Texture2D::loadFromFile(m_device, fullPath, config)));
+    m_textureCache.emplace(filepath, std::make_shared<Texture2D>(Texture2D::loadFromFile(m_device, fullPath, config)));
 }
 
 void Scene::loadMaterial(const std::string& materialName, MaterialConfig& materialConfig)
@@ -101,7 +101,7 @@ void Scene::loadModel(const std::string& modelName, const std::filesystem::path&
 
 void Scene::loadObject(const std::string& modelName, const std::string& materialName, const glm::vec3& position, const glm::vec3& scale)
 {
-    spdlog::info("registering new object (with {}, {})", modelName, materialName);
+    spdlog::info("registering new object (model: {}; material: {})", modelName, materialName);
 
     auto obj{ ObjectBuilder().withModel(m_modelCache.at(modelName)).withMaterial(m_materialCache.at(materialName)).withTransform(position, scale).build() };
     m_objects->emplace(obj.getId(), std::move(obj));
@@ -196,6 +196,76 @@ VkDescriptorSet Scene::allocateMaterialDescriptorSet(MaterialConfig& config)
         .overwrite(descriptorSet);
 
     return descriptorSet;
+}
+
+void from_json(const nlohmann::json& j, Scene& s)
+{
+    for(const auto& material : j.at(Scene::JSON_MATERIALS_ACC))
+    {
+        MaterialConfig matConfig{};
+
+        // NOTE: Step 1: Load all provided textures
+        const auto& textures{ material.at(Scene::JSON_TEXTURES_ACC) };
+        if(textures.at(Scene::JSON_ALBEDO_TEXTURE_ACC) != "")
+        {
+            s.loadTexture(textures.at(Scene::JSON_ALBEDO_TEXTURE_ACC).get<std::filesystem::path>(), TextureConfig::albedo());
+            matConfig.albedoTexture = s.m_textureCache.at(textures.at(Scene::JSON_ALBEDO_TEXTURE_ACC));
+        }
+        if(textures.at(Scene::JSON_NORMAL_TEXTURE_ACC) != "")
+        {
+            s.loadTexture(textures.at(Scene::JSON_NORMAL_TEXTURE_ACC).get<std::filesystem::path>(), TextureConfig::normal());
+            matConfig.normalTexture = s.m_textureCache.at(textures.at(Scene::JSON_NORMAL_TEXTURE_ACC));
+        }
+        if(textures.at(Scene::JSON_METALLIC_ROUGHNESS_TEXTURE_ACC) != "")
+        {
+            s.loadTexture(textures.at(Scene::JSON_METALLIC_ROUGHNESS_TEXTURE_ACC).get<std::filesystem::path>(), TextureConfig::metallicRoughness());
+            matConfig.metallicRoughnessTexture = s.m_textureCache.at(textures.at(Scene::JSON_METALLIC_ROUGHNESS_TEXTURE_ACC));
+        }
+        if(textures.at(Scene::JSON_OCCLUSION_TEXTURE_ACC) != "")
+        {
+            s.loadTexture(textures.at(Scene::JSON_OCCLUSION_TEXTURE_ACC).get<std::filesystem::path>(), TextureConfig::occlusion());
+            matConfig.occlusionTexture = s.m_textureCache.at(textures.at(Scene::JSON_OCCLUSION_TEXTURE_ACC));
+        }
+        if(textures.at(Scene::JSON_EMISSION_TEXTURE_ACC) != "")
+        {
+            s.loadTexture(textures.at(Scene::JSON_EMISSION_TEXTURE_ACC).get<std::filesystem::path>(), TextureConfig::emission());
+            matConfig.emissiveTexture = s.m_textureCache.at(textures.at(Scene::JSON_EMISSION_TEXTURE_ACC));
+        }
+        if(textures.at(Scene::JSON_HEIGHT_TEXTURE_ACC) != "")
+        {
+            // TODO: Uncomment once height maps are supported
+            // s.loadTexture(textures.at(Scene::JSON_HEIGHT_TEXTURE_ACC).get<std::filesystem::path>(), TextureConfig::height());
+            // matConfig.heightTexture = s.m_textureCache.at(textures.at(Scene::JSON_HEIGHT_TEXTURE_ACC));
+        }
+
+        // NOTE: Step 2: Create the material
+        s.loadMaterial(material.at(Scene::JSON_MATERIAL_NAME_ACC).get<std::string>(), matConfig);
+    }
+
+    for(const auto& model : j.at(Scene::JSON_MODELS_ACC))
+        s.loadModel(model.at(Scene::JSON_MODEL_NAME_ACC).get<std::string>(), model.at(Scene::JSON_MODEL_PATH_ACC).get<std::filesystem::path>());
+
+    for(const auto& object : j.at(Scene::JSON_OBJECS_ACC))
+    {
+        const auto& transform{ object.at(Scene::JSON_OBJECT_TRANSFORM_ACC) };
+
+        s.loadObject(
+            object.at(Scene::JSON_OBJECT_MODEL_ACC).get<std::string>(),
+            object.at(Scene::JSON_OBJECT_MATERIAL_ACC).get<std::string>(),
+            transform.at(Scene::JSON_OBJECT_TRANSFORM_POSITION_ACC).get<glm::vec3>(),
+            transform.at(Scene::JSON_OBJECT_TRANSFORM_SCALE_ACC).get<glm::vec3>()
+        );
+    }
+
+    for(const auto& light : j.at(Scene::JSON_LIGHTS_ACC))
+    {
+        const auto& pointLight{ light.at(Scene::JSON_LIGHT_POINT_LIGHT_ACC) };
+        s.loadLight(
+            pointLight.at(Scene::JSON_LIGHT_POINT_LIGHT_INTENSITY_ACC).get<float>(),
+            pointLight.at(Scene::JSON_LIGHT_POINT_LIGHT_COLOR_ACC).get<glm::vec3>(),
+            light.at(Scene::JSON_LIGHT_POSITION_ACC).get<glm::vec3>()
+        );
+    }
 }
 
 } // namespace vv

@@ -5,9 +5,6 @@
 #include "core/DescriptorSetLayout.hpp"
 #include "core/Device.hpp"
 #include "core/Texture2D.hpp"
-#include "glm/fwd.hpp"
-#include "nlohmann/adl_serializer.hpp"
-#include "nlohmann/json_fwd.hpp"
 #include "utility/Model.hpp"
 #include "utility/material/DefaultTextureProvider.hpp"
 #include "utility/material/Material.hpp"
@@ -20,7 +17,6 @@
 #include <cstddef>
 #include <filesystem>
 #include <memory>
-#include <ranges>
 #include <string_view>
 #include <unordered_map>
 #include <vector>
@@ -45,9 +41,9 @@ namespace nlohmann
                 throw json::type_error::create(302, "expected array of size 3 for glm::vec3", &j);
             }
 
-            v.x = j.at(0).get<float>();
-            v.y = j.at(1).get<float>();
-            v.z = j.at(2).get<float>();
+            j.at(0).get_to<float>(v.x);
+            j.at(1).get_to<float>(v.y);
+            j.at(2).get_to<float>(v.z);
         }
     };
 
@@ -56,20 +52,28 @@ namespace nlohmann
 namespace vv
 {
 
-using json = nlohmann::json;
-
+/// \brief Helper class to define a custom schema violation error message format
+///
+/// \author Felix Hommel
+/// \date 1/6/2026
 class JsonValidatorErrorHandler : public nlohmann::json_schema::basic_error_handler
 {
-    void error(const nlohmann::json::json_pointer& ptr, const json& instance, const std::string& message) override
+    void error(const nlohmann::json::json_pointer& ptr, const nlohmann::json& instance, const std::string& message) override
     {
         nlohmann::json_schema::basic_error_handler::error(ptr, instance, message);
         spdlog::error("\'{}\' - \'{}\': {}", ptr.to_string(), instance.dump(), message);
     }
 };
 
+/// \brief A \ref Scene is a collection of lights and objects that all can contribute to the final rendered image
+///
+/// \author Felix Hommel
+/// \date 1/8/2026
 class Scene
 {
 public:
+    using json = nlohmann::json;
+
     static constexpr auto JSON_MATERIALS_ACC{ "materials" };
     static constexpr auto JSON_TEXTURES_ACC{ "textures" };
     static constexpr auto JSON_ALBEDO_TEXTURE_ACC{ "albedo" };
@@ -94,7 +98,11 @@ public:
     static constexpr auto JSON_LIGHT_POINT_LIGHT_COLOR_ACC{ "color" };
     static constexpr auto JSON_LIGHT_POSITION_ACC{ "position" };
 
-    Scene(std::shared_ptr<Device> device, std::shared_ptr<DescriptorSetLayout> materialLayout);
+    /// \brief Construct a new Scene
+    ///
+    /// \param device a shared_ptr to the \ref Device which is used to allocate resources.
+    /// \param materialLayout a shared_ptr to the \ref DescriptorSetLayout where PBR materials are allocated from
+    explicit Scene(std::shared_ptr<Device> device, std::shared_ptr<DescriptorSetLayout> materialLayout);
     ~Scene() = default;
 
     Scene(const Scene&) = delete;
@@ -108,16 +116,6 @@ public:
 
     [[nodiscard]] static Scene loadFromFile(const std::filesystem::path& filepath, std::shared_ptr<Device> device, std::shared_ptr<DescriptorSetLayout> materialLayout);
     [[nodiscard]] static Scene loadFromText(std::string_view jsonText, std::shared_ptr<Device> device, std::shared_ptr<DescriptorSetLayout> materialLayout);
-
-    void loadTexture(const std::filesystem::path& filepath, const TextureConfig& config);
-    void loadMaterial(const std::string& materialName, MaterialConfig& materialConfig);
-    void loadModel(const std::string& modelName, const std::filesystem::path& filepath);
-    void loadObject(const std::string& modelName, const std::string& materialName, const glm::vec3& position, const glm::vec3& scale);
-    void loadLight(float intensity, const glm::vec3& color, const glm::vec3& position);
-
-    [[nodiscard]] std::shared_ptr<Texture2D> getTexture(const std::filesystem::path& key) const { return m_texturaCache.at(key); }
-    [[nodiscard]] std::shared_ptr<Material> getMaterial(const std::string& key) const { return m_materialCache.at(key); }
-    [[nodiscard]] std::shared_ptr<Model> getModel(const std::string& key) const { return m_modelCache.at(key); }
 
 private:
     static constexpr std::size_t MAX_MATERIAL_SETS{ 100 };
@@ -134,93 +132,24 @@ private:
     std::unique_ptr<DescriptorPool> m_materialPool;            ///< Pool to allocate material descriptors from
 
     // Containers for scene resources
-    std::unordered_map<std::filesystem::path, std::shared_ptr<Texture2D>> m_texturaCache; ///< Textures
-    std::unordered_map<std::string, std::shared_ptr<Model>> m_modelCache;       ///< Models
+    std::unordered_map<std::filesystem::path, std::shared_ptr<Texture2D>> m_textureCache; ///< Textures
     std::unordered_map<std::string, std::shared_ptr<Material>> m_materialCache; ///< Materials
+    std::unordered_map<std::string, std::shared_ptr<Model>> m_modelCache;       ///< Models
 
     // Scene objects
     std::shared_ptr<Object::ObjectMap> m_objects; ///< Objects
     std::vector<Object> m_pointLights;            ///< Lights
 
+    void loadTexture(const std::filesystem::path& filepath, const TextureConfig& config);
+    void loadMaterial(const std::string& materialName, MaterialConfig& materialConfig);
+    void loadModel(const std::string& modelName, const std::filesystem::path& filepath);
+    void loadObject(const std::string& modelName, const std::string& materialName, const glm::vec3& position, const glm::vec3& scale);
+    void loadLight(float intensity, const glm::vec3& color, const glm::vec3& position);
+
     VkDescriptorSet allocateMaterialDescriptorSet(MaterialConfig& config);
+
+    friend void from_json(const nlohmann::json& j, Scene& s);
 };
-
-inline static void to_json(json& j, const Scene& s)
-{
-    for(const auto& o : *s.getObjects() | std::ranges::views::keys)
-    {
-    }
-}
-
-inline static void from_json(const json& j, Scene& s)
-{
-    for(const auto& material : j.at(Scene::JSON_MATERIALS_ACC))
-    {
-        MaterialConfig matConfig{};
-
-        // NOTE: Step 1: Load all provided textures
-        const auto& textures{ material.at(Scene::JSON_TEXTURES_ACC) };
-        if(textures.at(Scene::JSON_ALBEDO_TEXTURE_ACC) != "")
-        {
-            s.loadTexture(textures.at(Scene::JSON_ALBEDO_TEXTURE_ACC).get<std::filesystem::path>(), TextureConfig::albedo());
-            matConfig.albedoTexture = s.getTexture(textures.at(Scene::JSON_ALBEDO_TEXTURE_ACC));
-        }
-        if(textures.at(Scene::JSON_NORMAL_TEXTURE_ACC) != "")
-        {
-            s.loadTexture(textures.at(Scene::JSON_NORMAL_TEXTURE_ACC).get<std::filesystem::path>(), TextureConfig::normal());
-            matConfig.normalTexture = s.getTexture(textures.at(Scene::JSON_NORMAL_TEXTURE_ACC));
-        }
-        if(textures.at(Scene::JSON_METALLIC_ROUGHNESS_TEXTURE_ACC) != "")
-        {
-            s.loadTexture(textures.at(Scene::JSON_METALLIC_ROUGHNESS_TEXTURE_ACC).get<std::filesystem::path>(), TextureConfig::albedo());
-            matConfig.metallicRoughnessTexture = s.getTexture(textures.at(Scene::JSON_METALLIC_ROUGHNESS_TEXTURE_ACC));
-        }
-        if(textures.at(Scene::JSON_OCCLUSION_TEXTURE_ACC) != "")
-        {
-            s.loadTexture(textures.at(Scene::JSON_OCCLUSION_TEXTURE_ACC).get<std::filesystem::path>(), TextureConfig::albedo());
-            matConfig.occlusionTexture = s.getTexture(textures.at(Scene::JSON_OCCLUSION_TEXTURE_ACC));
-        }
-        if(textures.at(Scene::JSON_EMISSION_TEXTURE_ACC) != "")
-        {
-            s.loadTexture(textures.at(Scene::JSON_EMISSION_TEXTURE_ACC).get<std::filesystem::path>(), TextureConfig::albedo());
-            matConfig.emissiveTexture = s.getTexture(textures.at(Scene::JSON_EMISSION_TEXTURE_ACC));
-        }
-        if(textures.at(Scene::JSON_HEIGHT_TEXTURE_ACC) != "")
-        {
-            s.loadTexture(textures.at(Scene::JSON_HEIGHT_TEXTURE_ACC).get<std::filesystem::path>(), TextureConfig::albedo());
-            // TODO: Uncomment once height maps are supported
-            // matConfig.heightTexture = s.getTexture(textures.at(Scene::JSON_HEIGHT_TEXTURE_ACC));
-        }
-
-        // NOTE: Step 2: Create the material
-        s.loadMaterial(material.at(Scene::JSON_MATERIAL_NAME_ACC).get<std::string>(), matConfig);
-    }
-
-    for(const auto& model : j.at(Scene::JSON_MODELS_ACC))
-        s.loadModel(model.at(Scene::JSON_MODEL_NAME_ACC).get<std::string>(), model.at(Scene::JSON_MODEL_PATH_ACC).get<std::filesystem::path>());
-
-    for(const auto& object : j.at(Scene::JSON_OBJECS_ACC))
-    {
-        const auto& transform{ object.at(Scene::JSON_OBJECT_TRANSFORM_ACC) };
-
-        s.loadObject(
-            object.at(Scene::JSON_OBJECT_MODEL_ACC).get<std::string>(),
-            object.at(Scene::JSON_OBJECT_MATERIAL_ACC).get<std::string>(),
-            transform.at(Scene::JSON_OBJECT_TRANSFORM_POSITION_ACC).get<glm::vec3>(),
-            transform.at(Scene::JSON_OBJECT_TRANSFORM_SCALE_ACC).get<glm::vec3>()
-        );
-    }
-
-    for(const auto& light : j.at(Scene::JSON_LIGHTS_ACC))
-    {
-        const auto& pointLight{ light.at(Scene::JSON_LIGHT_POINT_LIGHT_ACC) };
-        s.loadLight(
-            pointLight.at(Scene::JSON_LIGHT_POINT_LIGHT_INTENSITY_ACC).get<float>(),
-            pointLight.at(Scene::JSON_LIGHT_POINT_LIGHT_COLOR_ACC).get<glm::vec3>(),
-            light.at(Scene::JSON_LIGHT_POSITION_ACC).get<glm::vec3>()
-        );
-    }
-}
 
 } // namespace vv
 

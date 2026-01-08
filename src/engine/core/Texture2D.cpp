@@ -320,7 +320,7 @@ void Texture2D::createSampler()
         throw VulkanException("Failed to create texture sampler", result);
 }
 
-/// \brief Transition a imgae layout from one to another
+/// \brief Transition an image layout from one to another
 ///
 /// \param image the \ref VkImage to transition
 /// \param oldLayout the layout the image is currently in
