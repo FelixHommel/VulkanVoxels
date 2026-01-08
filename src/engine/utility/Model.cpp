@@ -135,8 +135,7 @@ Model::Model(Model&& other) noexcept
     , m_hasIndexBuffer(other.m_hasIndexBuffer)
     , m_indexBuffer(std::move(other.m_indexBuffer))
     , m_indexCount(other.m_indexCount)
-{
-}
+{}
 
 Model Model::loadFromFile(std::shared_ptr<Device> device, const std::filesystem::path& filepath)
 {

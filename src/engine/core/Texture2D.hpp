@@ -40,13 +40,20 @@ static constexpr std::string_view toString(TextureUsage usage) noexcept
 {
     switch(usage)
     {
-        case TextureUsage::Albedo: return "albedo";
-        case TextureUsage::Normal: return "normal";
-        case TextureUsage::MetallicRoughness: return "metallicRoughness";
-        case TextureUsage::Occlusion: return "occlusion";
-        case TextureUsage::Emission: return "emission";
-        case TextureUsage::Height: return "height";
-        default: return "unknown";
+    case TextureUsage::Albedo:
+        return "albedo";
+    case TextureUsage::Normal:
+        return "normal";
+    case TextureUsage::MetallicRoughness:
+        return "metallicRoughness";
+    case TextureUsage::Occlusion:
+        return "occlusion";
+    case TextureUsage::Emission:
+        return "emission";
+    case TextureUsage::Height:
+        return "height";
+    default:
+        return "unknown";
     }
 }
 

@@ -25,27 +25,24 @@
 namespace nlohmann
 {
 
-    template<>
-    struct adl_serializer<glm::vec3>
+template<>
+struct adl_serializer<glm::vec3>
+{
+    static void to_json(json& j, const glm::vec3& v) { j = json::array({ v.x, v.y, v.z }); }
+
+    static void from_json(const json& j, glm::vec3& v)
     {
-        static void to_json(json& j, const glm::vec3& v)
+        if(!j.is_array() || j.size() != 3)
         {
-            j = json::array({ v.x, v.y, v.z });
+            // NOLINTNEXTLINE(readability-magic-numbers): defined by https://json.nlohmann.me/home/exceptions/#jsonexceptiontype_error302
+            throw json::type_error::create(302, "expected array of size 3 for glm::vec3", &j);
         }
 
-        static void from_json(const json& j, glm::vec3& v)
-        {
-            if(!j.is_array() || j.size() != 3)
-            {
-                // NOLINTNEXTLINE(readability-magic-numbers): defined by https://json.nlohmann.me/home/exceptions/#jsonexceptiontype_error302
-                throw json::type_error::create(302, "expected array of size 3 for glm::vec3", &j);
-            }
-
-            j.at(0).get_to<float>(v.x);
-            j.at(1).get_to<float>(v.y);
-            j.at(2).get_to<float>(v.z);
-        }
-    };
+        j.at(0).get_to<float>(v.x);
+        j.at(1).get_to<float>(v.y);
+        j.at(2).get_to<float>(v.z);
+    }
+};
 
 } // namespace nlohmann
 
@@ -58,7 +55,9 @@ namespace vv
 /// \date 1/6/2026
 class JsonValidatorErrorHandler : public nlohmann::json_schema::basic_error_handler
 {
-    void error(const nlohmann::json::json_pointer& ptr, const nlohmann::json& instance, const std::string& message) override
+    void error(
+        const nlohmann::json::json_pointer& ptr, const nlohmann::json& instance, const std::string& message
+    ) override
     {
         nlohmann::json_schema::basic_error_handler::error(ptr, instance, message);
         spdlog::error("\'{}\' - \'{}\': {}", ptr.to_string(), instance.dump(), message);
@@ -114,15 +113,23 @@ public:
     [[nodiscard]] const std::vector<Object>& getPointLights() const { return m_pointLights; }
     [[nodiscard]] std::vector<Object>& getPointLights() { return m_pointLights; }
 
-    [[nodiscard]] static Scene loadFromFile(const std::filesystem::path& filepath, std::shared_ptr<Device> device, std::shared_ptr<DescriptorSetLayout> materialLayout);
-    [[nodiscard]] static Scene loadFromText(std::string_view jsonText, std::shared_ptr<Device> device, std::shared_ptr<DescriptorSetLayout> materialLayout);
+    [[nodiscard]] static Scene loadFromFile(
+        const std::filesystem::path& filepath,
+        std::shared_ptr<Device> device,
+        std::shared_ptr<DescriptorSetLayout> materialLayout
+    );
+    [[nodiscard]] static Scene loadFromText(
+        std::string_view jsonText, std::shared_ptr<Device> device, std::shared_ptr<DescriptorSetLayout> materialLayout
+    );
 
 private:
     static constexpr std::size_t MAX_MATERIAL_SETS{ 100 };
     static constexpr std::size_t MATERIAL_POOL_SIZE{ 500 };
     static constexpr auto SCENE_JSON_SCHEMA_FILE{ PROJECT_ROOT "resources/scene-schema.json" };
 
-    static Scene loadFromJson(const json& j, std::shared_ptr<Device> device, std::shared_ptr<DescriptorSetLayout> materialLayout);
+    static Scene loadFromJson(
+        const json& j, std::shared_ptr<Device> device, std::shared_ptr<DescriptorSetLayout> materialLayout
+    );
     static bool validateJson(const json& j);
 
     // Utility for managing resources of a scene
@@ -133,8 +140,8 @@ private:
 
     // Containers for scene resources
     std::unordered_map<std::filesystem::path, std::shared_ptr<Texture2D>> m_textureCache; ///< Textures
-    std::unordered_map<std::string, std::shared_ptr<Material>> m_materialCache; ///< Materials
-    std::unordered_map<std::string, std::shared_ptr<Model>> m_modelCache;       ///< Models
+    std::unordered_map<std::string, std::shared_ptr<Material>> m_materialCache;           ///< Materials
+    std::unordered_map<std::string, std::shared_ptr<Model>> m_modelCache;                 ///< Models
 
     // Scene objects
     std::shared_ptr<Object::ObjectMap> m_objects; ///< Objects
@@ -143,7 +150,9 @@ private:
     void loadTexture(const std::filesystem::path& filepath, const TextureConfig& config);
     void loadMaterial(const std::string& materialName, MaterialConfig& materialConfig);
     void loadModel(const std::string& modelName, const std::filesystem::path& filepath);
-    void loadObject(const std::string& modelName, const std::string& materialName, const glm::vec3& position, const glm::vec3& scale);
+    void loadObject(
+        const std::string& modelName, const std::string& materialName, const glm::vec3& position, const glm::vec3& scale
+    );
     void loadLight(float intensity, const glm::vec3& color, const glm::vec3& position);
 
     VkDescriptorSet allocateMaterialDescriptorSet(MaterialConfig& config);

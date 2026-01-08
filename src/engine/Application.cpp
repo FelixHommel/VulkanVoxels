@@ -69,8 +69,9 @@ Application::Application()
     m_pbrRenderSystem = std::make_unique<PBRRenderSystem>(
         m_device, m_renderer->getRenderPass(), m_globalSetLayout->getDescriptorLayout()
     );
-    m_scene = std::make_unique<Scene>(Scene::loadFromFile(SCENE_FILEPATH, m_device, m_pbrRenderSystem->getMaterialSetLayout()));
-    
+    m_scene = std::make_unique<Scene>(
+        Scene::loadFromFile(SCENE_FILEPATH, m_device, m_pbrRenderSystem->getMaterialSetLayout())
+    );
 }
 
 void Application::run()

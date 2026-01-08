@@ -34,7 +34,11 @@ Scene::Scene(std::shared_ptr<Device> device, std::shared_ptr<DescriptorSetLayout
                          .build();
 }
 
-Scene Scene::loadFromFile(const std::filesystem::path& filepath, std::shared_ptr<Device> device, std::shared_ptr<DescriptorSetLayout> materialLayout)
+Scene Scene::loadFromFile(
+    const std::filesystem::path& filepath,
+    std::shared_ptr<Device> device,
+    std::shared_ptr<DescriptorSetLayout> materialLayout
+)
 {
     json scene{};
 
@@ -54,7 +58,9 @@ Scene Scene::loadFromFile(const std::filesystem::path& filepath, std::shared_ptr
     return loadFromJson(scene, std::move(device), std::move(materialLayout));
 }
 
-Scene Scene::loadFromText(std::string_view jsonText, std::shared_ptr<Device> device, std::shared_ptr<DescriptorSetLayout> materialLayout)
+Scene Scene::loadFromText(
+    std::string_view jsonText, std::shared_ptr<Device> device, std::shared_ptr<DescriptorSetLayout> materialLayout
+)
 {
     json scene{};
 
@@ -99,11 +105,17 @@ void Scene::loadModel(const std::string& modelName, const std::filesystem::path&
     m_modelCache.emplace(modelName, std::make_shared<Model>(Model::loadFromFile(m_device, fullPath)));
 }
 
-void Scene::loadObject(const std::string& modelName, const std::string& materialName, const glm::vec3& position, const glm::vec3& scale)
+void Scene::loadObject(
+    const std::string& modelName, const std::string& materialName, const glm::vec3& position, const glm::vec3& scale
+)
 {
     spdlog::info("registering new object (model: {}; material: {})", modelName, materialName);
 
-    auto obj{ ObjectBuilder().withModel(m_modelCache.at(modelName)).withMaterial(m_materialCache.at(materialName)).withTransform(position, scale).build() };
+    auto obj{ ObjectBuilder()
+                  .withModel(m_modelCache.at(modelName))
+                  .withMaterial(m_materialCache.at(materialName))
+                  .withTransform(position, scale)
+                  .build() };
     m_objects->emplace(obj.getId(), std::move(obj));
 }
 
@@ -114,7 +126,9 @@ void Scene::loadLight(float intensity, const glm::vec3& color, const glm::vec3& 
     m_pointLights.emplace_back(ObjectBuilder().withPointLight(intensity, color).withTransform(position).build());
 }
 
-Scene Scene::loadFromJson(const json& j, std::shared_ptr<Device> device, std::shared_ptr<DescriptorSetLayout> materialLayout)
+Scene Scene::loadFromJson(
+    const json& j, std::shared_ptr<Device> device, std::shared_ptr<DescriptorSetLayout> materialLayout
+)
 {
     try
     {
@@ -208,27 +222,39 @@ void from_json(const nlohmann::json& j, Scene& s)
         const auto& textures{ material.at(Scene::JSON_TEXTURES_ACC) };
         if(textures.at(Scene::JSON_ALBEDO_TEXTURE_ACC) != "")
         {
-            s.loadTexture(textures.at(Scene::JSON_ALBEDO_TEXTURE_ACC).get<std::filesystem::path>(), TextureConfig::albedo());
+            s.loadTexture(
+                textures.at(Scene::JSON_ALBEDO_TEXTURE_ACC).get<std::filesystem::path>(), TextureConfig::albedo()
+            );
             matConfig.albedoTexture = s.m_textureCache.at(textures.at(Scene::JSON_ALBEDO_TEXTURE_ACC));
         }
         if(textures.at(Scene::JSON_NORMAL_TEXTURE_ACC) != "")
         {
-            s.loadTexture(textures.at(Scene::JSON_NORMAL_TEXTURE_ACC).get<std::filesystem::path>(), TextureConfig::normal());
+            s.loadTexture(
+                textures.at(Scene::JSON_NORMAL_TEXTURE_ACC).get<std::filesystem::path>(), TextureConfig::normal()
+            );
             matConfig.normalTexture = s.m_textureCache.at(textures.at(Scene::JSON_NORMAL_TEXTURE_ACC));
         }
         if(textures.at(Scene::JSON_METALLIC_ROUGHNESS_TEXTURE_ACC) != "")
         {
-            s.loadTexture(textures.at(Scene::JSON_METALLIC_ROUGHNESS_TEXTURE_ACC).get<std::filesystem::path>(), TextureConfig::metallicRoughness());
-            matConfig.metallicRoughnessTexture = s.m_textureCache.at(textures.at(Scene::JSON_METALLIC_ROUGHNESS_TEXTURE_ACC));
+            s.loadTexture(
+                textures.at(Scene::JSON_METALLIC_ROUGHNESS_TEXTURE_ACC).get<std::filesystem::path>(),
+                TextureConfig::metallicRoughness()
+            );
+            matConfig.metallicRoughnessTexture
+                = s.m_textureCache.at(textures.at(Scene::JSON_METALLIC_ROUGHNESS_TEXTURE_ACC));
         }
         if(textures.at(Scene::JSON_OCCLUSION_TEXTURE_ACC) != "")
         {
-            s.loadTexture(textures.at(Scene::JSON_OCCLUSION_TEXTURE_ACC).get<std::filesystem::path>(), TextureConfig::occlusion());
+            s.loadTexture(
+                textures.at(Scene::JSON_OCCLUSION_TEXTURE_ACC).get<std::filesystem::path>(), TextureConfig::occlusion()
+            );
             matConfig.occlusionTexture = s.m_textureCache.at(textures.at(Scene::JSON_OCCLUSION_TEXTURE_ACC));
         }
         if(textures.at(Scene::JSON_EMISSION_TEXTURE_ACC) != "")
         {
-            s.loadTexture(textures.at(Scene::JSON_EMISSION_TEXTURE_ACC).get<std::filesystem::path>(), TextureConfig::emission());
+            s.loadTexture(
+                textures.at(Scene::JSON_EMISSION_TEXTURE_ACC).get<std::filesystem::path>(), TextureConfig::emission()
+            );
             matConfig.emissiveTexture = s.m_textureCache.at(textures.at(Scene::JSON_EMISSION_TEXTURE_ACC));
         }
         if(textures.at(Scene::JSON_HEIGHT_TEXTURE_ACC) != "")
@@ -243,7 +269,10 @@ void from_json(const nlohmann::json& j, Scene& s)
     }
 
     for(const auto& model : j.at(Scene::JSON_MODELS_ACC))
-        s.loadModel(model.at(Scene::JSON_MODEL_NAME_ACC).get<std::string>(), model.at(Scene::JSON_MODEL_PATH_ACC).get<std::filesystem::path>());
+        s.loadModel(
+            model.at(Scene::JSON_MODEL_NAME_ACC).get<std::string>(),
+            model.at(Scene::JSON_MODEL_PATH_ACC).get<std::filesystem::path>()
+        );
 
     for(const auto& object : j.at(Scene::JSON_OBJECS_ACC))
     {
