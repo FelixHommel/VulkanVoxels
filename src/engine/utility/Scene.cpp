@@ -2,13 +2,22 @@
 
 #include "core/DescriptorWriter.hpp"
 #include "core/Device.hpp"
+#include "core/Texture2D.hpp"
 #include "utility/exceptions/Exception.hpp"
+#include "utility/exceptions/FileException.hpp"
 #include "utility/material/DefaultTextureProvider.hpp"
 #include "utility/object/ObjectBuilder.hpp"
 
-#include <memory>
-#include <utility>
+#include "nlohmann/json-schema.hpp"
+#include "nlohmann/json.hpp"
+#include "spdlog/spdlog.h"
+#include <string_view>
 #include <vulkan/vulkan_core.h>
+
+#include <fstream>
+#include <memory>
+#include <sstream>
+#include <utility>
 
 namespace vv
 {
@@ -25,22 +34,133 @@ Scene::Scene(std::shared_ptr<Device> device, std::shared_ptr<DescriptorSetLayout
                          .build();
 }
 
-std::shared_ptr<Material> Scene::createMaterial(MaterialConfig& config)
+Scene Scene::loadFromFile(const std::filesystem::path& filepath, std::shared_ptr<Device> device, std::shared_ptr<DescriptorSetLayout> materialLayout)
 {
-    VkDescriptorSet descriptorSet{ allocateMaterialDescriptorSet(config) };
-    m_materialCache.emplace_back(std::make_shared<Material>(m_device, config, descriptorSet));
+    json scene{};
 
-    return m_materialCache.back();
+    try
+    {
+        std::ifstream sceneFile{ filepath };
+        scene = json::parse(sceneFile);
+        sceneFile.close();
+    }
+    catch(json::parse_error& e)
+    {
+        std::stringstream ss;
+        ss << "Failed to parse json file:\n" << e.what();
+        throw FileException(ss.str(), filepath);
+    }
+
+    return loadFromJson(scene, std::move(device), std::move(materialLayout));
 }
 
-void Scene::addObject(Object&& o)
+Scene Scene::loadFromText(std::string_view jsonText, std::shared_ptr<Device> device, std::shared_ptr<DescriptorSetLayout> materialLayout)
 {
-    m_objects->emplace(o.getId(), std::move(o));
+    json scene{};
+
+    try
+    {
+        scene = json::parse(jsonText);
+    }
+    catch(json::parse_error& e)
+    {
+        std::stringstream ss;
+        ss << "Failed to parse json:\n" << e.what();
+        throw Exception(ss.str());
+    }
+
+    return loadFromJson(scene, std::move(device), std::move(materialLayout));
 }
 
-void Scene::addPointlight(Object&& o)
+void Scene::loadTexture(const std::filesystem::path& filepath, const TextureConfig& config)
 {
-    m_pointLights.emplace_back(std::move(o));
+    std::filesystem::path fullPath{ PROJECT_ROOT };
+    fullPath /= filepath;
+    spdlog::info("registering new texture: {}", fullPath.string());
+
+    m_texturaCache.emplace(filepath, std::make_shared<Texture2D>(Texture2D::loadFromFile(m_device, fullPath, config)));
+}
+
+void Scene::loadMaterial(const std::string& materialName, MaterialConfig& materialConfig)
+{
+    spdlog::info("registering new material: {}", materialName);
+
+    VkDescriptorSet descriptorSet{ allocateMaterialDescriptorSet(materialConfig) };
+    m_materialCache.emplace(materialName, std::make_shared<Material>(m_device, materialConfig, descriptorSet));
+}
+
+void Scene::loadModel(const std::string& modelName, const std::filesystem::path& filepath)
+{
+    spdlog::info("registering new model: {}", modelName);
+
+    std::filesystem::path fullPath{ PROJECT_ROOT };
+    fullPath /= filepath;
+
+    m_modelCache.emplace(modelName, std::make_shared<Model>(Model::loadFromFile(m_device, fullPath)));
+}
+
+void Scene::loadObject(const std::string& modelName, const std::string& materialName, const glm::vec3& position, const glm::vec3& scale)
+{
+    spdlog::info("registering new object (with {}, {})", modelName, materialName);
+
+    auto obj{ ObjectBuilder().withModel(m_modelCache.at(modelName)).withMaterial(m_materialCache.at(materialName)).withTransform(position, scale).build() };
+    m_objects->emplace(obj.getId(), std::move(obj));
+}
+
+void Scene::loadLight(float intensity, const glm::vec3& color, const glm::vec3& position)
+{
+    spdlog::info("registering new light");
+
+    m_pointLights.emplace_back(ObjectBuilder().withPointLight(intensity, color).withTransform(position).build());
+}
+
+Scene Scene::loadFromJson(const json& j, std::shared_ptr<Device> device, std::shared_ptr<DescriptorSetLayout> materialLayout)
+{
+    try
+    {
+        validateJson(j);
+    }
+    catch(json::parse_error& e)
+    {
+        throw Exception("Scene descriptor file didn't pass validation");
+    }
+
+
+    Scene s{ std::move(device), std::move(materialLayout) };
+    j.get_to(s);
+
+    return std::move(s);
+}
+
+bool Scene::validateJson(const json& j)
+{
+    nlohmann::json_schema::json_validator validator{};
+
+    try
+    {
+        std::ifstream schemaFile{ std::filesystem::path(SCENE_JSON_SCHEMA_FILE) };
+        const json schema{ json::parse(schemaFile) };
+        schemaFile.close();
+
+        validator.set_root_schema(schema);
+    }
+    catch(json::parse_error& e)
+    {
+        std::stringstream ss;
+        ss << "Failed to parse scene descriptor schema file:\n" << e.what();
+        throw FileException(ss.str(), SCENE_JSON_SCHEMA_FILE);
+    }
+    catch(std::exception& e)
+    {
+        std::stringstream ss;
+        ss << "Validation of schema failed:\n" << e.what();
+        throw FileException(ss.str(), SCENE_JSON_SCHEMA_FILE);
+    }
+
+    JsonValidatorErrorHandler err{};
+    validator.validate(j, err);
+
+    return !err;
 }
 
 VkDescriptorSet Scene::allocateMaterialDescriptorSet(MaterialConfig& config)

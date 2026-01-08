@@ -128,12 +128,22 @@ Model::Model(std::shared_ptr<Device> device, const Builder& builder) : device{ s
     createIndexBuffer(builder.indices);
 }
 
-std::unique_ptr<Model> Model::loadFromFile(std::shared_ptr<Device> device, const std::filesystem::path& filepath)
+Model::Model(Model&& other) noexcept
+    : device(std::move(other.device))
+    , m_vertexBuffer(std::move(other.m_vertexBuffer))
+    , m_vertexCount(other.m_vertexCount)
+    , m_hasIndexBuffer(other.m_hasIndexBuffer)
+    , m_indexBuffer(std::move(other.m_indexBuffer))
+    , m_indexCount(other.m_indexCount)
+{
+}
+
+Model Model::loadFromFile(std::shared_ptr<Device> device, const std::filesystem::path& filepath)
 {
     Builder builder{};
     builder.loadModel(filepath);
 
-    return std::make_unique<Model>(device, builder);
+    return { device, builder };
 }
 
 void Model::bind(VkCommandBuffer commandBuffer) const

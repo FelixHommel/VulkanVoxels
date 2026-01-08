@@ -69,8 +69,9 @@ Application::Application()
     m_pbrRenderSystem = std::make_unique<PBRRenderSystem>(
         m_device, m_renderer->getRenderPass(), m_globalSetLayout->getDescriptorLayout()
     );
-    m_scene = std::make_unique<Scene>(m_device, m_pbrRenderSystem->getMaterialSetLayout());
-    initScene();
+    static constexpr auto SCENE_FILEPATH{ PROJECT_ROOT "resources/scene.json" };
+    m_scene = std::make_unique<Scene>(Scene::loadFromFile(SCENE_FILEPATH, m_device, m_pbrRenderSystem->getMaterialSetLayout()));
+    
 }
 
 void Application::run()
@@ -131,100 +132,6 @@ void Application::run()
     }
 
     vkDeviceWaitIdle(m_device->device());
-}
-
-void Application::initScene()
-{
-    constexpr glm::vec3 OBJ_SACLE{
-        glm::vec3{ 0.5f, 0.5f, 0.5f }
-    };
-    constexpr glm::vec3 OBJ_POS{
-        glm::vec3{ 0.f, 0.f, 0.f }
-    };
-    MaterialConfig matConfigMetal{};
-    std::shared_ptr<Texture2D> texture{ std::make_shared<Texture2D>(
-        Texture2D::loadFromFile(m_device, MATERIAL_ALBEDO_PATH_RUSTED, TextureConfig::albedo())
-    ) };
-    matConfigMetal.albedoTexture = texture;
-    texture = std::make_shared<Texture2D>(
-        Texture2D::loadFromFile(m_device, MATERIAL_NORMAL_PATH_RUSTED, TextureConfig::normal())
-    );
-    matConfigMetal.normalTexture = texture;
-    texture = std::make_shared<Texture2D>(
-        Texture2D::loadFromFile(m_device, MATERIAL_METALLIC_ROUGHNESS_PATH_RUSTED, TextureConfig::albedo())
-    );
-    matConfigMetal.metallicRoughnessTexture = texture;
-    // texture = std::make_shared<Texture2D>(
-    //     Texture2D::loadFromFile(m_device, MATERIAL_OCCLUSION_PATH_METAL, TextureConfig::albedo())
-    // );
-    // matConfigMetal.occlusionTexture = texture;
-
-    auto material = m_scene->createMaterial(matConfigMetal);
-    std::shared_ptr<Model> model = Model::loadFromFile(m_device, SPHERE_PATH);
-    Object smoothVase{
-        ObjectBuilder().withModel(model).withTransform(OBJ_POS, OBJ_SACLE).withMaterial(material).build()
-    };
-
-    m_scene->addObject(std::move(smoothVase));
-
-    constexpr glm::vec3 floorPos{
-        glm::vec3{ 0.f, 0.5f, 0.f }
-    };
-    constexpr glm::vec3 floorScale{
-        glm::vec3{ 3.f, 1.f, 3.f }
-    };
-
-    MaterialConfig matConfigBrick{};
-    texture = std::make_shared<Texture2D>(
-        Texture2D::loadFromFile(m_device, MATERIAL_ALBEDO_PATH_BRICK, TextureConfig::albedo())
-    );
-    matConfigMetal.albedoTexture = texture;
-    texture = std::make_shared<Texture2D>(
-        Texture2D::loadFromFile(m_device, MATERIAL_NORMAL_PATH_BRICK, TextureConfig::normal())
-    );
-    matConfigMetal.normalTexture = texture;
-    texture = std::make_shared<Texture2D>(
-        Texture2D::loadFromFile(m_device, MATERIAL_METALLIC_ROUGHNESS_PATH_BRICK, TextureConfig::albedo())
-    );
-    matConfigMetal.metallicRoughnessTexture = texture;
-    texture = std::make_shared<Texture2D>(
-        Texture2D::loadFromFile(m_device, MATERIAL_OCCLUSION_PATH_BRICK, TextureConfig::albedo())
-    );
-    matConfigMetal.occlusionTexture = texture;
-    material = m_scene->createMaterial(matConfigMetal);
-
-    model = Model::loadFromFile(m_device, QUAD_PATH);
-    Object floor{ ObjectBuilder().withModel(model).withTransform(floorPos, floorScale).withMaterial(material).build() };
-    m_scene->addObject(std::move(floor));
-
-    m_scene->addPointlight(
-        ObjectBuilder().withPointLight(50.f, glm::vec3(1.f, 1.f, 1.f)).withTransform(glm::vec3(2.f, -2.f, -1.f)).build()
-    );
-    // m_scene->addPointlight(ObjectBuilder().withPointLight(20.f, glm::vec3(0.8f, 0.8f, 1.f)).withTransform(glm::vec3(-2.f, -1.f, 0.f)).build());
-
-    // constexpr auto COLOR_RED{
-    //     glm::vec3{ 1.f, 1.f, 1.f }
-    // };
-    // constexpr auto COLOR_BLUE{
-    //     glm::vec3{ 1.f, 1.f, 1.f }
-    // };
-    // constexpr std::size_t LIGHTS{ 2 };
-    // for(std::size_t i{ 0 }; i < LIGHTS; ++i)
-    // {
-    //     const auto rotateLight{ glm::rotate(
-    //         glm::mat4(1.f),
-    //         static_cast<float>(i) * glm::two_pi<float>() / static_cast<float>(LIGHTS),
-    //         { 0.f, -1.f, 0.f }
-    //     ) };
-    //     const auto translateLight{ glm::vec3(rotateLight * glm::vec4(-1.f, -1.f, -1.f, 1.f)) };
-    //
-    //     m_scene->addPointlight(
-    //         ObjectBuilder()
-    //             .withPointLight(POINT_LIGHT_INTENSITY, i % 2 == 0 ? COLOR_RED : COLOR_BLUE)
-    //             .withTransform(translateLight)
-    //             .build()
-    //     );
-    // }
 }
 
 } // namespace vv
