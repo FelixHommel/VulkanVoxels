@@ -1,0 +1,63 @@
+{
+    "materials": [
+        {
+            "name": "brick",
+            "textures": {
+                "albedo": "resources/textures/rough-brick/rough-brick1-albedo.png",
+                "normal": "resources/textures/rough-brick/rough-brick1-normal.png",
+                "metallicRoughness": "resources/textures/rough-brick/rough-brick1-metallicRoughness.png",
+                "occlusion": "resources/textures/rough-brick/rough-brick1-ao.png",
+                "emission": "",
+                "height": "resources/textures/rough-brick/rough-brick1-height.png"
+            }
+        },
+        {
+            "name": "rusted-iron",
+            "textures": {
+                "albedo": "resources/textures/rustediron-alt2/rustediron2-albedo.png",
+                "normal": "resources/textures/rustediron-alt2/rustediron2-normal.png",
+                "metallicRoughness": "resources/textures/rustediron-alt2/rustediron2-metallicRoughness.png",
+                "occlusion": "",
+                "emission": "",
+                "height": ""
+            }
+        }
+    ],
+    "models": [
+        {
+            "name": "sphere",
+            "path": "resources/models/sphere.obj"
+        },
+        {
+            "name": "quad",
+            "path": "resources/models/quad.obj"
+        }
+    ],
+    "objects": [
+        {
+            "model": "sphere",
+            "material": "rusted-iron",
+            "transform": {
+                "position": [ 0.0, 0.0, 0.0 ],
+                "scale": [ 0.5, 0.5, 0.5 ]
+            }
+        },
+        {
+            "model": "quad",
+            "material": "brick",
+            "transform": {
+                "position": [ 0.0, 0.5, 0.0 ],
+                "scale": [ 3.0, 1.0, 3.0 ]
+            }
+        }
+    ],
+    "lights": [
+        {
+            "pointLight": {
+                "intensity": 50.0,
+                "color": [ 1.0, 1.0, 1.0 ]
+            },
+            "position": [ 2.0, -2.0, -1.0 ]
+        }
+    ]
+}

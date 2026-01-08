@@ -96,6 +96,8 @@ target_link_libraries(${NAME}
     PUBLIC
         glfw
         glm
+        nlohmann_json::nlohmann_json
+        nlohmann_json_schema_validator
         spdlog::spdlog
         VMA
         Vulkan::Vulkan
