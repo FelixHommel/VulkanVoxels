@@ -22,6 +22,20 @@ FetchContent_Declare(
 add_subdirectory(googletest)
 
 FetchContent_Declare(
+    json
+    GIT_REPOSITORY https://github.com/nlohmann/json.git
+    GIT_TAG v3.12.0
+)
+add_subdirectory(json)
+
+FetchContent_Declare(
+    json-schema
+    GIT_REPOSITORY https://github.com/pboettch/json-schema-validator.git
+    GIT_TAG 2.4.0
+)
+add_subdirectory(json-schema)
+
+FetchContent_Declare(
     spdlog
     GIT_REPOSITORY https://github.com/gabime/spdlog.git
     GIT_TAG v1.15.2

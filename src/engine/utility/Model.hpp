@@ -72,7 +72,7 @@ public:
     ~Model() = default;
 
     Model(const Model&) = delete;
-    Model(Model&&) = delete;
+    Model(Model&& other) noexcept;
     Model& operator=(const Model&) = delete;
     Model& operator=(Model&&) = delete;
 
@@ -80,7 +80,7 @@ public:
     ///
     /// \param device \ref Device to create the vertex and index buffers on
     /// \param filepath path to the obj file
-    static std::unique_ptr<Model> loadFromFile(std::shared_ptr<Device> device, const std::filesystem::path& filepath);
+    static Model loadFromFile(std::shared_ptr<Device> device, const std::filesystem::path& filepath);
 
     /// \brief Bind the vertex buffer of the model
     ///

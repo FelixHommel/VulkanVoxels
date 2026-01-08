@@ -1,0 +1,7 @@
+set(JSON_VALIDATOR_INSTALL OFF CACHE BOOL "Install targets" FORCE)
+set(JSON_VALIDATOR_BUILD_TESTS OFF CACHE BOOL "Build tests" FORCE)
+set(JSON_VALIDATOR_BUILD_EXAMPLES OFF CACHE BOOL "Build examples" FORCE)
+set(JSON_VALIDATOR_SHARED_LIBS OFF CACHE BOOL "Build as shared library" FORCE)
+set(JSON_VALIDATOR_TEST_COVERAGE OFF CACHE BOOL "Build with test coverage" FORCE)
+
+FetchContent_MakeAvailable(json-schema)
